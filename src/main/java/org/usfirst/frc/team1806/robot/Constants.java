@@ -73,9 +73,30 @@ public class Constants {
     public final static int kDriveLowGearMaxAccel = 20146; // Counts
     public final static double kDriveTurnMaxPower = .6;
 
+    public final static double kLiftHoldPercentOutput = .17;
     // Encoder constants used by Rocket Elevator system
     public final static int kCreepModeLiftHeight = 13000;
 
+    public final static int kLiftPositionControlPIDSlot = 10;
+    public final static int kLiftPositionPIDTimeout = 10;
+    public final static double kLiftPositionkP = 1;
+    public final static double kLiftPositionkI = 0.002;
+    public final static double kLiftPositionkD = 0.0015;
+    public final static double kLiftPositionkF = 1 / 20000;
+    public final static int kLiftPositionIZone = 800;
+    public final static double kLiftPositionRampRate = 0;
+    public final static int kBottomLimitTolerance = 50;
+
+    public final static int kLiftPositionTolerance = 500;
+    public final static int kLiftVelocityTolerance = 100;
+
+    public final static double liftSpeed = .2;
+
+
+    public final static double kLiftHoldkPGain = .00005;
+    public final static int kBumpEncoderPosition = 1500;
+
+    public final static int kLiftTopLimitSwitchPosition = 500;
 
     public final static int kTeleOpHoldHeight = 1100;
 

@@ -43,7 +43,7 @@ public class DriveTrainSubsystem implements Subsystem{
 	public enum DriveStates{
 		DRIVING, // Ya old normal dirivng
 		CREEP, // Creep for percise movement
-		VISION, // Vision tracking? //TODO do vision tracking lmao
+		VISION, // Vision tracking?
 		TURN_TO_HEADING, // Turn using PID
 		DRIVE_TO_POSITION, // Drive to Position using SRX PID
 		PATH_FOLLOWING,

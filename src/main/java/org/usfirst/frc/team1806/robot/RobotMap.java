@@ -20,8 +20,8 @@ public class RobotMap {
 
 	
 	//Cube Elevator CANs
-	public static int cubeMaster = 6;
-	public static int cubeSlave = 7;
+	public static int liftLead = 6;
+	public static int liftFollow = 7;
 	
 	// Climber CAN Ports
 	public static int upMotor = 9;
@@ -42,7 +42,8 @@ public class RobotMap {
 	
 	///// DIOs
 
-
+	public static int liftBottomLimit = 0;
+	public static int liftHighLimit = 1;
 
 
 	///////////// PDP PORTS

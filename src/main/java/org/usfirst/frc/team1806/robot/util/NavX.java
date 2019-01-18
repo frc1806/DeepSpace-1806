@@ -44,7 +44,7 @@ public class NavX {
     }
 
     public synchronized void reset() {
-        mAHRS.reset();  
+        mAHRS.reset();
         resetState();
     }
 
