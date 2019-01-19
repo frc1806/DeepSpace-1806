@@ -4,6 +4,7 @@ import java.awt.Robot;
 import java.util.HashSet;
 
 //import org.org.CORBA.PRIVATE_MEMBER;
+import com.google.common.base.Function;
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Kinematics;
 import org.usfirst.frc.team1806.robot.RobotMap;

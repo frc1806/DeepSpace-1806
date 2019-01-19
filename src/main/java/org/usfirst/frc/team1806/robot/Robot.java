@@ -11,6 +11,7 @@ import org.usfirst.frc.team1806.robot.auto.*;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 import org.usfirst.frc.team1806.robot.path.motion.RobotStateEstimator;
 import org.usfirst.frc.team1806.robot.subsystems.DriveTrainSubsystem;
+import org.usfirst.frc.team1806.robot.subsystems.LiftSubsystem;
 import org.usfirst.frc.team1806.robot.subsystems.SubsystemManager;
 import org.usfirst.frc.team1806.robot.util.CrashTracker;
 import org.usfirst.frc.team1806.robot.util.DriveSignal;
@@ -28,16 +29,21 @@ import java.util.Arrays;
 public class Robot extends TimedRobot {
 
     private DriveTrainSubsystem mDrive = DriveTrainSubsystem.getInstance();
-    public static Talon meme1, meme2;
     private RobotState mRobotState = RobotState.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
     public static OI m_oi;
     public static PowerDistributionPanel powerDistributionPanel;
     SendableChooser<Command> m_chooser = new SendableChooser<>();
+
+
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
-            Arrays.asList(DriveTrainSubsystem.getInstance()));
+            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance()));
+
+
     private Looper mEnabledLooper = new Looper();
-    public static boolean isCompBot = true;
+
+
+
     public static AutoModeBase selectedAuto;
     public static boolean isBlue;
     public boolean arePathsInit = false;
@@ -63,16 +69,20 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
       m_oi = new OI();
+
+      //Sets up camera
       camera = new UsbCamera("cam0", 0);
       camera.setFPS(30);
       camera.getPath();
       cameraServer = new MjpegServer("camera",  5806);
       cameraServer.setSource(camera);
       zeroAllSensors();
+
+      //adds in the iterative code to make the code run
       mEnabledLooper.register(RobotStateEstimator.getInstance());
       mSubsystemManager.registerEnabledLoops(mEnabledLooper);
+
       powerDistributionPanel = new PowerDistributionPanel();
-      // chooser.addObject("My Auto", new MyAutoCommand());
       SmartDashboard.putData("Auto mode", m_chooser);
       mAutoModeExecuter = null;
       mAutoModeExecuter = new AutoModeExecuter();
@@ -85,6 +95,7 @@ public class Robot extends TimedRobot {
       } catch (InterruptedException e){
         System.out.println(e);
       }
+
       BluePathAdapter.initPaths();
       RedPathAdapter.initPaths();
       SmartDashboard.putString("testingFieldValue", "LLR");
@@ -110,7 +121,8 @@ public class Robot extends TimedRobot {
           isBlue = false;
         }
       }
-      allPeriodic(); AutoModeSelector.initAutoModeSelector();
+      allPeriodic();
+      AutoModeSelector.initAutoModeSelector();
       selectedAuto = AutoModeSelector.getSelectedAutoMode();
       autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
 
@@ -211,6 +223,8 @@ public class Robot extends TimedRobot {
     @Override
     public void testPeriodic() {
     }
+
+
     public void zeroAllSensors() {
 //		System.out.println("Zeroing all Sensors..");
       mSubsystemManager.zeroSensors();

@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
  * Whew, this subsystem is for our liftactions, we will later implement this into a superstructure
  * so we can interact with our intake for doing things like shooting!
  */
-public class LiftSubsystem {
+public class LiftSubsystem  implements Subsystem {
 	public enum LiftStates {
 		POSITION_CONTROL,
 		RESET_TO_BOTTOM,
@@ -47,6 +47,7 @@ public class LiftSubsystem {
 	private LiftStates mLiftStates;
 	private LiftPosition mLiftPosition;
 	private static boolean mCubeOverride = false;
+	private static LiftSubsystem mLiftSubsystem = new LiftSubsystem();
 	public LiftSubsystem() {
 		liftLead = new TalonSRX(RobotMap.liftLead);
 		liftFollow = new TalonSRX(RobotMap.liftFollow);
@@ -63,6 +64,7 @@ public class LiftSubsystem {
  		reloadGains();
 	}
 
+	@Override
 	public void outputToSmartDashboard() {
 		SmartDashboard.putNumber("Wanted Lift Setpoint: ", mLiftWantedPosition);
         SmartDashboard.putString("Lift State: ", returnLiftStates().toString());
@@ -73,13 +75,17 @@ public class LiftSubsystem {
         SmartDashboard.putNumber("Lift Wanted Position", mLiftWantedPosition);
     }
 
+	@Override
 	public void stop() {
         setLiftIdle();
 	}
 
+	@Override
 	public synchronized void zeroSensors() {
 		liftLead.setSelectedSensorPosition(0,0,10);
 	}
+
+
     public synchronized void zeroSensorsAtTop(){
         liftLead.setSelectedSensorPosition(Constants.kLiftTopLimitSwitchPosition, 0, 10);
         if(mLiftStates != LiftStates.POSITION_CONTROL) {
@@ -92,6 +98,8 @@ public class LiftSubsystem {
             mLiftStates = LiftStates.POSITION_CONTROL;
         }
     }
+
+	@Override
 	public void registerEnabledLoops(Looper enabledLooper) {
         enabledLooper.register(new Loop() {
             @Override
@@ -162,8 +170,13 @@ public class LiftSubsystem {
         });
 	}
 
+	@Override
 	public void writeToLog() {
 
+	}
+
+	public static LiftSubsystem getInstance() {
+		return mLiftSubsystem;
 	}
 
 	public synchronized void goToSetpoint(int setpoint) {
@@ -181,7 +194,7 @@ public class LiftSubsystem {
 
 	public synchronized void goToTop() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public double getHeightInInches() {
@@ -199,7 +212,7 @@ public class LiftSubsystem {
 		liftLead.setNeutralMode(NeutralMode.Brake);
 		liftFollow.setNeutralMode(NeutralMode.Brake);
 		isBrakeMode = true;
-		
+
 	}
 	public void setCoastMode() {
 		liftLead.setNeutralMode(NeutralMode.Coast);
@@ -216,7 +229,7 @@ public class LiftSubsystem {
 		liftLead.config_IntegralZone(Constants.kLiftPositionControlPIDSlot, Constants.kLiftPositionIZone, Constants.kLiftPositionPIDTimeout);
 		liftLead.configClosedloopRamp(Constants.kLiftPositionRampRate, Constants.kLiftPositionPIDTimeout);
 	}
-	
+
 	public synchronized void resetToBottom() {
 		if(!areWeAtBottomLimit() || Math.abs(liftLead.getSelectedSensorPosition(0)) < Constants.kBottomLimitTolerance) {
 		    if(mLiftStates != LiftStates.RESET_TO_BOTTOM){
@@ -226,7 +239,7 @@ public class LiftSubsystem {
             }
 		}
 	}
-	
+
 	public synchronized void resetToTop() {
         if(!topLimit.get()) {
             if(mLiftStates != LiftStates.RESET_TO_TOP){
@@ -251,9 +264,9 @@ public class LiftSubsystem {
 				Math.abs(liftLead.getSelectedSensorVelocity(0)) < Constants.kLiftVelocityTolerance;
 	}
 	/**
-	 * 
+	 *
 	 * @return
-	 * returns current state of cube 
+	 * returns current state of cube
 	 */
 	public synchronized LiftStates returnLiftStates() {
 		return mLiftStates;

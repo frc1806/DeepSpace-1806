@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Set;
 
-//import org.Reflections;
+import org.reflections.Reflections;
 import org.usfirst.frc.team1806.robot.auto.modes.DummyMode;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -23,7 +23,7 @@ public class AutoModeSelector {
      * Uses reflection to get every auto mode in the defined auto modes package. The idea being to remove a step from the process of adding an autonomous mode.
      */
     public static void initAutoModeSelector() {
-        /*
+
     	ArrayList<String> modesArray = new ArrayList<String>();
     	Reflections reflections = new Reflections(AUTO_MODES_PACKAGE);
         Set<Class<? extends AutoModeBase>> modes = reflections.getSubTypesOf(AutoModeBase.class);
@@ -33,7 +33,7 @@ public class AutoModeSelector {
         String[] stringArray = new String[modesArray.size()];
         SmartDashboard.putStringArray(AUTO_OPTIONS_DASHBOARD_KEY, modesArray.toArray(stringArray));
         //SmartDashboard.putString(SELECTED_AUTO_MODE_DASHBOARD_KEY, mDefaultMode.mDashboardName);
-        */
+
 
         //TODO resolve reflections
     }
@@ -46,7 +46,7 @@ public class AutoModeSelector {
         String selectedModeName = SmartDashboard.getString(
                 SELECTED_AUTO_MODE_DASHBOARD_KEY,
                 "org.usfirst.frc.team1806.robot.auto.modes.DummyMode");
-        /*
+
         Reflections reflections = new Reflections(AUTO_MODES_PACKAGE);
         Set<Class<? extends AutoModeBase>> modes = reflections.getSubTypesOf(AutoModeBase.class);
         
@@ -76,7 +76,7 @@ public class AutoModeSelector {
 				}
             }
         }
-        */
+
         return fallBackToDefaultAuto(selectedModeName);
     }
     
