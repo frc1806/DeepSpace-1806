@@ -1,0 +1,8 @@
+*.bin
+*.lock
+*.ipr
+*.iws
+*.imlj
+*.class
+build/*
+out/*
