@@ -1,5 +1,4 @@
 package org.usfirst.frc.team1806.robot.subsystems;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Robot;
@@ -46,7 +45,7 @@ public class LiftSubsystem  implements Subsystem {
 	private int mLiftWantedPosition = 0;
 	private LiftStates mLiftStates;
 	private LiftPosition mLiftPosition;
-	private static boolean mCubeOverride = false;
+	private static boolean mPickupOverride = false;
 	private static LiftSubsystem mLiftSubsystem = new LiftSubsystem();
 	public LiftSubsystem() {
 		liftLead = new TalonSRX(RobotMap.liftLead);
@@ -371,13 +370,13 @@ public class LiftSubsystem  implements Subsystem {
 		}
 		return false;
 	}
-	public synchronized static boolean getCubeOverride(){
-		return mCubeOverride;
+	public synchronized static boolean getPickupSensorOverride(){
+		return mPickupOverride;
 	}
-	public synchronized static void cubeOverride(){
-		mCubeOverride = true;
+	public synchronized static void pickupOverride(){
+		mPickupOverride = true;
 	}
-	public synchronized static void stopCubeOverride(){
-		mCubeOverride = false;
+	public synchronized static void stopPickupOverride(){
+		mPickupOverride = false;
 	}
 }

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 import org.usfirst.frc.team1806.robot.auto.actions.controller.VibrateControllerForTime;
 import org.usfirst.frc.team1806.robot.subsystems.DriveTrainSubsystem;
+import org.usfirst.frc.team1806.robot.subsystems.SquidSubsystem;
 import org.usfirst.frc.team1806.robot.subsystems.SubsystemManager;
 import org.usfirst.frc.team1806.robot.util.CheesyDriveHelper;
 import org.usfirst.frc.team1806.robot.util.Latch;
@@ -28,17 +29,19 @@ import edu.wpi.first.wpilibj.drive.MecanumDrive;
  */
 public class OI {
 	private DriveTrainSubsystem mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
+	private SquidSubsystem mSquidSubsystem = SquidSubsystem.getInstance();
     private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
 	private XboxController dc = new XboxController(0);
 	private XboxController oc = new XboxController(1);
 	private XboxController autoController = new XboxController(2);
 	private Latch autoInTeleOp = new Latch();
+	private Boolean wasB = false;
 
 	public void runCommands(){
 		synchronized (mDriveTrainSubsystem) {
 			if(dc.getRightTrigger() > .2) {
 				mDriveTrainSubsystem.setCreepMode(mCheesyDriveHelper.cheesyDrive(
-						dc.getLeftJoyY(), dc.getRightJoyX(),dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
+						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
 			}else {
 				mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
 						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
@@ -46,6 +49,15 @@ public class OI {
 		}
 		if(Constants.enableAutoInTeleOp){
 			autoInTeleOp.update(autoController.getButtonStart());
+		}
+
+		if(!wasB && dc.getButtonB()){
+			if(mSquidSubsystem.isOpen()) {
+				mSquidSubsystem.closeSquid();
+			}
+			else {
+				mSquidSubsystem.openSquid();
+			}
 		}
 
 	}

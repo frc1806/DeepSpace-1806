@@ -22,24 +22,22 @@ public class RobotMap {
 	//Cube Elevator CANs
 	public static int liftLead = 6;
 	public static int liftFollow = 7;
-	
-	// Climber CAN Ports
-	public static int upMotor = 9;
-	public static int downA = 10;
-	public static int downB = 8;
-	public static int downC = 13;
+
 	
 	//Intake CAN Ports
 	
 	public static int leftInnerIntake = 11;
 	public static int rightInnerIntake = 12;
 
+
 	////////// These are all of the solenoids for the robot
 	
 	//Shifting
 
-	
-	
+	//Squid
+	public static int squidopenport  = 0;
+	public static int squidcloseport = 1;
+
 	///// DIOs
 
 	public static int liftBottomLimit = 0;
