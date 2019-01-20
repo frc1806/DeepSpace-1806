@@ -51,7 +51,7 @@ public class DriveTrainSubsystem implements Subsystem{
 		VELOCITY_SETPOINT,
 		NOTHING // Used on init
 	}
-    private static DriveTrainSubsystem mDriveTrainSubsystem = new DriveTrainSubsystem();
+    private static DriveTrainSubsystem mDriveTrainSubsystem = new DriveTrainSubsystem(); //Only ever 1 instance of drivetrain.
 	private static final int kLowGearPositionControlSlot = 0;
 	private static final int kHighGearVelocityControlSlot = 1;
 	public static DriveTrainSubsystem getInstance() {
