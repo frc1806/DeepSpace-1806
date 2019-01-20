@@ -2,7 +2,7 @@
 *.lock
 *.ipr
 *.iws
-*.imlj
+*.iml
 *.class
 build/*
 out/*
