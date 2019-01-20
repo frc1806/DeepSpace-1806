@@ -47,7 +47,7 @@ public class LiftSubsystem  implements Subsystem {
 	private LiftStates mLiftStates;
 	private LiftPosition mLiftPosition;
 	private static boolean mCubeOverride = false;
-	private static LiftSubsystem mLiftSubsystem = new LiftSubsystem();
+	private static LiftSubsystem mLiftSubsystem = new LiftSubsystem(); //only ever 1 lift
 	public LiftSubsystem() {
 		liftLead = new TalonSRX(RobotMap.liftLead);
 		liftFollow = new TalonSRX(RobotMap.liftFollow);
