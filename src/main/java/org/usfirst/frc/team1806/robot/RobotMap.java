@@ -35,8 +35,17 @@ public class RobotMap {
 	//Shifting
 
 	//Squid
-	public static int squidopenport  = 0;
-	public static int squidcloseport = 1;
+	public static int squidOpenPort = 0;
+	public static int squidClosePort = 1;
+	public static int squidExtendForward = 2;
+	public static int squidExtendBackward = 3;
+
+	//BeaverTail
+	public static int beaverTailFlipperExtend = 4;
+	public static int beaverTailFlipperRetract = 5;
+	public static int beaverTailEjectExtend = 6;
+	public static int beaverTailEjectRetract = 7;
+
 
 	///// DIOs
 

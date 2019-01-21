@@ -10,15 +10,15 @@ public class SquidSubsystem implements Subsystem {
 
     private static SquidSubsystem mSquidSubsystem = new SquidSubsystem();
     private DoubleSolenoid mSquidSolenoid;
-
+    private DoubleSolenoid mSquidExtender;
 
     public static SquidSubsystem getInstance(){
         return mSquidSubsystem;
     }
 
     private SquidSubsystem(){
-            mSquidSolenoid = new DoubleSolenoid(RobotMap.squidopenport, RobotMap.squidcloseport);
-
+            mSquidSolenoid = new DoubleSolenoid(RobotMap.squidOpenPort, RobotMap.squidClosePort);
+            mSquidExtender = new DoubleSolenoid(RobotMap.squidExtendForward, RobotMap.squidExtendBackward);
     }
 
     public void writeToLog(){
@@ -26,7 +26,9 @@ public class SquidSubsystem implements Subsystem {
     }
 
     public void outputToSmartDashboard(){
-    SmartDashboard.putString("SquidState", mSquidSolenoid.get().name());
+    SmartDashboard.putString("Squid State", mSquidSolenoid.get().name());
+    SmartDashboard.putString("Squid Extend" , mSquidExtender.get().name());
+
     }
 
     public void stop(){
@@ -38,7 +40,7 @@ public class SquidSubsystem implements Subsystem {
     }
 
     public boolean isOpen() {
-       return mSquidSolenoid.get() == DoubleSolenoid.Value.kForward;
+        return mSquidSolenoid.get() == DoubleSolenoid.Value.kForward;
     }
 
 
@@ -51,5 +53,16 @@ public class SquidSubsystem implements Subsystem {
     }
     public void closeSquid(){
         mSquidSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
+
+    public void extendSquid() {
+        mSquidExtender.set(DoubleSolenoid.Value.kForward);
+    }
+
+    public void retractSquid () {
+        mSquidExtender.set(DoubleSolenoid.Value.kReverse);
+    }
+    public boolean isExtended() {
+        return mSquidExtender.get() == DoubleSolenoid.Value.kForward;
     }
 }

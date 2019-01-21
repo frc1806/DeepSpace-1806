@@ -36,6 +36,7 @@ public class OI {
 	private XboxController autoController = new XboxController(2);
 	private Latch autoInTeleOp = new Latch();
 	private Boolean wasB = false;
+	private Boolean wasRightDPad = false;
 
 	public void runCommands(){
 		synchronized (mDriveTrainSubsystem) {
@@ -60,6 +61,18 @@ public class OI {
 			}
 		}
 
+		if(!wasRightDPad && dc.getPOVRight()) {
+			if(mSquidSubsystem.isExtended()) {
+				mSquidSubsystem.retractSquid();
+			}
+			else {
+				mSquidSubsystem.isExtended();
+			}
+		}
+
+
+		wasB = dc.getButtonB();
+		wasRightDPad = dc.getPOVRight();
 	}
 	public void resetAutoLatch(){
 	    autoInTeleOp.resetLatch();
