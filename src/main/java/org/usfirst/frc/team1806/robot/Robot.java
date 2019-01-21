@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1806.robot.auto.*;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 import org.usfirst.frc.team1806.robot.path.motion.RobotStateEstimator;
+import org.usfirst.frc.team1806.robot.subsystems.CompressorControlSubsystem;
 import org.usfirst.frc.team1806.robot.subsystems.DriveTrainSubsystem;
 import org.usfirst.frc.team1806.robot.subsystems.LiftSubsystem;
 import org.usfirst.frc.team1806.robot.subsystems.SubsystemManager;
@@ -37,7 +38,7 @@ public class Robot extends TimedRobot {
 
 
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
-            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance()));
+            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance(), CompressorControlSubsystem.getInstance()));
 
 
     private Looper mEnabledLooper = new Looper();
