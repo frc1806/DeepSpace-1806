@@ -50,6 +50,13 @@ public class IntakeSubsystem implements Subsystem{
 			
 		}
 	};
+
+	/**
+	 *
+	 * @param intakingSpeed The default intake speed
+	 * @param rightCAN the id for the right motor TalonSRX
+	 * @param leftCAN the id for the left TalonSRX
+	 */
 	public IntakeSubsystem(double intakingSpeed, int rightCAN, int leftCAN) {
 		leftOuterIntake = new TalonSRX(rightCAN);
 		rightOuterIntake = new TalonSRX(leftCAN);

@@ -28,6 +28,9 @@ public class RobotMap {
 	
 	public static int leftInnerIntake = 11;
 	public static int rightInnerIntake = 12;
+	public static int leftOuterIntake = 13;
+	public static int rightOuterIntake = 14;
+
 
 
 	////////// These are all of the solenoids for the robot
@@ -45,6 +48,11 @@ public class RobotMap {
 	public static int beaverTailFlipperRetract = 5;
 	public static int beaverTailEjectExtend = 6;
 	public static int beaverTailEjectRetract = 7;
+
+	//CargoIntakeSubsystem
+	public static int cargoIntakeExtend = 8;
+	public static int cargoIntakeRetract = 9;
+
 
 
 	///// DIOs

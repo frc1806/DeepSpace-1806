@@ -117,4 +117,9 @@ public class Constants {
     public final static double kExpectedCompressorMaxCurrentDraw = 100;
     public final static double kExpectedCompressorVoltageDrop = 1.5;
 
+
+    //Intake Constants
+    public final static double kInnerIntakingSpeed = 1.0;
+    public final static double kOuterIntakingSpeed = 1.0;
+
 }
