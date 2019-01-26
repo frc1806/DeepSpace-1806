@@ -27,26 +27,42 @@ public class LiftSubsystem  implements Subsystem {
 		IDLE
 	}
 	public enum LiftPosition {
-		BOTTOM_LIMIT,
-        TOP_LIMIT,
-		TELEOP_HOLD,
-		SHIP_CARGO_LOW,
-		SHIP_CARGO_HIGH,
-		ROCKET_CARGO_LOW,
-		ROCKET_CARGO_MID,
-		ROCKET_CARGO_HIGH,
-		ROCKET_HATCH_MID,
-		ROCKET_HATCH_HIGH
+		BOTTOM_LIMIT(0),
+        TOP_LIMIT(0),
+		TELEOP_HOLD(100),
+		SHIP_CARGO(0),
+		ROCKET_CARGO_LOW(0),
+		ROCKET_CARGO_MID(0),
+		ROCKET_CARGO_HIGH(0),
+		ROCKET_HATCH_LOW(0),
+		ROCKET_HATCH_MID(0),
+		ROCKET_HATCH_HIGH(0),
+		TEMP_HOLD_POS(0);
 
+		int height;
+		LiftPosition(int liftHeight){
+			height = liftHeight;
+		}
+
+		int getHeight(){
+			return height;
+		}
+
+		LiftPosition setHeight(int liftHeight) {
+			height = liftHeight;
+			return this;
+		}
 	}
+
 	private TalonSRX liftLead, liftFollow; //gotta have the power
 	public DigitalInput bottomLimit, topLimit;
+
 	private boolean isBrakeMode = false;
 	private boolean mIsOnTarget = false;
-	private int mLiftWantedPosition = 0;
+
 	private LiftStates mLiftStates;
 	private LiftPosition mLiftPosition;
-	private static boolean mCubeOverride = false;
+
 	private static LiftSubsystem mLiftSubsystem = new LiftSubsystem();
 	public LiftSubsystem() {
 		liftLead = new TalonSRX(RobotMap.liftLead);
@@ -66,18 +82,18 @@ public class LiftSubsystem  implements Subsystem {
 
 	@Override
 	public void outputToSmartDashboard() {
-		SmartDashboard.putNumber("Wanted Lift Setpoint: ", mLiftWantedPosition);
+		SmartDashboard.putString("Wanted Lift Position: ", mLiftPosition.toString());
         SmartDashboard.putString("Lift State: ", returnLiftStates().toString());
         SmartDashboard.putString("Lift Position", returnCubePosition().toString());
 		SmartDashboard.putNumber("Lift Encoder Position", liftLead.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Lift Power Sending", liftLead.getMotorOutputPercent());
 		SmartDashboard.putBoolean("Bottom limit triggered", areWeAtBottomLimit());
-        SmartDashboard.putNumber("Lift Wanted Position", mLiftWantedPosition);
+        SmartDashboard.putNumber("Lift Wanted Height", mLiftPosition.getHeight());
     }
 
 	@Override
 	public void stop() {
-        setLiftIdle();
+        mLiftStates = LiftStates.IDLE;
 	}
 
 	@Override
@@ -88,15 +104,11 @@ public class LiftSubsystem  implements Subsystem {
 
     public synchronized void zeroSensorsAtTop(){
         liftLead.setSelectedSensorPosition(Constants.kLiftTopLimitSwitchPosition, 0, 10);
-        if(mLiftStates != LiftStates.POSITION_CONTROL) {
-            mLiftStates = LiftStates.POSITION_CONTROL;
-        }
+        mLiftStates = LiftStates.POSITION_CONTROL;
     }
     public synchronized void zeroSensorsAtBottom(){
         liftLead.setSelectedSensorPosition(0, 0, 10);
-        if(mLiftStates != LiftStates.POSITION_CONTROL) {
-            mLiftStates = LiftStates.POSITION_CONTROL;
-        }
+        mLiftStates = LiftStates.POSITION_CONTROL;
     }
 
 	@Override
@@ -104,7 +116,7 @@ public class LiftSubsystem  implements Subsystem {
         enabledLooper.register(new Loop() {
             @Override
             public void onStop(double timestamp) {
-                setLiftIdle();
+                mLiftStates = LiftStates.IDLE;
             }
 
             @Override
@@ -112,23 +124,28 @@ public class LiftSubsystem  implements Subsystem {
 				if(Robot.needToPositionControlInTele){
 					setLiftHoldPosition();
 				} else {
-					setLiftIdle();
+					mLiftStates = LiftStates.IDLE;
 				}
             }
 
             @Override
             public void onLoop(double timestamp) {
             	synchronized (LiftSubsystem.this){
+            		//not moving and not manual
 					if(isAtPosition() && mLiftStates != LiftStates.MANUAL_CONTROL){
+						//not moving, at bottom
 						if(mLiftStates == LiftStates.RESET_TO_BOTTOM
 								|| areWeAtBottomLimit()
 								){
 							mLiftStates = LiftStates.IDLE;
-						} else{
+						}
+						//not moving, not at bottom
+						else{
 							mLiftStates = LiftStates.HOLD_POSITION;
 							holdPosition();
 						}
 					}
+
 					cubePositionLoop();
 					cubeLiftStateLoop();
 				}
@@ -146,7 +163,7 @@ public class LiftSubsystem  implements Subsystem {
 			private void cubeLiftStateLoop(){
 				switch(mLiftStates) {
 					case POSITION_CONTROL:
-						updatePositionControl();
+						setBrakeMode();
 						return;
 					case RESET_TO_BOTTOM:
 						mIsOnTarget = false;
@@ -155,7 +172,12 @@ public class LiftSubsystem  implements Subsystem {
 						mIsOnTarget = false;
 						return;
 					case HOLD_POSITION:
-						holdPosition();
+						liftLead.set(ControlMode.PercentOutput, Constants.kLiftHoldPercentOutput +
+								( mLiftPosition.getHeight() - liftLead.getSelectedSensorPosition(0)) * Constants.kLiftHoldkPGain);
+						if(Math.abs(getHeightInCounts() - mLiftPosition.getHeight()) < Constants.kLiftPositionTolerance) {
+							mLiftStates = LiftStates.POSITION_CONTROL;
+							goToSetpoint(mLiftPosition);
+						}
 						return;
 					case MANUAL_CONTROL:
 						return;
@@ -179,9 +201,19 @@ public class LiftSubsystem  implements Subsystem {
 		return mLiftSubsystem;
 	}
 
+	public synchronized void goToSetpoint(LiftPosition setpoint) {
+		mLiftStates = LiftStates.POSITION_CONTROL;
+		mLiftPosition = setpoint;
+		setBrakeMode();
+		liftLead.set(ControlMode.Position, mLiftPosition.getHeight());
+		//System.out.println(mLiftWantedPosition + "  " + isReadyForSetpoint());
+	}
 	public synchronized void goToSetpoint(int setpoint) {
-		mLiftWantedPosition = setpoint;
-		liftLead.set(ControlMode.Position, mLiftWantedPosition);
+		mLiftStates = LiftStates.POSITION_CONTROL;
+		mLiftPosition.TEMP_HOLD_POS.setHeight(setpoint);
+		mLiftPosition = LiftPosition.TEMP_HOLD_POS;
+		setBrakeMode();
+		liftLead.set(ControlMode.Position, mLiftPosition.getHeight());
 		//System.out.println(mLiftWantedPosition + "  " + isReadyForSetpoint());
 	}
 
@@ -232,11 +264,9 @@ public class LiftSubsystem  implements Subsystem {
 
 	public synchronized void resetToBottom() {
 		if(!areWeAtBottomLimit() || Math.abs(liftLead.getSelectedSensorPosition(0)) < Constants.kBottomLimitTolerance) {
-		    if(mLiftStates != LiftStates.RESET_TO_BOTTOM){
 		        mLiftStates = LiftStates.RESET_TO_BOTTOM;
 		        mLiftPosition = LiftPosition.BOTTOM_LIMIT;
 				goToSetpoint(0);
-            }
 		}
 	}
 
@@ -260,7 +290,7 @@ public class LiftSubsystem  implements Subsystem {
 		if(mLiftStates == LiftStates.IDLE){
 			return false;
 		}
-		return Math.abs(mLiftWantedPosition - liftLead.getSelectedSensorPosition(0)) < Constants.kLiftPositionTolerance &&
+		return Math.abs(mLiftPosition.getHeight() - liftLead.getSelectedSensorPosition(0)) < Constants.kLiftPositionTolerance &&
 				Math.abs(liftLead.getSelectedSensorVelocity(0)) < Constants.kLiftVelocityTolerance;
 	}
 	/**
@@ -284,29 +314,23 @@ public class LiftSubsystem  implements Subsystem {
      * Used to stop the manipulator from running. mostly ran on stop or when first setting the liftactions up
      */
 	public synchronized void setLiftIdle(){
-	    if(mLiftStates != LiftStates.IDLE){
-	        mLiftStates = LiftStates.IDLE;
-        }
+	    mLiftStates = LiftStates.IDLE;
         liftLead.set(ControlMode.PercentOutput, 0);
     }
 	public synchronized  void setLiftHoldPosition(){
-		if(mLiftStates != LiftStates.POSITION_CONTROL){
-			mLiftStates = LiftStates.POSITION_CONTROL;
-		}
-		goToSetpoint(returnLiftPosition());
+		mLiftStates = LiftStates.POSITION_CONTROL;
+		goToSetpoint(mLiftPosition.TEMP_HOLD_POS.getHeight());
 	}
     /**
      * Sets up the robot to accept position setpoints
      */
     public synchronized void updatePositionControl(){
-	    if(mLiftStates != LiftStates.POSITION_CONTROL){
-	        mLiftStates = LiftStates.POSITION_CONTROL;
-        }
+		mLiftStates = LiftStates.POSITION_CONTROL;
         setBrakeMode();
     }
 	public synchronized void goToTeleOpHold(){
     	mLiftPosition = LiftPosition.TELEOP_HOLD;
-    	updatePositionControl();
+    	mLiftStates = LiftStates.POSITION_CONTROL;
     	if(isReadyForSetpoint()){
     		goToSetpoint(Constants.kTeleOpHoldHeight);
 		}
@@ -319,9 +343,6 @@ public class LiftSubsystem  implements Subsystem {
 				mLiftStates == LiftStates.IDLE ||
 				mLiftStates == LiftStates.HOLD_POSITION ||
 				mLiftStates == LiftStates.RESET_TO_BOTTOM;
-	}
-	public int returnLiftPosition(){
-    	return liftLead.getSelectedSensorPosition(0);
 	}
 
 	public synchronized void manualMode(double power){
@@ -336,15 +357,12 @@ public class LiftSubsystem  implements Subsystem {
 	 * Used to hold the cube when it is ready to be spat out
 	 */
 	public synchronized void holdPosition(){
-    	liftLead.set(ControlMode.PercentOutput, Constants.kLiftHoldPercentOutput + ( returnWantedPosition() - liftLead.getSelectedSensorPosition(0)) * Constants.kLiftHoldkPGain);
-    	if(Math.abs(getHeightInCounts() - returnWantedPosition()) < Constants.kLiftPositionTolerance){
+    	liftLead.set(ControlMode.PercentOutput, Constants.kLiftHoldPercentOutput +
+				( mLiftPosition.getHeight() - liftLead.getSelectedSensorPosition(0)) * Constants.kLiftHoldkPGain);
+    	if(Math.abs(getHeightInCounts() - mLiftPosition.getHeight()) < Constants.kLiftPositionTolerance){
     		mLiftStates = LiftStates.POSITION_CONTROL;
-    		goToSetpoint(mLiftWantedPosition);
+    		goToSetpoint(mLiftPosition);
 		}
-//		goToSetpoint(mLiftWantedPosition);
-	}
-	public int returnWantedPosition(){
-		return mLiftWantedPosition;
 	}
 
 	/**
@@ -357,27 +375,20 @@ public class LiftSubsystem  implements Subsystem {
 	public int returnLiftHeight(){
 		return liftLead.getSelectedSensorPosition(0);
 	}
-	public synchronized boolean bumpSetpointUp(){
+	public synchronized boolean bumpHeightUp(){
 		if(mLiftStates == LiftStates.POSITION_CONTROL || mLiftStates == LiftStates.HOLD_POSITION) {
-			goToSetpoint(mLiftWantedPosition + Constants.kBumpEncoderPosition);
+			mLiftPosition = LiftPosition.TEMP_HOLD_POS.setHeight(mLiftPosition.getHeight() + Constants.kBumpEncoderPosition);
+			goToSetpoint(mLiftPosition);
 			return true;
 		}
 		return false;
 	}
-	public synchronized boolean bumpSetpointDown(){
+	public synchronized boolean bumpHeightDown(){
 		if(mLiftStates == LiftStates.POSITION_CONTROL || mLiftStates == LiftStates.HOLD_POSITION ){
-			goToSetpoint(mLiftWantedPosition - Constants.kBumpEncoderPosition);
+			mLiftPosition = LiftPosition.TEMP_HOLD_POS.setHeight(mLiftPosition.getHeight() - Constants.kBumpEncoderPosition);
+			goToSetpoint(mLiftPosition);
 			return true;
 		}
 		return false;
-	}
-	public synchronized static boolean getCubeOverride(){
-		return mCubeOverride;
-	}
-	public synchronized static void cubeOverride(){
-		mCubeOverride = true;
-	}
-	public synchronized static void stopCubeOverride(){
-		mCubeOverride = false;
 	}
 }
