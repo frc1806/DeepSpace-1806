@@ -119,7 +119,8 @@ public class Constants {
 
 
     //Intake Constants
-    public final static double kInnerIntakingSpeed = 1.0;
-    public final static double kOuterIntakingSpeed = 1.0;
+    public final static double kInnerIntakingSpeed = .3;
+    public final static double kOuterIntakingSpeed = .3;
+
 
 }
