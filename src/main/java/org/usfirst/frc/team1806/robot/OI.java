@@ -11,10 +11,7 @@ import edu.wpi.first.wpilibj.CircularBuffer;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 import org.usfirst.frc.team1806.robot.auto.actions.controller.VibrateControllerForTime;
-import org.usfirst.frc.team1806.robot.subsystems.CompressorControlSubsystem;
-import org.usfirst.frc.team1806.robot.subsystems.DriveTrainSubsystem;
-import org.usfirst.frc.team1806.robot.subsystems.SquidSubsystem;
-import org.usfirst.frc.team1806.robot.subsystems.SubsystemManager;
+import org.usfirst.frc.team1806.robot.subsystems.*;
 import org.usfirst.frc.team1806.robot.util.CheesyDriveHelper;
 import org.usfirst.frc.team1806.robot.util.Latch;
 import org.usfirst.frc.team1806.robot.util.XboxController;
@@ -32,7 +29,8 @@ public class OI {
 	private DriveTrainSubsystem mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
 	private SquidSubsystem mSquidSubsystem = SquidSubsystem.getInstance();
 	private CompressorControlSubsystem mCompressorControlSubsystem = CompressorControlSubsystem.getInstance();
-    private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
+	private LiftSubsystem mLiftSubsystem = LiftSubsystem.getInstance();
+	private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
 	private XboxController dc = new XboxController(0);
 	private XboxController oc = new XboxController(1);
 	private XboxController autoController = new XboxController(2);
@@ -50,6 +48,18 @@ public class OI {
 						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
 			}
 		}
+		synchronized (mLiftSubsystem) {
+			if(dc.getButtonA()) {
+				mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.TELEOP_HOLD);
+			}
+			if(dc.getButtonX()) {
+				mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.SHIP_CARGO);
+			}
+			if(dc.getButtonY()) {
+				mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_CARGO_HIGH);
+			}
+		}
+
 		if(Constants.enableAutoInTeleOp){
 			autoInTeleOp.update(autoController.getButtonStart());
 		}

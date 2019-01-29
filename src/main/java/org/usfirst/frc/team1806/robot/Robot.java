@@ -38,12 +38,10 @@ public class Robot extends TimedRobot {
 
 
     private final SubsystemManager mSubsystemManager = new SubsystemManager(
-            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance(), CompressorControlSubsystem.getInstance()));
+            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance() ));
 
 
     private Looper mEnabledLooper = new Looper();
-
-
 
     public static AutoModeBase selectedAuto;
     public static boolean isBlue;
@@ -74,6 +72,7 @@ public class Robot extends TimedRobot {
       //Sets up camera
       camera = new UsbCamera("cam0", 0);
       camera.setFPS(30);
+      camera.setBrightness(50);
       camera.getPath();
       cameraServer = new MjpegServer("camera",  5806);
       cameraServer.setSource(camera);
@@ -133,13 +132,13 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
       try {
-//			zeroAllSensors();
-//			CrashTracker.logAutoInit();
-//            System.out.println("Auto start timestamp: " + Timer.getFPGATimestamp());
-//            if (mAutoModeExecuter != null) {
-//                mAutoModeExecuter.stop();
-//            }
-//            mDrive.setHighGear(true);
+			zeroAllSensors();
+			CrashTracker.logAutoInit();
+            System.out.println("Auto start timestamp: " + Timer.getFPGATimestamp());
+            if (mAutoModeExecuter != null) {
+                mAutoModeExecuter.stop();
+            }
+            //mDrive.setHighGear(true);
         needToPositionControlInTele = false;
         mDrive.setBrakeMode();
         mEnabledLooper.start();

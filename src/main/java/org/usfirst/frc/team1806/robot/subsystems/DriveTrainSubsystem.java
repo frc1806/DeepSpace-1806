@@ -3,7 +3,7 @@ package org.usfirst.frc.team1806.robot.subsystems;
 import java.awt.Robot;
 import java.util.HashSet;
 
-//import org.org.CORBA.PRIVATE_MEMBER;
+//import org.omg.CORBA.PRIVATE_MEMBER;
 import com.google.common.base.Function;
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Kinematics;
@@ -392,10 +392,10 @@ public class DriveTrainSubsystem implements Subsystem{
 
     }
     public synchronized void resetNavx(){
-		//TODO navx.reset();
+		navx.reset();
      }
     public synchronized void resetYaw(){
-		//TODO navx.zeroYaw();
+		navx.zeroYaw();
      }
     public String returnDriveState() {
     	return mDriveStates.toString();
@@ -570,6 +570,8 @@ public class DriveTrainSubsystem implements Subsystem{
 		masterLeft.set(ControlMode.PercentOutput, 0);
 		masterRight.set(ControlMode.PercentOutput, 0);
 	}
+
+
     
     /**
      * Called periodically when the robot is in path following mode. Updates the path follower with the robots latest

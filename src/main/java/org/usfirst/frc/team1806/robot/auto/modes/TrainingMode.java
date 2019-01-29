@@ -33,5 +33,6 @@ public class TrainingMode extends AutoModeBase {
         PathContainer trainingDealio = new TrainingPath(); //I de-capitalized the variable name. Coding standards. -Dillon
         runAction(new ResetPoseFromPathAction(trainingDealio));
         runAction(new DrivePathAction(trainingDealio));
+        runAction(new WaitAction(15));
     }
 }

@@ -1,6 +1,7 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
 import org.usfirst.frc.team1806.robot.Constants;
+import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.driver.AnalogPressureSensor;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
@@ -42,6 +43,9 @@ public class CompressorControlSubsystem implements Subsystem {
             lastTimeStamp = currentTimeStamp;
             currentTimeStamp = timestamp;
             synchronized (CompressorControlSubsystem.this) {
+
+                //IF statements in reverse order of priority
+
                 Boolean runCompressor = false;
                 if(pressureSamplingFilter.update(pressureSensor.getPressure()) < Constants.kPressureAverageMinimumToStart){
                     runCompressor = true;
@@ -91,6 +95,7 @@ public class CompressorControlSubsystem implements Subsystem {
 
     private CompressorControlSubsystem(){
         compressor = new Compressor(0);
+        pressureSensor = new AnalogPressureSensor(0);//TODO put in robot map
         pressureSamplingFilter = new SamplingFilter(Constants.kPressureSensorSamplingLoops);
         voltageSamplingFilter = new SamplingFilter(Constants.kBatteryVoltageSamplingLoops);
         amperageSamplingFilter = new SamplingFilter(Constants.kRobotDemandAmpsSamplingLoops);

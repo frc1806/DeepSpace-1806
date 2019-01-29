@@ -4,10 +4,18 @@ import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.Action;
 import org.usfirst.frc.team1806.robot.subsystems.LiftSubsystem;
 
 public class liftToHeight implements Action {
+
+    private LiftSubsystem.LiftPosition wantedHeight;
+    private boolean instant;
+    public liftToHeight(LiftSubsystem.LiftPosition _wantedHeight, boolean _instant) {
+        wantedHeight = _wantedHeight;
+        instant = _instant;
+    }
+
     LiftSubsystem mLiftSubsystem = LiftSubsystem.getInstance();
     @Override
     public boolean isFinished() {
-        return mLiftSubsystem.isAtPosition();
+        return mLiftSubsystem.isAtPosition() || instant;
     }
 
     @Override
@@ -16,12 +24,12 @@ public class liftToHeight implements Action {
     }
 
     @Override
-    public void done()        {
+    public void done() {
 
     }
 
     @Override
     public void start() {
-        mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.TELEOP_HOLD);
+        mLiftSubsystem.goToSetpoint(wantedHeight);
     }
 }
