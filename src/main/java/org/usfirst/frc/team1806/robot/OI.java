@@ -37,6 +37,7 @@ public class OI {
 	private Latch autoInTeleOp = new Latch();
 	private Boolean wasB = false;
 	private Boolean wasRightDPad = false;
+	private CargoIntakeSubsystem mCargoIntakeSubsystem = CargoIntakeSubsystem.getInstance();
 
 	public void runCommands(){
 		synchronized (mDriveTrainSubsystem) {
@@ -80,6 +81,21 @@ public class OI {
 			else {
 				mSquidSubsystem.isExtended();
 			}
+		}
+		if(dc.getLeftTrigger() >.2){
+			mCargoIntakeSubsystem.intakeCargo();
+		}
+		else if(dc.getPOVDown()){
+			mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.SLOW);
+		}
+		else if(dc.getPOVLeft()){
+			mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.FAST);
+		}
+		else if(dc.getPOVUp()){
+			mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.IRRESPONSIBLE);
+		}
+		else if(dc.getButtonLB()){
+			mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.MEDIUM);
 		}
 
 		mCompressorControlSubsystem.setOverride(oc.getButtonY());

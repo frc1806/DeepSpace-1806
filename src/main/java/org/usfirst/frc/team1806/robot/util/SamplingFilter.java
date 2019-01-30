@@ -22,24 +22,34 @@ public class SamplingFilter {
      * @return {@link Double}- The current sample to add to the list.
      */
     public Double update(Double sample){
-        Double currentRunningTotal = samplingBuffer.getLast().getRunningTotal();
-        if(samplingBuffer.size() >= maxSamples)
-        {
-            currentRunningTotal -= samplingBuffer.getFirst().getCurrentValue();
-            samplingBuffer.removeFirst();
-        }
+        if(!samplingBuffer.isEmpty()){
+            Double currentRunningTotal = samplingBuffer.getLast().getRunningTotal();
+            if(samplingBuffer.size() >= maxSamples) {
+                    currentRunningTotal -= samplingBuffer.getFirst().getCurrentValue();
+                    samplingBuffer.removeFirst();
+                }
 
-        currentRunningTotal += sample;
-        samplingBuffer.add(new SamplingFilterValue(sample, currentRunningTotal));
-        return currentRunningTotal / samplingBuffer.size();
-    }
+                currentRunningTotal += sample;
+                samplingBuffer.add(new SamplingFilterValue(sample, currentRunningTotal));
+                return currentRunningTotal / samplingBuffer.size();
+            }
+            else{
+                samplingBuffer.add(new SamplingFilterValue(sample, sample));
+                return sample;
+            }
+        }
 
     /**
      *
      * @return The current average value of the samples.
      */
     public Double getCurrentAverage(){
-        return samplingBuffer.getLast().getRunningTotal() / samplingBuffer.size();
+        if (!samplingBuffer.isEmpty()){
+            return samplingBuffer.getLast().getRunningTotal() / samplingBuffer.size();
+        }
+        else{
+            return 0.0;
+        }
     }
 
     /**
