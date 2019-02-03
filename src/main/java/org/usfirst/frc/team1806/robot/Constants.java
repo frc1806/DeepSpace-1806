@@ -122,5 +122,9 @@ public class Constants {
     public final static double kInnerIntakingSpeed = .3;
     public final static double kOuterIntakingSpeed = .3;
 
-
+    //Battery State Of Charge
+    public final static double kFullChargeBatteryCoulombCount = 25200;
+    public final static double kBatteryFullChargeVoltage = 12.7;
+    public final static double kBatteryDepletedVoltage = 11.8;
+    public final static double kLowAmpLoad = 10;
 }

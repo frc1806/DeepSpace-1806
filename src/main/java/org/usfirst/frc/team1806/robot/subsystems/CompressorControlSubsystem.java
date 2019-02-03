@@ -25,6 +25,7 @@ public class CompressorControlSubsystem implements Subsystem {
     private AnalogPressureSensor pressureSensor;
     private Boolean override;
     private PowerDistributionPanel powerDistributionPanel;
+    private Double batteryCoulombCount;
 
     private Boolean wasCompressorRunning;
 
@@ -74,7 +75,14 @@ public class CompressorControlSubsystem implements Subsystem {
                 }
 
                 compressor.setClosedLoopControl(runCompressor);
-;
+
+                if(powerDistributionPanel.getTotalCurrent()<Constants.kLowAmpLoad){
+                    batteryCoulombCount = ((powerDistributionPanel.getVoltage() - Constants.kBatteryDepletedVoltage)/(Constants.kBatteryFullChargeVoltage -Constants.kBatteryDepletedVoltage))* Constants.kFullChargeBatteryCoulombCount;
+                }
+                else {
+                    batteryCoulombCount -= powerDistributionPanel.getTotalCurrent() * (currentTimeStamp - lastTimeStamp);
+                }
+
                 }
             }
 
@@ -112,6 +120,7 @@ public class CompressorControlSubsystem implements Subsystem {
         SmartDashboard.putNumber("Recent Average Battery Voltage", voltageSamplingFilter.getCurrentAverage());
         SmartDashboard.putNumber("Recent Average PDP Total Current", amperageSamplingFilter.getCurrentAverage());
         SmartDashboard.putBoolean("Is Compressor Running?", compressor.getClosedLoopControl());
+        SmartDashboard.putNumber("Battery Charge", (batteryCoulombCount/Constants.kFullChargeBatteryCoulombCount)* 100);
     }
 
     public void stop(){
