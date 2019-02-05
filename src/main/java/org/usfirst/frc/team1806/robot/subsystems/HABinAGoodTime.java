@@ -1,12 +1,19 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
 import org.usfirst.frc.team1806.robot.loop.Looper;
-import com.revrobotics.CANSparkMax;
+//import com.revrobotics.CANSparkMax;
 
 public class HABinAGoodTime implements Subsystem {
 
-    CANSparkMax leftHABArm;
-    CANSparkMax rightHABArm;
+    //CANSparkMax leftHABArm;
+    //CANsparkMax rightHABArm;
+private static HABinAGoodTime mHabANiceDay = new HABinAGoodTime();
+
+
+
+    public static HABinAGoodTime getInstance(){
+        return mHabANiceDay;
+    }
 
 
     public void writeToLog(){
