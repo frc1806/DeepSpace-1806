@@ -5,7 +5,7 @@ import org.usfirst.frc.team1806.robot.RobotState;
 public class RunActionAtAngleRange implements Action {
     double minRange;
     double maxRange;
-    Action action = null;
+    private Action action = null;
     private boolean hasRunAction = false;
     double currentAngle;
     public RunActionAtAngleRange(double minAngle, double maxAngle, Action action){

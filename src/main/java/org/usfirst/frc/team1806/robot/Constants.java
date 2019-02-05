@@ -127,4 +127,8 @@ public class Constants {
     public final static double kBatteryFullChargeVoltage = 12.7;
     public final static double kBatteryDepletedVoltage = 11.8;
     public final static double kLowAmpLoad = 10;
+
+    //Accelerometer Constants
+    public final static double habDropAccelerationThreshold = 1.0; //g force
+
 }
