@@ -30,7 +30,8 @@ public class BeaverTailSubsystem implements Subsystem {
     }
 
     public void stop(){
-
+        mBeaverTailEject.set(DoubleSolenoid.Value.kOff);
+        mBeaverTailFlipper.set(DoubleSolenoid.Value.kOff);
     }
 
     public void zeroSensors(){
