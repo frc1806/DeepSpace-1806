@@ -1,4 +1,6 @@
 package org.usfirst.frc.team1806.robot.subsystems;
+import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Robot;
@@ -9,6 +11,7 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -28,9 +31,9 @@ public class LiftSubsystem  implements Subsystem {
 	public enum LiftPosition {
 		BOTTOM_LIMIT(0),
         TOP_LIMIT(16000),
-		TELEOP_HOLD(400),
-		SHIP_CARGO(5500),
-		ROCKET_CARGO_LOW(5000),
+		TELEOP_HOLD(600),
+		SHIP_CARGO(7000),
+		ROCKET_CARGO_LOW(6000),
 		ROCKET_CARGO_MID(10000),
 		ROCKET_CARGO_HIGH(16000),
 		ROCKET_HATCH_LOW(4000),
@@ -53,7 +56,7 @@ public class LiftSubsystem  implements Subsystem {
 		}
 	}
 
-	private TalonSRX liftLead, liftFollow; //gotta have the power
+	private CANSparkMax liftLead, liftFollow; //gotta have the power
 	public DigitalInput bottomLimit, topLimit;
 
 	private boolean isBrakeMode = false;
@@ -62,32 +65,32 @@ public class LiftSubsystem  implements Subsystem {
 	private LiftStates mLiftStates;
 	private LiftPosition mLiftPosition;
 
+	private CANPIDController canpidController;
+
 	private static LiftSubsystem mLiftSubsystem = new LiftSubsystem(); //only ever 1 lift
 
 	public LiftSubsystem() {
-		liftLead = new TalonSRX(RobotMap.liftLead);
-		liftFollow = new TalonSRX(RobotMap.liftFollow);
-		liftFollow.follow(liftLead);
-		liftLead.configContinuousCurrentLimit(130, 10);
+		liftLead = new CANSparkMax(RobotMap.liftLead, CANSparkMaxLowLevel.MotorType.kBrushless);
+		liftFollow = new CANSparkMax(RobotMap.liftFollow, CANSparkMaxLowLevel.MotorType.kBrushless);
+		liftFollow.follow(liftLead, true);
+		liftLead.setSmartCurrentLimit(130, 80);
 		bottomLimit = new DigitalInput(RobotMap.liftBottomLimit);
 		topLimit = new DigitalInput(RobotMap.liftHighLimit);
 		mLiftStates = LiftStates.IDLE;
 		mLiftPosition = LiftPosition.BOTTOM_LIMIT;
-		liftLead.setSensorPhase(false);
-		liftLead.setInverted(true);
-		liftFollow.setInverted(true);
-		liftLead.configPeakOutputReverse(-.4, 10);
  		reloadGains();
+ 		canpidController = new CANPIDController(liftLead);
 	}
+
 
 	@Override
 	public void outputToSmartDashboard() {
-		SmartDashboard.putString("Wanted Lift Position: ", mLiftPosition.toString());
         SmartDashboard.putString("Lift State: ", returnLiftStates().toString());
-        SmartDashboard.putString("Lift Position", returnCubePosition().toString());
-		SmartDashboard.putNumber("Lift Encoder Position", liftLead.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("Lift Power Sending", liftLead.getMotorOutputPercent());
-		SmartDashboard.putBoolean("Bottom limit triggered", areWeAtBottomLimit());
+        SmartDashboard.putString("Lift Position", returnLiftPosition().toString());
+		SmartDashboard.putNumber("Lift Encoder Position", liftLead.getEncoder().getPosition());
+		SmartDashboard.putNumber("Lift Leader Power Sending", liftLead.getEncoder().getPosition());
+		SmartDashboard.putNumber("Lift Follow Power Sending", liftFollow.getAppliedOutput());
+		SmartDashboard.putBoolean("Lift Bottom limit triggered", areWeAtBottomLimit());
         SmartDashboard.putNumber("Lift Wanted Height", mLiftPosition.getHeight());
     }
 
@@ -98,7 +101,7 @@ public class LiftSubsystem  implements Subsystem {
 
 	@Override
 	public synchronized void zeroSensors() {
-		liftLead.setSelectedSensorPosition(0,0,10);
+		liftLead.getEncoder();
 	}
 
 
@@ -205,7 +208,7 @@ public class LiftSubsystem  implements Subsystem {
 		mLiftStates = LiftStates.POSITION_CONTROL;
 		mLiftPosition = setpoint;
 		setBrakeMode();
-		liftLead.set(ControlMode.Position, mLiftPosition.getHeight());
+		liftLead.set(mLiftPosition.getHeight());
 		//System.out.println(mLiftWantedPosition + "  " + isReadyForSetpoint());
 	}
 	public synchronized void goToSetpoint(int setpoint) {
@@ -213,7 +216,8 @@ public class LiftSubsystem  implements Subsystem {
 		mLiftPosition.TEMP_HOLD_POS.setHeight(setpoint);
 		mLiftPosition = LiftPosition.TEMP_HOLD_POS;
 		setBrakeMode();
-		liftLead.set(ControlMode.Position, mLiftPosition.getHeight());
+		liftLead.pidWrite();
+		liftLead.set(mLiftPosition.getHeight());
 		//System.out.println(mLiftWantedPosition + "  " + isReadyForSetpoint());
 	}
 
@@ -233,8 +237,8 @@ public class LiftSubsystem  implements Subsystem {
 		return getHeightInCounts() / Constants.kCountsPerInch;
 	}
 
-	public int getHeightInCounts() {
-		return liftLead.getSelectedSensorPosition(0);
+	public double getHeightInCounts() {
+		return liftLead.getEncoder().getPosition();
 	}
 
 	public boolean isOnTarget() {
@@ -254,16 +258,16 @@ public class LiftSubsystem  implements Subsystem {
 		return isBrakeMode;
 	}
 	public void reloadGains() {
-		liftLead.config_kP(Constants.kLiftPositionControlPIDSlot, Constants.kLiftPositionkP, Constants.kLiftPositionPIDTimeout);
-		liftLead.config_kI(Constants.kLiftPositionControlPIDSlot, Constants.kLiftPositionkI, Constants.kLiftPositionPIDTimeout);
-		liftLead.config_kD(Constants.kLiftPositionControlPIDSlot, Constants.kLiftPositionkD, Constants.kLiftPositionPIDTimeout);
-		liftLead.config_kF(Constants.kLiftPositionControlPIDSlot, Constants.kLiftPositionkF, Constants.kLiftPositionPIDTimeout);
-		liftLead.config_IntegralZone(Constants.kLiftPositionControlPIDSlot, Constants.kLiftPositionIZone, Constants.kLiftPositionPIDTimeout);
-		liftLead.configClosedloopRamp(Constants.kLiftPositionRampRate, Constants.kLiftPositionPIDTimeout);
+		liftLead.setParameter(CANSparkMaxLowLevel.ConfigParameter.kP_0, Constants.kLiftPositionkP);
+		liftLead.setParameter(CANSparkMaxLowLevel.ConfigParameter.kI_0, Constants.kLiftPositionkI);
+		liftLead.setParameter(CANSparkMaxLowLevel.ConfigParameter.kD_0, Constants.kLiftPositionkD);
+		liftLead.setParameter(CANSparkMaxLowLevel.ConfigParameter.kF_0, Constants.kLiftPositionkF);
+		liftLead.setParameter(CANSparkMaxLowLevel.ConfigParameter.kIZone_0, Constants.kLiftPositionIZone);
+		liftLead.setParameter(CANSparkMaxLowLevel.ConfigParameter.kRampRate, Constants.kLiftPositionRampRate);
 	}
 
 	public synchronized void resetToBottom() {
-		if(!areWeAtBottomLimit() || Math.abs(liftLead.getSelectedSensorPosition(0)) < Constants.kBottomLimitTolerance) {
+		if(!areWeAtBottomLimit() || Math.abs(liftLead.getEncoder().getPosition()) < Constants.kBottomLimitTolerance) {
 		        mLiftStates = LiftStates.RESET_TO_BOTTOM;
 		        mLiftPosition = LiftPosition.BOTTOM_LIMIT;
 				goToSetpoint(0);
@@ -276,7 +280,7 @@ public class LiftSubsystem  implements Subsystem {
                 mLiftStates = LiftStates.RESET_TO_TOP;
 				mLiftPosition = LiftPosition.TOP_LIMIT;
 			}
-            liftLead.set(ControlMode.PercentOutput, Constants.liftSpeed);
+            liftLead.set(Constants.liftSpeed);
         } else {
             zeroSensorsAtTop();
         }
@@ -290,8 +294,8 @@ public class LiftSubsystem  implements Subsystem {
 		if(mLiftStates == LiftStates.IDLE){
 			return false;
 		}
-		return Math.abs(mLiftPosition.getHeight() - liftLead.getSelectedSensorPosition(0)) < Constants.kLiftPositionTolerance &&
-				Math.abs(liftLead.getSelectedSensorVelocity(0)) < Constants.kLiftVelocityTolerance;
+		return Math.abs(mLiftPosition.getHeight() - liftLead.getEncoder().getPosition()) < Constants.kLiftPositionTolerance &&
+				Math.abs(liftLead.getEncoder().getVelocity()) < Constants.kLiftVelocityTolerance;
 	}
 	/**
 	 *
@@ -306,7 +310,7 @@ public class LiftSubsystem  implements Subsystem {
      * @return
      * returns the position of where the liftactions is eg: moving, scale
      */
-	public synchronized LiftPosition returnCubePosition() {
+	public synchronized LiftPosition returnLiftPosition() {
 		return mLiftPosition;
 	}
 

@@ -71,7 +71,7 @@ public class Robot extends TimedRobot {
       //Sets up camera
       camera = new UsbCamera("cam0", 0);
       camera.setFPS(30);
-      camera.setBrightness(50);
+      camera.setBrightness(20);
       camera.getPath();
       cameraServer = new MjpegServer("camera",  5806);
       cameraServer.setSource(camera);

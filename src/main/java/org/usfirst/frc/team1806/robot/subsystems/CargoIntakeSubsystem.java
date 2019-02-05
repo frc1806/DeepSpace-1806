@@ -1,6 +1,6 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
-import jdk.internal.org.objectweb.asm.tree.InnerClassNode;
+//import jdk.internal.org.objectweb.asm.tree.InnerClassNode;
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Looper;
@@ -37,10 +37,11 @@ public class CargoIntakeSubsystem implements Subsystem {
     }
 
     private CargoIntakeSubsystem(){
+        /*
         extensionSolenoid = new DoubleSolenoid(RobotMap.cargoIntakeExtend, RobotMap.cargoIntakeRetract);
         innerIntake = new IntakeSubsystem(Constants.kInnerIntakingSpeed, RobotMap.leftInnerIntake, RobotMap.rightInnerIntake);
         outerIntake = new IntakeSubsystem(Constants.kOuterIntakingSpeed, RobotMap.leftOuterIntake, RobotMap.rightOuterIntake);
-
+        */
     }
 
 

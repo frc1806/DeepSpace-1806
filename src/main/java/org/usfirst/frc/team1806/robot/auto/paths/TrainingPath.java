@@ -22,18 +22,21 @@ public class TrainingPath implements PathContainer{
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(22,120,0,0));
-        sWaypoints.add(new Waypoint(140,120,20,110));
-        sWaypoints.add(new Waypoint(260,60,20,110));
-        sWaypoints.add(new Waypoint(306,60,18,90));
-        sWaypoints.add(new Waypoint(306,81,0,90));
+
+        sWaypoints.add(new Waypoint(40,45,0,0));
+        sWaypoints.add(new Waypoint(70,60,5,60));
+        sWaypoints.add(new Waypoint(140,79,20,60));
+        sWaypoints.add(new Waypoint(220,79,15,60));
+        sWaypoints.add(new Waypoint(275,75,13,60));
+        sWaypoints.add(new Waypoint(276,90,0,55));
+        sWaypoints.add(new Waypoint(284,110,0,60));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
 
     @Override
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(22, 120), Rotation2d.fromDegrees(0));
+        return new RigidTransform2d(new Translation2d(40, 45), Rotation2d.fromDegrees(0));
     }
 
 
