@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1806.robot.auto.*;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 import org.usfirst.frc.team1806.robot.path.motion.RobotStateEstimator;
-import org.usfirst.frc.team1806.robot.subsystems.CompressorControlSubsystem;
 import org.usfirst.frc.team1806.robot.subsystems.DriveTrainSubsystem;
 import org.usfirst.frc.team1806.robot.subsystems.LiftSubsystem;
 import org.usfirst.frc.team1806.robot.subsystems.SubsystemManager;
@@ -37,7 +36,7 @@ public class Robot extends TimedRobot {
     SendableChooser<Command> m_chooser = new SendableChooser<>();
 
 
-    private final SubsystemManager mSubsystemManager = new SubsystemManager(
+    private static final SubsystemManager S_SubsystemManager = new SubsystemManager(
             Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance()));
 
     private Looper mEnabledLooper = new Looper();
@@ -53,13 +52,15 @@ public class Robot extends TimedRobot {
       AUTO_INIT,
       AUTO_PERIODIC
     }
-    AutoInTeleOp autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
-    /*
-     * LLL
-     * RRR
-     * LRL
-     * RLR
-     */
+    public AutoInTeleOp autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
+
+    public enum GamePieceMode{
+        HATCH_PANEL,
+        CARGO
+    }
+
+    private static GamePieceMode GamePieceMode;
+
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -79,7 +80,7 @@ public class Robot extends TimedRobot {
 
       //adds in the iterative code to make the code run
       mEnabledLooper.register(RobotStateEstimator.getInstance());
-      mSubsystemManager.registerEnabledLoops(mEnabledLooper);
+      S_SubsystemManager.registerEnabledLoops(mEnabledLooper);
 
       powerDistributionPanel = new PowerDistributionPanel();
       SmartDashboard.putData("Auto mode", m_chooser);
@@ -226,13 +227,13 @@ public class Robot extends TimedRobot {
 
     public void zeroAllSensors() {
 //		System.out.println("Zeroing all Sensors..");
-      mSubsystemManager.zeroSensors();
+      S_SubsystemManager.zeroSensors();
       mRobotState.reset(Timer.getFPGATimestamp(), new RigidTransform2d());
 //        System.out.print("All Sensors zeroed!");
 
     }
     public synchronized void allPeriodic() {
-      mSubsystemManager.outputToSmartDashboard();
+      S_SubsystemManager.outputToSmartDashboard();
       mRobotState.outputToSmartDashboard();
       mEnabledLooper.outputToSmartDashboard();
       SmartDashboard.putString("Auto We Are Running", AutoModeSelector.returnNameOfSelectedAuto());
@@ -242,6 +243,33 @@ public class Robot extends TimedRobot {
       Scheduler.getInstance().run();
       m_oi.runCommands();
       allPeriodic();
+    }
+
+    /**
+     * Sets the global game piece mode, runs functions associated with mode change on subsystems.
+     * @param mode the wanted mode
+     */
+    public static synchronized void setGamePieceMode(GamePieceMode mode){
+        GamePieceMode = mode;
+
+        switch(mode){
+            case CARGO:
+                S_SubsystemManager.goToCargoMode();
+                break;
+            case HATCH_PANEL:
+                S_SubsystemManager.goToCargoMode();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public static synchronized GamePieceMode getGamePieceMode(){
+        return GamePieceMode;
+    }
+
+    public static synchronized void RetractAll(){
+        S_SubsystemManager.retractAll();
     }
   }
 

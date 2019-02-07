@@ -9,9 +9,9 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANEncoder.*;
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 /**
@@ -59,6 +59,12 @@ public class LiftSubsystem  implements Subsystem {
 	private CANPIDController liftLeadController, liftFollowController;
 	public DigitalInput bottomLimit, topLimit;
 
+	private CargoIntakeSubsystem mCargoIntakeSubsystem;
+	private double intakePneumaticWait ;
+	private double lastTimeStamp;
+	private boolean needsIntakeOut;
+	private boolean wasIntakeOut;
+
 	private boolean isBrakeMode = false;
 	private boolean mIsOnTarget = false;
 
@@ -81,6 +87,12 @@ public class LiftSubsystem  implements Subsystem {
 		mLiftPosition = LiftPosition.BOTTOM_LIMIT;
  		reloadGains();
  		canpidController = new CANPIDController(liftLead);
+
+ 		intakePneumaticWait = 0;
+ 		mCargoIntakeSubsystem = CargoIntakeSubsystem.getInstance();
+ 		lastTimeStamp = 0;
+ 		needsIntakeOut = false;
+ 		wasIntakeOut = false;
 	}
 
 
@@ -118,11 +130,19 @@ public class LiftSubsystem  implements Subsystem {
 	@Override
 	public void registerEnabledLoops(Looper enabledLooper) {
         enabledLooper.register(new Loop() {
-            @Override
+			/**
+			 * Set lift to idle.
+			 * @param timestamp current robot runtime in seconds.
+			 */
+			@Override
             public void onStop(double timestamp) {
                 mLiftStates = LiftStates.IDLE;
             }
 
+			/**
+			 *
+			 * @param timestamp current robot runtime in seconds
+			 */
             @Override
             public void onStart(double timestamp) {
 				if(Robot.needToPositionControlInTele){
@@ -132,9 +152,32 @@ public class LiftSubsystem  implements Subsystem {
 				}
             }
 
-            @Override
+			/**
+			 *
+			 * @param timestamp current robot runtime in seconds
+			 */
+			@Override
             public void onLoop(double timestamp) {
             	synchronized (LiftSubsystem.this){
+
+            		//deal with intake interactions
+            		if(intakePneumaticWait > 0)
+					{
+						mCargoIntakeSubsystem.extendOuterIntake();
+						intakePneumaticWait -= (timestamp - lastTimeStamp);
+						if(intakePneumaticWait <= 0)
+						{
+							liftLead.set(mLiftPosition.getHeight());
+						}
+					}
+
+					if(needsIntakeOut && getHeightInCounts() > Constants.kMaxLiftHeightToNeedToExtendIntake){
+						needsIntakeOut = false;
+						if(!wasIntakeOut || Robot.getGamePieceMode() == Robot.GamePieceMode.HATCH_PANEL){
+							mCargoIntakeSubsystem.retractOuterIntake();
+						}
+					}
+
             		//not moving and not manual
 					if(isAtPosition() && mLiftStates != LiftStates.MANUAL_CONTROL){
 						//not moving, at bottom
@@ -149,22 +192,14 @@ public class LiftSubsystem  implements Subsystem {
 							holdPosition();
 						}
 					}
+					liftStateLoop();
 
-					cubePositionLoop();
-					cubeLiftStateLoop();
+					lastTimeStamp = timestamp;
 				}
             }
 
-            private void cubePositionLoop(){
-            	switch (mLiftPosition){
-					case BOTTOM_LIMIT:
-						return;
-					case TOP_LIMIT:
-						return;
-				}
-			}
 
-			private void cubeLiftStateLoop(){
+			private void liftStateLoop(){
 				switch(mLiftStates) {
 					case POSITION_CONTROL:
 						setBrakeMode();
@@ -209,7 +244,15 @@ public class LiftSubsystem  implements Subsystem {
 		mLiftStates = LiftStates.POSITION_CONTROL;
 		mLiftPosition = setpoint;
 		setBrakeMode();
-		liftLeadController.setReference(mLiftPosition.getHeight(), ControlType.kPosition);
+		if(currentLiftCommandNeedsIntakeExtension(setpoint)){
+			needsIntakeOut = true;
+			wasIntakeOut = mCargoIntakeSubsystem.isOuterIntakeExtended();
+			mCargoIntakeSubsystem.extendOuterIntake();
+			intakePneumaticWait = Constants.kLiftWaitForExtendIntake;
+		}
+		else {
+			liftLeadController.setReference(mLiftPosition.getHeight(), ControlType.kPosition);
+		}
 		//System.out.println(mLiftWantedPosition + "  " + isReadyForSetpoint());
 	}
 	public synchronized void goToSetpoint(int setpoint) {
@@ -404,5 +447,33 @@ public class LiftSubsystem  implements Subsystem {
 			return true;
 		}
 		return false;
+	}
+
+	public synchronized boolean isNeedingIntakeOut(){
+		return needsIntakeOut;
+	}
+
+	private boolean currentLiftCommandNeedsIntakeExtension(LiftPosition setpoint){
+		return getHeightInCounts() < Constants.kMaxLiftHeightToNeedToExtendIntake || setpoint.getHeight() <Constants.kMaxLiftHeightToNeedToExtendIntake;
+	}
+
+	public void goToHatchMode(){
+		//cargo intake won't retract if the lift needs it out, then the lift's loop will retract it anyway
+	}
+
+	public void goToCargoMode(){
+		//oddly nothing to do here
+	}
+
+	public void retractAll() {
+		if(mLiftStates == LiftStates.POSITION_CONTROL && currentLiftCommandNeedsIntakeExtension(mLiftPosition)){
+			if(getHeightInCounts() < Constants.kMaxLiftHeightToNeedToExtendIntake) {
+				setLiftIdle();
+			}
+			else{
+				LiftPosition.TEMP_HOLD_POS.setHeight(Constants.kMaxLiftHeightToNeedToExtendIntake + Constants.kSafeLiftHeightOffsetToNotHitIntake)
+				goToSetpoint(LiftPosition.TELEOP_HOLD);
+			}
+		}
 	}
 }

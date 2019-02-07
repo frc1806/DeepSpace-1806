@@ -148,4 +148,17 @@ public class IntakeSubsystem implements Subsystem{
 	public void intakeLeftSide(double power){
 		leftOuterIntake.set(ControlMode.PercentOutput, power);
 	}
+
+
+	public void goToHatchMode(){
+		//nothing to do here, this only does cargo
+	}
+
+	public void goToCargoMode(){
+		//nothing to do here, this only does cargo, this is always ready for cargo. Unless it's borked, but we can't code for that.
+	}
+
+	public void retractAll() {
+		//extensions not controlled here
+	}
 }

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 public class CargoIntakeSubsystem implements Subsystem {
 
     private static CargoIntakeSubsystem mCargoIntakeSubsystem = new CargoIntakeSubsystem();
+    private LiftSubsystem liftSubsystem;
     private DoubleSolenoid extensionSolenoid;
     private IntakeSubsystem innerIntake;
     private IntakeSubsystem outerIntake;
@@ -37,11 +38,11 @@ public class CargoIntakeSubsystem implements Subsystem {
     }
 
     private CargoIntakeSubsystem(){
-        /*
+
         extensionSolenoid = new DoubleSolenoid(RobotMap.cargoIntakeExtend, RobotMap.cargoIntakeRetract);
         innerIntake = new IntakeSubsystem(Constants.kInnerIntakingSpeed, RobotMap.leftInnerIntake, RobotMap.rightInnerIntake);
         outerIntake = new IntakeSubsystem(Constants.kOuterIntakingSpeed, RobotMap.leftOuterIntake, RobotMap.rightOuterIntake);
-        */
+        liftSubsystem = LiftSubsystem.getInstance();
     }
 
 
@@ -87,5 +88,20 @@ public class CargoIntakeSubsystem implements Subsystem {
     innerIntake.outtaking(power.getPower());
     outerIntake.stop();
 
+    }
+
+
+    public void goToHatchMode(){
+        if(!liftSubsystem.isNeedingIntakeOut()){
+            retractOuterIntake();
+        }
+    }
+
+    public void goToCargoMode(){
+        //TODO
+    }
+
+    public void retractAll() {
+        retractOuterIntake(); //lift will handle making sure there's no problem doing this
     }
 }

@@ -35,4 +35,17 @@ private static HABinAGoodTime mHabANiceDay = new HABinAGoodTime();
     public void registerEnabledLoops(Looper enabledLooper){
 
     }
+
+
+    public void goToHatchMode(){
+        //nothing to do here
+    }
+
+    public void goToCargoMode(){
+        //nothing to do here
+    }
+
+    public void retractAll() {
+        //TODO
+    }
 }
