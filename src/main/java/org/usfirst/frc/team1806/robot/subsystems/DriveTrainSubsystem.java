@@ -312,6 +312,8 @@ public class DriveTrainSubsystem implements Subsystem {
 		SmartDashboard.putNumber("driveRightVelocity", getRightVelocityInchesPerSec());
 		SmartDashboard.putNumber("Left Side", masterLeft.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Right Side: ", masterRight.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Current Acceleration Value", navx.getWorldLinearAccelZ());
+
 		if (!isHighGear()) {
 			if (masterLeft.getSelectedSensorVelocity(0) > leftLowGearMaxVel) {
 				leftLowGearMaxVel = masterLeft.getSelectedSensorVelocity(0);
@@ -751,4 +753,5 @@ public class DriveTrainSubsystem implements Subsystem {
 		return navx.getWorldLinearAccelZ();
 	}
 }
+
 

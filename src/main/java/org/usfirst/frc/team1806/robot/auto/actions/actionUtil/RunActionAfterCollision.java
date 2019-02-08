@@ -16,12 +16,11 @@ public class RunActionAfterCollision implements Action {
         mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
         action = actionToRun;
         hasActionRun = false;
-    }
 
+    }
 
     @Override
     public boolean isFinished() {return action.isFinished();}
-
 
 
 
@@ -39,18 +38,12 @@ public class RunActionAfterCollision implements Action {
     }
 
 
-
-
     @Override
-    public void done() {
-
-    }
-
-
-
+    public void done() { action.done();}
 
     @Override
     public void start() {
 
     }
+
 }

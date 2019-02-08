@@ -71,7 +71,7 @@ public class RobotMap {
 	public static int leftResponse = 11;
 	public static int rightTrigger = 12;
 	public static int rightResponse = 13;
-
+	public static int hatchDetector = 14;
 
 	///////////// PDP PORTS
 
