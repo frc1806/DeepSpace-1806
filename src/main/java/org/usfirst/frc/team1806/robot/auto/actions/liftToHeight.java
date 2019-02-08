@@ -3,11 +3,11 @@ package org.usfirst.frc.team1806.robot.auto.actions;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.Action;
 import org.usfirst.frc.team1806.robot.subsystems.LiftSubsystem;
 
-public class liftToHeight implements Action {
+public class LiftToHeight implements Action {
 
     private LiftSubsystem.LiftPosition wantedHeight;
     private boolean instant;
-    public liftToHeight(LiftSubsystem.LiftPosition _wantedHeight, boolean _instant) {
+    public LiftToHeight(LiftSubsystem.LiftPosition _wantedHeight, boolean _instant) {
         wantedHeight = _wantedHeight;
         instant = _instant;
     }

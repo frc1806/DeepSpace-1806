@@ -1,6 +1,8 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.SensorUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Looper;
@@ -11,6 +13,7 @@ public class SquidSubsystem implements Subsystem {
     private static SquidSubsystem mSquidSubsystem = new SquidSubsystem();
     private DoubleSolenoid mSquidSolenoid;
     private DoubleSolenoid mSquidExtender;
+    private DigitalInput mHatchDetector;
 
     public static SquidSubsystem getInstance(){
         return mSquidSubsystem;
@@ -19,6 +22,7 @@ public class SquidSubsystem implements Subsystem {
     private SquidSubsystem(){
             mSquidSolenoid = new DoubleSolenoid(RobotMap.squidOpenPort, RobotMap.squidClosePort);
             mSquidExtender = new DoubleSolenoid(RobotMap.squidExtendForward, RobotMap.squidExtendBackward);
+            mHatchDetector = new DigitalInput(RobotMap.hatchDetector);
     }
 
     public void writeToLog(){
@@ -43,6 +47,10 @@ public class SquidSubsystem implements Subsystem {
         return mSquidSolenoid.get() == DoubleSolenoid.Value.kForward;
     }
 
+    public boolean isDetectingHatch(){
+        return mHatchDetector.get();
+    }
+
 
     public void registerEnabledLoops(Looper enabledLooper){
 
@@ -65,4 +73,13 @@ public class SquidSubsystem implements Subsystem {
     public boolean isExtended() {
         return mSquidExtender.get() == DoubleSolenoid.Value.kForward;
     }
+
+    public void openSquidIfHatch(){
+        if (isDetectingHatch()){
+            openSquid();
+        } else if (isOpen()){
+            closeSquid();
+        }
+    }
 }
+
