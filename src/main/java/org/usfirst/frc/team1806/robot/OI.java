@@ -67,7 +67,7 @@ public class OI {
 				}
 
 				synchronized (mSquidSubsystem) {
-					if (dc.getLeftTrigger() > Constants.kTiggerThreshold) {
+					if (dc.getLeftTrigger() > Constants.kTriggerThreshold) {
 						mSquidSubsystem.openSquid();
 					}
 
@@ -114,14 +114,14 @@ public class OI {
 
 				synchronized (mCargoIntakeSubsystem) {
 					if (!mLiftSubsystem.isNeedingIntakeOut()) {
-						if (dc.getRightTrigger() >= Constants.kTiggerThreshold) {
+						if (dc.getRightTrigger() >= Constants.kTriggerThreshold) {
 							mCargoIntakeSubsystem.extendOuterIntake();
 						} else {
 							mCargoIntakeSubsystem.retractOuterIntake();
 						}
 					}
 
-					if (dc.getLeftTrigger() > Constants.kTiggerThreshold) {
+					if (dc.getLeftTrigger() > Constants.kTriggerThreshold) {
 						mCargoIntakeSubsystem.intakeCargo();
 					} else if (dc.getPOVDown()) {
 						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.MEDIUM);
@@ -141,13 +141,13 @@ public class OI {
 				break;
 		}
 
-		if(dc.getButtonBack()){
+		if(dc.getButtonBack() || oc.getPOVDown()){
 			Robot.RetractAll();
 		}
 
 		mCompressorControlSubsystem.setOverride(oc.getButtonY());
 
-		wasSquidExtendButton = dc.getRightTrigger() > Constants.kTiggerThreshold;
+		wasSquidExtendButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
 		wasChangeModeButton = dc.getButtonRB();
 
 	}

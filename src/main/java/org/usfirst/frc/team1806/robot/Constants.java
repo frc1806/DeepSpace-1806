@@ -138,6 +138,6 @@ public class Constants {
     public final static int kSafeLiftHeightOffsetToNotHitIntake = 500; // total of this and the line above will be the setpoint
 
     //controls
-    public final static double kTiggerThreshold = .2;
+    public final static double kTriggerThreshold = .2;
 
 }
