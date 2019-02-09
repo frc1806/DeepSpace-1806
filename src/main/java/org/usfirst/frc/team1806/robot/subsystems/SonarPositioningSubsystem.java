@@ -60,4 +60,17 @@ public class SonarPositioningSubsystem {
     public void registerEnabledLoops(Looper enabledLooper){
 
     }
+
+
+    public void goToHatchMode(){
+        //sonars don't care about game piece mode
+    }
+
+    public void goToCargoMode(){
+        //sonars don't care about game piece mode
+    }
+
+    public void retractAll() {
+        //sonars don't need retracting
+    }
 }

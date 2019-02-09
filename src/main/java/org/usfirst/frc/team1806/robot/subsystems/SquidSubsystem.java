@@ -74,12 +74,24 @@ public class SquidSubsystem implements Subsystem {
         return mSquidExtender.get() == DoubleSolenoid.Value.kForward;
     }
 
-    public void openSquidIfHatch(){
-        if (isDetectingHatch()){
+    public void openSquidIfHatch() {
+        if (isDetectingHatch()) {
             openSquid();
-        } else if (isOpen()){
+        } else if (isOpen()) {
             closeSquid();
         }
+    }
+
+    public void goToHatchMode(){
+        //don't want to extend on mode switch
+    }
+
+    public void goToCargoMode(){
+        retractSquid();
+    }
+
+    public void retractAll() {
+        retractSquid();
     }
 }
 

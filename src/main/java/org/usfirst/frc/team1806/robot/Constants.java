@@ -131,4 +131,13 @@ public class Constants {
     //Accelerometer Constants
     public final static double habDropAccelerationThreshold = 1.0; //g force
 
+
+    //Lift interference avoidence
+    public final static double kLiftWaitForExtendIntake = 0.25;
+    public final static int kMaxLiftHeightToNeedToExtendIntake = 1000;
+    public final static int kSafeLiftHeightOffsetToNotHitIntake = 500; // total of this and the line above will be the setpoint
+
+    //controls
+    public final static double kTriggerThreshold = .2;
+
 }

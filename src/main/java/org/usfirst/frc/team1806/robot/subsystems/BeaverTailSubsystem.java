@@ -65,4 +65,19 @@ public class BeaverTailSubsystem implements Subsystem {
     public void retractEjector(){
         mBeaverTailEject.set(DoubleSolenoid.Value.kReverse);
     }
+
+
+    public void goToHatchMode(){
+        //TODO
+    }
+
+    public void goToCargoMode(){
+        retractBeaverTail();
+        retractEjector();
+    }
+
+    public void retractAll() {
+        retractBeaverTail();
+        retractEjector();
+    }
 }

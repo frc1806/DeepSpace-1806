@@ -12,7 +12,6 @@ import org.usfirst.frc.team1806.robot.util.CheesyDriveHelper;
 import org.usfirst.frc.team1806.robot.util.Latch;
 import org.usfirst.frc.team1806.robot.util.XboxController;
 
-
 /**
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
@@ -27,11 +26,16 @@ public class OI {
 	private XboxController oc = new XboxController(1);
 	private XboxController autoController = new XboxController(2);
 	private Latch autoInTeleOp = new Latch();
-	private Boolean wasB = false;
-	private Boolean wasRightDPad = false;
+	private Boolean wasSquidExtendButton = false;
+	private Boolean wasChangeModeButton = false;
 	private CargoIntakeSubsystem mCargoIntakeSubsystem = CargoIntakeSubsystem.getInstance();
 
 	public void runCommands(){
+
+		//Controls in both modes
+		if(Constants.enableAutoInTeleOp){
+			autoInTeleOp.update(autoController.getButtonStart());
+		}
 		synchronized (mDriveTrainSubsystem) {
 			if(dc.getRightTrigger() > .2) {
 				mDriveTrainSubsystem.setCreepMode(mCheesyDriveHelper.cheesyDrive(
@@ -41,62 +45,111 @@ public class OI {
 						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
 			}
 		}
-		synchronized (mLiftSubsystem) {
-			if(Math.abs(oc.getLeftJoyY()) > .2) {
-				mLiftSubsystem.manualMode(oc.getLeftJoyY());
-			}
-			if(dc.getButtonA()) {
-				mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.TELEOP_HOLD);
-			}
-			if(dc.getButtonX()) {
-				mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.SHIP_CARGO);
-			}
-			if(dc.getButtonY()) {
-				mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_CARGO_HIGH);
-			}
+
+		//Controls that change based on mode
+		switch(Robot.getGamePieceMode()){
+			case HATCH_PANEL:
+			default:
+
+				synchronized (mLiftSubsystem) {
+					if(dc.getButtonA()) {
+						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_HATCH_LOW);
+					}
+					if(dc.getButtonX()) {
+						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_HATCH_MID);
+					}
+					if(dc.getButtonY()) {
+						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_HATCH_HIGH);
+					}
+					if(dc.getButtonB()) {
+						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.BOTTOM_LIMIT);
+					}
+				}
+
+				synchronized (mSquidSubsystem) {
+					if (dc.getLeftTrigger() > Constants.kTriggerThreshold) {
+						mSquidSubsystem.openSquid();
+					}
+
+					if (dc.getButtonLB()) {
+						mSquidSubsystem.closeSquid();
+					}
+
+
+					if (!wasSquidExtendButton && dc.getPOVRight()) {
+						if (mSquidSubsystem.isExtended()) {
+							mSquidSubsystem.retractSquid();
+						} else {
+							mSquidSubsystem.isExtended();
+						}
+					}
+				}
+
+
+				//TODO:Beaver controls
+
+
+				if(dc.getButtonRB() && !wasChangeModeButton){
+					Robot.setGamePieceMode(Robot.GamePieceMode.CARGO);
+				}
+
+				break;
+
+			case CARGO:
+
+				synchronized (mLiftSubsystem) {
+					if(dc.getButtonA()) {
+						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_CARGO_LOW);
+					}
+					if(dc.getButtonX()) {
+						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_CARGO_MID);
+					}
+					if(dc.getButtonY()) {
+						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_CARGO_HIGH);
+					}
+					if(dc.getButtonB()) {
+						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.BOTTOM_LIMIT);
+					}
+				}
+
+				synchronized (mCargoIntakeSubsystem) {
+					if (!mLiftSubsystem.isNeedingIntakeOut()) {
+						if (dc.getRightTrigger() >= Constants.kTriggerThreshold) {
+							mCargoIntakeSubsystem.extendOuterIntake();
+						} else {
+							mCargoIntakeSubsystem.retractOuterIntake();
+						}
+					}
+
+					if (dc.getLeftTrigger() > Constants.kTriggerThreshold) {
+						mCargoIntakeSubsystem.intakeCargo();
+					} else if (dc.getPOVDown()) {
+						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.MEDIUM);
+					} else if (dc.getPOVLeft()) {
+						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.FAST);
+					} else if (dc.getPOVUp()) {
+						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.IRRESPONSIBLE);
+					} else if (dc.getButtonLB()) {
+						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.SLOW);
+					}
+				}
+
+				if(dc.getButtonRB() && !wasChangeModeButton){
+					Robot.setGamePieceMode(Robot.GamePieceMode.HATCH_PANEL);
+				}
+
+				break;
 		}
 
-		if(Constants.enableAutoInTeleOp){
-			autoInTeleOp.update(autoController.getButtonStart());
-		}
-
-		if(!wasB && dc.getButtonB()){
-			if(mSquidSubsystem.isOpen()) {
-				mSquidSubsystem.closeSquid();
-			}
-			else {
-				mSquidSubsystem.openSquid();
-			}
-		}
-
-		if(!wasRightDPad && dc.getPOVRight()) {
-			if(mSquidSubsystem.isExtended()) {
-				mSquidSubsystem.retractSquid();
-			}
-			else {
-				mSquidSubsystem.isExtended();
-			}
-		}
-		if(dc.getLeftTrigger() >.2){
-			mCargoIntakeSubsystem.intakeCargo();
-		}
-		else if(dc.getPOVDown()){
-			mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.SLOW);
-		}
-		else if(dc.getPOVLeft()){
-			mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.FAST);
-		}
-		else if(dc.getPOVUp()){
-			mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.IRRESPONSIBLE);
-		}
-		else if(dc.getButtonLB()){
-			mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.MEDIUM);
+		if(dc.getButtonBack() || oc.getPOVDown()){
+			Robot.RetractAll();
 		}
 
 		mCompressorControlSubsystem.setOverride(oc.getButtonY());
 
-		wasB = dc.getButtonB();
-		wasRightDPad = dc.getPOVRight();
+		wasSquidExtendButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
+		wasChangeModeButton = dc.getButtonRB();
+
 	}
 	public void resetAutoLatch(){
 	    autoInTeleOp.resetLatch();

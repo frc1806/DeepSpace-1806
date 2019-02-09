@@ -141,4 +141,16 @@ public class CompressorControlSubsystem implements Subsystem {
     }
 
 
+
+    public void goToHatchMode(){
+        //nothing to do here unless we want to change how we manage air based on what mode we're in
+    }
+
+    public void goToCargoMode(){
+        //nothing to do here unless we want to change how we manage air based on what mode we're in
+    }
+
+    public void retractAll() {
+        //nothing to do here unless we want to change how we manage air based on what mode we're in
+    }
 }
