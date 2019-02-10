@@ -54,6 +54,7 @@ public class CargoIntakeSubsystem implements Subsystem {
         //TODO
     }
 
+
     public void stop(){
         innerIntake.stop();
         outerIntake.stop();
@@ -84,6 +85,10 @@ public class CargoIntakeSubsystem implements Subsystem {
     outerIntake.intakeRightSide(Constants.kOuterIntakingSpeed);
     }
 
+    /**
+     * Reverses the inner intake to shoot the ball.
+     * @param power how much power should be used to shoot the ball.
+     */
     public void scoreCargo(ScoringPower power){
     innerIntake.outtaking(power.getPower());
     outerIntake.stop();
