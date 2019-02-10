@@ -11,6 +11,7 @@ public class RobotMap {
     ///////////// CAN ports 
 	
 	//Drive train CAN
+
 	public static int rightA = 0; //
 	public static int masterRight = 1; //
 	public static int rightC = 2;
@@ -20,6 +21,7 @@ public class RobotMap {
 
 	
 	//Cube Elevator CANs
+
 	public static int liftLead = 6;
 	public static int liftFollow = 7;
 
@@ -38,18 +40,21 @@ public class RobotMap {
 	//Shifting
 
 	//Squid
+
 	public static int squidOpenPort = 0;
 	public static int squidClosePort = 1;
 	public static int squidExtendForward = 2;
 	public static int squidExtendBackward = 3;
 
 	//BeaverTail
+
 	public static int beaverTailFlipperExtend = 4;
 	public static int beaverTailFlipperRetract = 5;
 	public static int beaverTailEjectExtend = 6;
 	public static int beaverTailEjectRetract = 7;
 
 	//CargoIntakeSubsystem
+
 	public static int cargoIntakeExtend = 8;
 	public static int cargoIntakeRetract = 9;
 
@@ -72,6 +77,11 @@ public class RobotMap {
 	public static int rightTrigger = 12;
 	public static int rightResponse = 13;
 	public static int hatchDetector = 14;
+
+	//HABClimber
+
+	public static int HABLiftLeft = 15;
+	public static int HABLiftRight = 16;
 
 	///////////// PDP PORTS
 
