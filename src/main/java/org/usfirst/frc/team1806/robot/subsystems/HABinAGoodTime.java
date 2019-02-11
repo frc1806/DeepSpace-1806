@@ -17,6 +17,9 @@ public class HABinAGoodTime implements Subsystem {
     private ClimbPosition mClimbPosition;
     private ClimbStates mClimbStates;
 
+    private double avgClimberHeight;
+    private boolean isManual = false;
+
     public static HABinAGoodTime getInstance(){
         return mHabANiceDay;
     }
@@ -66,16 +69,15 @@ public class HABinAGoodTime implements Subsystem {
     public void writeToLog(){
         //TODO
     }
-    private boolean isManual;
-    public boolean manualHandler(boolean manualReq, double left, double right) {
+    public void manualHandler(boolean manualReq, double left, double right) {
+        isManual = manualReq;
         if (manualReq) {
             leftHABArm.getPIDController().setReference(left, ControlType.kDutyCycle);
             rightHABArm.getPIDController().setReference(right, ControlType.kDutyCycle);
             mClimbStates = ClimbStates.MANUAL_CONTROL;
-            return true;
         }
-        else {
-            return false;
+        else if(!manualReq && mClimbStates == ClimbStates.MANUAL_CONTROL) {
+            mClimbStates = ClimbStates.IDLE;
         }
     }
 
@@ -113,16 +115,18 @@ public class HABinAGoodTime implements Subsystem {
                 mClimbPosition = ClimbPosition.RETRACTION_LIMIT;
                 mClimbStates = ClimbStates.IDLE;
             }
-
+            double leftPower = 0;
+            double rightPower = 0;
             @Override
             public void onLoop(double timestamp) {
-
+                avgClimberHeight = (Math.abs(rightHABArm.getEncoder().getPosition()) + Math.abs(leftHABArm.getEncoder().getPosition()))/2;
                 switch (mClimbStates) {
                     case IDLE:
                         stop();
                     case HOLD_POSITION:
                         stop(); //TODO create dumb hold position loop IF needed
-                    case MANUAL_CONTROL:
+                    case POSITION_CONTROL:
+
 
                 }
             }
