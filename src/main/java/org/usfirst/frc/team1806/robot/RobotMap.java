@@ -44,14 +44,12 @@ public class RobotMap {
 	public static int squidExtendBackward = 3;
 
 	//BeaverTail
-	public static int beaverTailFlipperExtend = 4;
-	public static int beaverTailFlipperRetract = 5;
 	public static int beaverTailEjectExtend = 6;
 	public static int beaverTailEjectRetract = 7;
 
 	//CargoIntakeSubsystem
-	public static int cargoIntakeExtend = 8;
-	public static int cargoIntakeRetract = 9;
+	public static int cargoIntakeExtend = 4;
+	public static int cargoIntakeRetract = 5;
 
 
 
@@ -59,10 +57,6 @@ public class RobotMap {
 
 	public static int liftBottomLimit = 0;
 	public static int liftHighLimit = 1;
-	public static int frontLeftTrigger = 2;
-	public static int frontLeftResponse = 3;
-	public static int frontRightTrigger = 4;
-	public static int frontRightResponse = 5;
 	public static int rearLeftTrigger = 6;
 	public static int rearLeftResponse = 7;
 	public static int rearRightTrigger = 8;
@@ -70,8 +64,8 @@ public class RobotMap {
 	public static int leftTrigger = 10;
 	public static int leftResponse = 11;
 	public static int rightTrigger = 12;
-	public static int rightResponse = 13;
-	public static int hatchDetector = 14;
+	public static int rightResponse = 2;
+	public static int hatchDetector = 3;
 
 	///////////// PDP PORTS
 

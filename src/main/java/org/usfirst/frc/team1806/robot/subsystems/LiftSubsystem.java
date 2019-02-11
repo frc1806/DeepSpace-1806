@@ -78,6 +78,7 @@ public class LiftSubsystem  implements Subsystem {
 	public LiftSubsystem() {
 		liftLead = new CANSparkMax(RobotMap.liftLead, CANSparkMaxLowLevel.MotorType.kBrushless);
 		liftLeadController = new CANPIDController(liftLead);
+		liftFollow = new CANSparkMax(RobotMap.liftFollow, CANSparkMaxLowLevel.MotorType.kBrushless);
 		liftFollow.follow(liftLead, true);
 		liftLead.setSmartCurrentLimit(130, 80);
 		liftFollow.setSmartCurrentLimit(130, 80);
@@ -471,7 +472,7 @@ public class LiftSubsystem  implements Subsystem {
 				setLiftIdle();
 			}
 			else{
-				LiftPosition.TEMP_HOLD_POS.setHeight(Constants.kMaxLiftHeightToNeedToExtendIntake + Constants.kSafeLiftHeightOffsetToNotHitIntake)
+				LiftPosition.TEMP_HOLD_POS.setHeight(Constants.kMaxLiftHeightToNeedToExtendIntake + Constants.kSafeLiftHeightOffsetToNotHitIntake);
 				goToSetpoint(LiftPosition.TELEOP_HOLD);
 			}
 		}
