@@ -471,7 +471,7 @@ public class LiftSubsystem  implements Subsystem {
 				setLiftIdle();
 			}
 			else{
-				LiftPosition.TEMP_HOLD_POS.setHeight(Constants.kMaxLiftHeightToNeedToExtendIntake + Constants.kSafeLiftHeightOffsetToNotHitIntake)
+				LiftPosition.TEMP_HOLD_POS.setHeight(Constants.kMaxLiftHeightToNeedToExtendIntake + Constants.kSafeLiftHeightOffsetToNotHitIntake);
 				goToSetpoint(LiftPosition.TELEOP_HOLD);
 			}
 		}
