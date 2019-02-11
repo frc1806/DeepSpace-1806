@@ -56,7 +56,6 @@ public class LiftSubsystem  implements Subsystem {
 	}
 
 	private CANSparkMax liftLead, liftFollow; //gotta have the power
-	private CANPIDController liftLeadController, liftFollowController;
 	public DigitalInput bottomLimit, topLimit;
 
 	private CargoIntakeSubsystem mCargoIntakeSubsystem;
@@ -77,7 +76,6 @@ public class LiftSubsystem  implements Subsystem {
 
 	public LiftSubsystem() {
 		liftLead = new CANSparkMax(RobotMap.liftLead, CANSparkMaxLowLevel.MotorType.kBrushless);
-		liftLeadController = new CANPIDController(liftLead);
 		liftFollow = new CANSparkMax(RobotMap.liftFollow, CANSparkMaxLowLevel.MotorType.kBrushless);
 		liftFollow.follow(liftLead, true);
 		liftLead.setSmartCurrentLimit(130, 80);
@@ -115,16 +113,16 @@ public class LiftSubsystem  implements Subsystem {
 
 	@Override
 	public synchronized void zeroSensors() {
-		liftLead.getEncoder();
+		liftLead.getEncoder().setPosition(0);
 	}
 
 
     public synchronized void zeroSensorsAtTop(){
-        //liftLead.setSelectedSensorPosition(Constants.kLiftTopLimitSwitchPosition, 0, 10); TODO re-add once CanSpark api gets fixed
+        liftLead.getEncoder().setPosition(0);
         mLiftStates = LiftStates.POSITION_CONTROL;
     }
     public synchronized void zeroSensorsAtBottom(){
-        //liftLead.setSelectedSensorPosition(0, 0, 10); TODO re-add once CanSpark api gets fixed
+		liftLead.getEncoder().setPosition(0);
         mLiftStates = LiftStates.POSITION_CONTROL;
     }
 
@@ -222,7 +220,7 @@ public class LiftSubsystem  implements Subsystem {
 					case MANUAL_CONTROL:
 						return;
 					case IDLE:
-						liftLeadController.setReference(0, ControlType.kVoltage);
+						liftLead.getPIDController().setReference(0, ControlType.kDutyCycle);
 						return;
 					default:
 						return;
@@ -252,7 +250,7 @@ public class LiftSubsystem  implements Subsystem {
 			intakePneumaticWait = Constants.kLiftWaitForExtendIntake;
 		}
 		else {
-			liftLeadController.setReference(mLiftPosition.getHeight(), ControlType.kPosition);
+			liftLead.getPIDController().setReference(mLiftPosition.getHeight(), ControlType.kPosition);
 		}
 		//System.out.println(mLiftWantedPosition + "  " + isReadyForSetpoint());
 	}
@@ -261,7 +259,7 @@ public class LiftSubsystem  implements Subsystem {
 		mLiftPosition.TEMP_HOLD_POS.setHeight(setpoint);
 		mLiftPosition = LiftPosition.TEMP_HOLD_POS;
 		setBrakeMode();
-		liftLeadController.setReference(mLiftPosition.getHeight(), ControlType.kPosition);
+		liftLead.getPIDController().setReference(mLiftPosition.getHeight(), ControlType.kPosition);
 		//System.out.println(mLiftWantedPosition + "  " + isReadyForSetpoint());
 	}
 
@@ -312,11 +310,11 @@ public class LiftSubsystem  implements Subsystem {
 		liftLead.setParameter(CANSparkMaxLowLevel.ConfigParameter.kIZone_0, Constants.kLiftPositionIZone);
 		liftLead.setParameter(CANSparkMaxLowLevel.ConfigParameter.kRampRate, Constants.kLiftPositionRampRate);
 		*/
-		liftLeadController.setP(Constants.kLiftPositionkP);
-		liftLeadController.setI(Constants.kLiftPositionkI);
-		liftLeadController.setD(Constants.kLiftPositionkD);
-		liftLeadController.setFF(Constants.kLiftPositionkF);
-		liftLeadController.setIZone(Constants.kLiftPositionIZone);
+		liftLead.getPIDController().setP(Constants.kLiftPositionkP);
+		liftLead.getPIDController().setI(Constants.kLiftPositionkI);
+		liftLead.getPIDController().setD(Constants.kLiftPositionkD);
+		liftLead.getPIDController().setFF(Constants.kLiftPositionkF);
+		liftLead.getPIDController().setIZone(Constants.kLiftPositionIZone);
 
 	}
 
@@ -334,7 +332,7 @@ public class LiftSubsystem  implements Subsystem {
                 mLiftStates = LiftStates.RESET_TO_TOP;
 				mLiftPosition = LiftPosition.TOP_LIMIT;
 			}
-            liftLeadController.setReference(Constants.liftSpeed, ControlType.kDutyCycle);
+            liftLead.getPIDController().setReference(Constants.liftSpeed, ControlType.kDutyCycle);
         } else {
             zeroSensorsAtTop();
         }
@@ -373,7 +371,7 @@ public class LiftSubsystem  implements Subsystem {
      */
 	public synchronized void setLiftIdle(){
 	    mLiftStates = LiftStates.IDLE;
-        liftLeadController.setReference(0, ControlType.kDutyCycle); //DutyCycle just means voltage on scale of -1 to 1
+        liftLead.getPIDController().setReference(0, ControlType.kDutyCycle); //DutyCycle just means voltage on scale of -1 to 1
     }
 	public synchronized  void setLiftHoldPosition(){
 		mLiftStates = LiftStates.POSITION_CONTROL;
@@ -405,7 +403,7 @@ public class LiftSubsystem  implements Subsystem {
 
 	public synchronized void manualMode(double power){
     	mLiftStates = LiftStates.MANUAL_CONTROL;
-    	liftLeadController.setReference(power, ControlType.kDutyCycle);
+		liftLead.getPIDController().setReference(power, ControlType.kDutyCycle);
 	}
 	public void setupForManualMode(){
 
@@ -415,7 +413,7 @@ public class LiftSubsystem  implements Subsystem {
 	 * Used to hold the cube when it is ready to be spat out
 	 */
 	public synchronized void holdPosition(){
-    	liftLeadController.setReference(Constants.kLiftHoldPercentOutput +
+		liftLead.getPIDController().setReference(Constants.kLiftHoldPercentOutput +
 				( mLiftPosition.getHeight() - liftLead.getEncoder().getPosition()) * Constants.kLiftHoldkPGain, ControlType.kDutyCycle);
     	if(Math.abs(getHeightInCounts() - mLiftPosition.getHeight()) < Constants.kLiftPositionTolerance){
     		mLiftStates = LiftStates.POSITION_CONTROL;
