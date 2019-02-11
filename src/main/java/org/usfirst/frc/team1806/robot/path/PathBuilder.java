@@ -43,11 +43,9 @@ public class PathBuilder {
 
     /**
      * A waypoint along a path. Contains a position, radius (for creating curved paths), and speed. The information from
-     * these waypoints is used by the PathBuilder class to generate Paths. Waypoints also contain an optional marker
-     * that is used by the WaitForPathMarkerAction.
+     * these waypoints is used by the PathBuilder class to generate Paths.
      *
      * @see PathBuilder
-     * @see WaitForPathMarkerAction
      */
     public static class Waypoint {
         Translation2d position;
