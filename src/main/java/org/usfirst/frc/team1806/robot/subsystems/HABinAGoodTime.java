@@ -84,6 +84,8 @@ public class HABinAGoodTime implements Subsystem {
     public void outputToSmartDashboard(){
         SmartDashboard.putNumber("Climb rightVel", rightHABArm.getEncoder().getVelocity());
         SmartDashboard.putNumber("Climb leftVel", leftHABArm.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Climb right encoder pos", rightHABArm.getEncoder().getPosition());
+        SmartDashboard.putNumber("Climb left encoder pos", leftHABArm.getEncoder().getPosition());
         SmartDashboard.putNumber("Climb angleOffset", mDriveTrainSubsystem.getGyroRoll());
         SmartDashboard.putString("Climb Position" , mClimbPosition.toString());
         SmartDashboard.putString("Climb States" , mClimbStates.toString());
@@ -117,17 +119,25 @@ public class HABinAGoodTime implements Subsystem {
             }
             double leftPower = 0;
             double rightPower = 0;
+            double kPAngleCorrection = 0.02;
+            double error = 0;
             @Override
             public void onLoop(double timestamp) {
                 avgClimberHeight = (Math.abs(rightHABArm.getEncoder().getPosition()) + Math.abs(leftHABArm.getEncoder().getPosition()))/2;
+                error = mClimbPosition.getHeight() - avgClimberHeight;
                 switch (mClimbStates) {
                     case IDLE:
                         stop();
                     case HOLD_POSITION:
                         stop(); //TODO create dumb hold position loop IF needed
                     case POSITION_CONTROL:
-
-
+                        rightPower = .5 + kPAngleCorrection * mDriveTrainSubsystem.getGyroRoll();
+                        leftPower = .5 - kPAngleCorrection * mDriveTrainSubsystem.getGyroRoll();
+                        rightHABArm.set(rightPower);
+                        leftHABArm.set(leftPower); //TODO maybe add stall protection?
+                        if(Math.abs(error) < 1) {
+                            mClimbStates = ClimbStates.HOLD_POSITION;
+                        }
                 }
             }
 
