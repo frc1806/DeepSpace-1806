@@ -1,6 +1,7 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
 //import jdk.internal.org.objectweb.asm.tree.InnerClassNode;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Looper;
@@ -51,7 +52,7 @@ public class CargoIntakeSubsystem implements Subsystem {
     }
 
     public void outputToSmartDashboard(){
-        //TODO
+        SmartDashboard.putBoolean("OuterIntake Extended",isOuterIntakeExtended());
     }
 
 
