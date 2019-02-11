@@ -25,7 +25,7 @@ public class CompressorControlSubsystem implements Subsystem {
     private AnalogPressureSensor pressureSensor;
     private Boolean override;
     private PowerDistributionPanel powerDistributionPanel;
-    private Double batteryCoulombCount;
+    private Double batteryCoulombCount = 0.0;
 
     private Boolean wasCompressorRunning;
 
@@ -107,7 +107,9 @@ public class CompressorControlSubsystem implements Subsystem {
         pressureSamplingFilter = new SamplingFilter(Constants.kPressureSensorSamplingLoops);
         voltageSamplingFilter = new SamplingFilter(Constants.kBatteryVoltageSamplingLoops);
         amperageSamplingFilter = new SamplingFilter(Constants.kRobotDemandAmpsSamplingLoops);
-
+        batteryCoulombCount = Constants.kFullChargeBatteryCoulombCount;
+        wasCompressorRunning =false;
+        override = false;
     }
     public void writeToLog(){
 

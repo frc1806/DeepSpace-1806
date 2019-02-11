@@ -50,7 +50,7 @@ public class MotionState {
      * 
      * @param t
      *            The time of the new MotionState.
-     * @return A MotionState that is a valid predecessor (if t<=0) or successor (if t>=0) of this state.
+     * @return A MotionState that is a valid predecessor (if t is less than or equal to) or successor (if t is greater than or equal to) of this state.
      */
     public MotionState extrapolate(double t) {
         return extrapolate(t, acc);
@@ -65,7 +65,7 @@ public class MotionState {
      *            The time of the new MotionState.
      * @param acc
      *            The acceleration to apply.
-     * @return A MotionState that is a valid predecessor (if t<=0) or successor (if t>=0) of this state (with the
+     * @return A MotionState that is a valid predecessor (if t is less than or equal to) or successor (if t is greater than or equal to) of this state (with the
      *         specified accel).
      */
     public MotionState extrapolate(double t, double acc) {
@@ -74,7 +74,7 @@ public class MotionState {
     }
 
     /**
-     * Find the next time (first time > MotionState.t()) that this MotionState will be at pos. This is an inverse of the
+     * Find the next time (first time &gt; MotionState.t()) that this MotionState will be at pos. This is an inverse of the
      * extrapolate() method.
      * 
      * @param pos

@@ -78,6 +78,7 @@ public class LiftSubsystem  implements Subsystem {
 	public LiftSubsystem() {
 		liftLead = new CANSparkMax(RobotMap.liftLead, CANSparkMaxLowLevel.MotorType.kBrushless);
 		liftLeadController = new CANPIDController(liftLead);
+		liftFollow = new CANSparkMax(RobotMap.liftFollow, CANSparkMaxLowLevel.MotorType.kBrushless);
 		liftFollow.follow(liftLead, true);
 		liftLead.setSmartCurrentLimit(130, 80);
 		liftFollow.setSmartCurrentLimit(130, 80);
@@ -453,6 +454,11 @@ public class LiftSubsystem  implements Subsystem {
 		return needsIntakeOut;
 	}
 
+	/**
+	 * Checks if the current lift command would need the intake to extend to avoid the mechanisms interfering.
+	 * @param setpoint The setpoint to check if it would require intake extention
+	 * @return TRUE if command
+	 */
 	private boolean currentLiftCommandNeedsIntakeExtension(LiftPosition setpoint){
 		return getHeightInCounts() < Constants.kMaxLiftHeightToNeedToExtendIntake || setpoint.getHeight() <Constants.kMaxLiftHeightToNeedToExtendIntake;
 	}
