@@ -1,5 +1,6 @@
 package org.usfirst.frc.team1806.robot.auto.actions.actionUtil;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.subsystems.DriveTrainSubsystem;
 

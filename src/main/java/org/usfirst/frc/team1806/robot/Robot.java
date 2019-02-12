@@ -271,4 +271,3 @@ public class Robot extends TimedRobot {
         S_SubsystemManager.retractAll();
     }
   }
-
