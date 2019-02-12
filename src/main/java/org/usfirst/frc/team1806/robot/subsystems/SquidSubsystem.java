@@ -43,10 +43,18 @@ public class SquidSubsystem implements Subsystem {
 
     }
 
+    /**
+     * Checks if squid is open
+     * @return boolean where extended is true and not extended is false
+     */
     public boolean isOpen() {
         return mSquidSolenoid.get() == DoubleSolenoid.Value.kForward;
     }
 
+    /**
+     * Checks if hatch is in the squid
+     * @return true if there is a hatch in the squid if not return false
+     */
     public boolean isDetectingHatch(){
         return mHatchDetector.get();
     }
@@ -55,25 +63,47 @@ public class SquidSubsystem implements Subsystem {
     public void registerEnabledLoops(Looper enabledLooper){
 
     }
+
+    /**
+     * opens the squid
+     */
     public void openSquid(){
         mSquidSolenoid.set(DoubleSolenoid.Value.kForward);
 
     }
+
+    /**
+     * closes the squid
+     */
     public void closeSquid(){
         mSquidSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 
+    /**
+     * extends the squid
+     */
     public void extendSquid() {
         mSquidExtender.set(DoubleSolenoid.Value.kForward);
     }
 
+    /**
+     * retracts the squid
+     */
     public void retractSquid () {
         mSquidExtender.set(DoubleSolenoid.Value.kReverse);
     }
+
+    /**
+     * checks if the squid is extended
+     * @return true if extended if not return false
+     */
     public boolean isExtended() {
         return mSquidExtender.get() == DoubleSolenoid.Value.kForward;
     }
 
+    /**
+     * opens the squid if it detects a hatch panel
+     */
     public void openSquidIfHatch() {
         if (isDetectingHatch()) {
             openSquid();
