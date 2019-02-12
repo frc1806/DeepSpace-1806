@@ -57,14 +57,14 @@ public class IntakeSubsystem implements Subsystem{
 	 * @param rightCAN the id for the right motor TalonSRX
 	 * @param leftCAN the id for the left TalonSRX
 	 */
-	public IntakeSubsystem(double intakingSpeed, int rightCAN, int leftCAN) {
+	public IntakeSubsystem(double intakingSpeed, int rightCAN, int leftCAN, boolean flipLeft, boolean flipRight) {
 		leftOuterIntake = new TalonSRX(rightCAN);
 		rightOuterIntake = new TalonSRX(leftCAN);
 		intakeCircularBuffer = new CircularBuffer(wantedSize);
 		timer = new Timer();
 		stopperTimer = new Timer();
-		rightOuterIntake.setInverted(true);
-		leftOuterIntake.setInverted(false);
+		rightOuterIntake.setInverted(flipRight);
+		leftOuterIntake.setInverted(flipLeft);
 		mIntakingSpeed = intakingSpeed;
 	}
 	@Override
@@ -85,6 +85,7 @@ public class IntakeSubsystem implements Subsystem{
 		hasStopped = false;
 		timer.reset();
 		timer.stop();
+		stopAllMotors();
 	}
 
 	@Override
