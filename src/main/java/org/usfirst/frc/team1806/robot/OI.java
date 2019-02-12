@@ -50,7 +50,6 @@ public class OI {
 		switch(Robot.getGamePieceMode()){
 			case HATCH_PANEL:
 			default:
-
 				synchronized (mLiftSubsystem) {
 					if(dc.getButtonA()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_HATCH_LOW);
@@ -131,7 +130,10 @@ public class OI {
 						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.IRRESPONSIBLE);
 					} else if (dc.getButtonLB()) {
 						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.SLOW);
+					} else {
+						mCargoIntakeSubsystem.stop();
 					}
+
 				}
 
 				if(dc.getButtonRB() && !wasChangeModeButton){

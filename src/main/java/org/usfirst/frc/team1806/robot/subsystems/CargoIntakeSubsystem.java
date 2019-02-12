@@ -41,8 +41,8 @@ public class CargoIntakeSubsystem implements Subsystem {
     private CargoIntakeSubsystem(){
 
         extensionSolenoid = new DoubleSolenoid(RobotMap.cargoIntakeExtend, RobotMap.cargoIntakeRetract);
-        innerIntake = new IntakeSubsystem(Constants.kInnerIntakingSpeed, RobotMap.leftInnerIntake, RobotMap.rightInnerIntake);
-        outerIntake = new IntakeSubsystem(Constants.kOuterIntakingSpeed, RobotMap.leftOuterIntake, RobotMap.rightOuterIntake);
+        innerIntake = new IntakeSubsystem(Constants.kInnerIntakingSpeed, RobotMap.leftInnerIntake, RobotMap.rightInnerIntake, false, true);
+        outerIntake = new IntakeSubsystem(Constants.kOuterIntakingSpeed, RobotMap.leftOuterIntake, RobotMap.rightOuterIntake, false, false);
         liftSubsystem = LiftSubsystem.getInstance();
     }
 
@@ -52,7 +52,7 @@ public class CargoIntakeSubsystem implements Subsystem {
     }
 
     public void outputToSmartDashboard(){
-        SmartDashboard.putBoolean("OuterIntake Extended",isOuterIntakeExtended());
+        SmartDashboard.putBoolean("OuterIntakeExtend", isOuterIntakeExtended());
     }
 
 
@@ -86,7 +86,7 @@ public class CargoIntakeSubsystem implements Subsystem {
     innerIntake.intakeLeftSide(Constants.kInnerIntakingSpeed);
     innerIntake.intakeRightSide(Constants.kInnerIntakingSpeed);
     if(isOuterIntakeExtended()){
-        outerIntake.intakeLeftSide(Constants.kOuterIntakingSpeed);
+        outerIntake.intakeLeftSide(Constants.kOuterIntakingSpeed +.2);
         outerIntake.intakeRightSide(Constants.kOuterIntakingSpeed);
     }
     else{
