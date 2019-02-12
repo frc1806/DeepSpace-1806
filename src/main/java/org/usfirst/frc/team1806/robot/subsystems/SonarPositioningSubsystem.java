@@ -11,12 +11,12 @@ import org.usfirst.frc.team1806.robot.util.Translation2d;
 public class SonarPositioningSubsystem {
 
     private static SonarPositioningSubsystem mSonarPositioningSubsystem = new SonarPositioningSubsystem();
-    private Ultrasonic frontLeft, frontRight, rearLeft, rearRight, left, right;
+    private Ultrasonic rearLeft, rearRight, left, right;
     public static SonarPositioningSubsystem getInstance() {return mSonarPositioningSubsystem;}
 
     private SonarPositioningSubsystem(){
-        frontLeft = new Ultrasonic(RobotMap.frontLeftTrigger, RobotMap.frontLeftResponse);
-        frontRight = new Ultrasonic(RobotMap.frontRightTrigger, RobotMap.frontRightResponse);
+        //frontLeft = new Ultrasonic(RobotMap.frontLeftTrigger, RobotMap.frontLeftResponse);
+        //rontRight = new Ultrasonic(RobotMap.frontRightTrigger, RobotMap.frontRightResponse);
         rearLeft = new Ultrasonic(RobotMap.rearLeftTrigger, RobotMap.rearLeftResponse);
         rearRight = new Ultrasonic(RobotMap.rearRightTrigger, RobotMap.rearRightResponse);
         left = new Ultrasonic(RobotMap.leftTrigger,RobotMap.leftResponse);
@@ -33,9 +33,6 @@ public class SonarPositioningSubsystem {
     }
     public RigidTransform2d getLeftBackwardsStartPose(){
         return new RigidTransform2d (new Translation2d(0,0), Rotation2d.fromDegrees(0));
-    }
-    public double getAverageFrontOfRobotDistance(){
-        return (frontLeft.getRangeInches() + frontRight.getRangeInches()) / 2;
     }
     public double getAverageBackOfRobotDistance(){
         return (rearLeft.getRangeInches() + rearRight.getRangeInches()) / 2;

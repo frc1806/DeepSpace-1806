@@ -12,11 +12,11 @@ public class BeaverTailSubsystem implements Subsystem {
     public static  BeaverTailSubsystem getInstance(){
         return mBeaverTailSubsystem;
     }
-    private DoubleSolenoid mBeaverTailFlipper;
+  //  private DoubleSolenoid mBeaverTailFlipper;
     private DoubleSolenoid mBeaverTailEject;
 
     private BeaverTailSubsystem(){
-        mBeaverTailFlipper = new DoubleSolenoid(RobotMap.beaverTailFlipperExtend, RobotMap.beaverTailFlipperRetract);
+      //  mBeaverTailFlipper = new DoubleSolenoid(RobotMap.beaverTailFlipperExtend, RobotMap.beaverTailFlipperRetract);
         mBeaverTailEject = new DoubleSolenoid(RobotMap.beaverTailEjectExtend, RobotMap.beaverTailEjectRetract);
     }
 
@@ -25,13 +25,13 @@ public class BeaverTailSubsystem implements Subsystem {
     }
 
     public void outputToSmartDashboard(){
-        SmartDashboard.putString("Beaver Tail Flipper State", mBeaverTailFlipper.get().name());
+        //SmartDashboard.putString("Beaver Tail Flipper State", mBeaverTailFlipper.get().name());
         SmartDashboard.putString("Beaver Tail Eject State", mBeaverTailEject.get().name());
     }
 
     public void stop(){
         mBeaverTailEject.set(DoubleSolenoid.Value.kOff);
-        mBeaverTailFlipper.set(DoubleSolenoid.Value.kOff);
+       // mBeaverTailFlipper.set(DoubleSolenoid.Value.kOff);
     }
 
     public void zeroSensors(){
@@ -43,15 +43,15 @@ public class BeaverTailSubsystem implements Subsystem {
     }
 
     public boolean isOut(){
-        return mBeaverTailFlipper.get() == DoubleSolenoid.Value.kForward;
+        return false;//mBeaverTailFlipper.get() == DoubleSolenoid.Value.kForward;
     }
 
     public void extendBeaverTail(){
-        mBeaverTailFlipper.set(DoubleSolenoid.Value.kForward);
+        //mBeaverTailFlipper.set(DoubleSolenoid.Value.kForward);
     }
 
     public void retractBeaverTail(){
-        mBeaverTailFlipper.set(DoubleSolenoid.Value.kReverse);
+        //mBeaverTailFlipper.set(DoubleSolenoid.Value.kReverse);
     }
 
     public boolean isEjected(){

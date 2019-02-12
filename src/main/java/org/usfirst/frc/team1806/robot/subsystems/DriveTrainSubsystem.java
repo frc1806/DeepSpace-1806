@@ -1,10 +1,6 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
-import java.awt.Robot;
-import java.util.HashSet;
-
 //import org.omg.CORBA.PRIVATE_MEMBER;
-import com.google.common.base.Function;
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Kinematics;
 import org.usfirst.frc.team1806.robot.RobotMap;
@@ -26,13 +22,8 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.I2C.Port;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+		import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.SPI;
 
 /**
@@ -243,9 +234,17 @@ public class DriveTrainSubsystem implements Subsystem {
 		}
 	}
 
-	public synchronized Rotation2d getGyroAngle() {
+	public synchronized Rotation2d getGyroYaw() {
 		return navx.getYaw();
 		//return new Rotation2d();
+	}
+
+	private double zeroRoll = 0;
+	public synchronized double getGyroRoll() {
+		return navx.getRoll() - zeroRoll;
+	}
+	public void zeroGyroRoll() {
+		zeroRoll = navx.getRoll();
 	}
 
 	public double getLeftDistanceInches() {
@@ -353,7 +352,7 @@ public class DriveTrainSubsystem implements Subsystem {
 		SmartDashboard.putNumber("Right Motor Percent Output", masterRight.getMotorOutputPercent());
 		SmartDashboard.putNumber("Left Motor Percent Output", masterLeft.getMotorOutputPercent());
 		SmartDashboard.putString("Drive State", returnDriveState());
-		SmartDashboard.putNumber("NavX", getGyroAngle().getDegrees());
+		SmartDashboard.putNumber("NavX", getGyroYaw().getDegrees());
 		SmartDashboard.putBoolean("Are we in brake mode", mIsBrakeMode);
 	}
 

@@ -82,8 +82,14 @@ public class CargoIntakeSubsystem implements Subsystem {
     public void intakeCargo(){
     innerIntake.intakeLeftSide(Constants.kInnerIntakingSpeed);
     innerIntake.intakeRightSide(Constants.kInnerIntakingSpeed);
-    outerIntake.intakeLeftSide(Constants.kOuterIntakingSpeed);
-    outerIntake.intakeRightSide(Constants.kOuterIntakingSpeed);
+    if(isOuterIntakeExtended()){
+        outerIntake.intakeLeftSide(Constants.kOuterIntakingSpeed);
+        outerIntake.intakeRightSide(Constants.kOuterIntakingSpeed);
+    }
+    else{
+        outerIntake.stop();
+    }
+
     }
 
     /**

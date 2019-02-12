@@ -10,9 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1806.robot.auto.*;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 import org.usfirst.frc.team1806.robot.path.motion.RobotStateEstimator;
-import org.usfirst.frc.team1806.robot.subsystems.DriveTrainSubsystem;
-import org.usfirst.frc.team1806.robot.subsystems.LiftSubsystem;
-import org.usfirst.frc.team1806.robot.subsystems.SubsystemManager;
+import org.usfirst.frc.team1806.robot.subsystems.*;
 import org.usfirst.frc.team1806.robot.util.CrashTracker;
 import org.usfirst.frc.team1806.robot.util.DriveSignal;
 import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
@@ -37,7 +35,7 @@ public class Robot extends TimedRobot {
 
 
     private static final SubsystemManager S_SubsystemManager = new SubsystemManager(
-            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance()));
+            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance(), CompressorControlSubsystem.getInstance(), CargoIntakeSubsystem.getInstance()));
 
     private Looper mEnabledLooper = new Looper();
 
@@ -67,6 +65,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
+        Robot.setGamePieceMode(GamePieceMode.HATCH_PANEL);
       m_oi = new OI();
 
       //Sets up camera
