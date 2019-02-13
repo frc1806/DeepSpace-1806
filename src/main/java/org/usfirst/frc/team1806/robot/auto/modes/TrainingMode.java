@@ -3,10 +3,8 @@ package org.usfirst.frc.team1806.robot.auto.modes;
 import org.usfirst.frc.team1806.robot.auto.AutoModeBase;
 import org.usfirst.frc.team1806.robot.auto.AutoModeEndedException;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.*;
-import org.usfirst.frc.team1806.robot.auto.actions.LiftToHeight;
 import org.usfirst.frc.team1806.robot.auto.paths.RightFeed2HCR2;
 import org.usfirst.frc.team1806.robot.path.PathContainer;
-import org.usfirst.frc.team1806.robot.subsystems.LiftSubsystem;
 import org.usfirst.frc.team1806.robot.util.Translation2d;
 
 public class TrainingMode extends AutoModeBase {

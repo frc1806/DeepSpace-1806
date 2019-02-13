@@ -1,7 +1,6 @@
 package org.usfirst.frc.team1806.robot.auto.actions;
 
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.Action;
-import org.usfirst.frc.team1806.robot.subsystems.LiftSubsystem;
 
 public class LiftToHeight implements Action {
 
