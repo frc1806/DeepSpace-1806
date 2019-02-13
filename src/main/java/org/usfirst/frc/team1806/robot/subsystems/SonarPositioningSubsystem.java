@@ -19,11 +19,10 @@ public class SonarPositioningSubsystem implements Subsystem{
         //frontLeft = new Ultrasonic(RobotMap.frontLeftTrigger, RobotMap.frontLeftResponse);
         //frontRight = new Ultrasonic(RobotMap.frontRightTrigger, RobotMap.frontRightResponse);
         rearLeft = new Ultrasonic(RobotMap.rearLeftTrigger, RobotMap.rearLeftResponse);
-        rearRight = new Ultrasonic(RobotMap.rearRightTrigger, RobotMap.rearRightResponse);
-        left = new Ultrasonic(RobotMap.leftTrigger,RobotMap.leftResponse);
-        right = new Ultrasonic(RobotMap.rightTrigger, RobotMap.rightResponse);
+        //rearRight = new Ultrasonic(RobotMap.rearRightTrigger, RobotMap.rearRightResponse);
+        //left = new Ultrasonic(RobotMap.leftTrigger,RobotMap.leftResponse);
+        //right = new Ultrasonic(RobotMap.rightTrigger, RobotMap.rightResponse);
         rearLeft.setAutomaticMode(true);
-        rearLeft.ping();
     }
     public RigidTransform2d getRightFowardsStartPose(){
         return new RigidTransform2d (new Translation2d(0,0), Rotation2d.fromDegrees(0));
@@ -44,7 +43,7 @@ public class SonarPositioningSubsystem implements Subsystem{
     final double sideOffset = 11;
     final double rearSeperation = 16;
     public RigidTransform2d getRobotPoseFromUltrasonic() {
-        double robotAngle = Math.atan((rearLeft.getRangeInches() - rearRight.getRangeInches())/rearSeperation);
+        //double robotAngle = Math.atan((rearLeft.getRangeInches() - rearRight.getRangeInches())/rearSeperation);
         return new RigidTransform2d (new Translation2d(0,0), Rotation2d.fromDegrees(0));
     }
 
@@ -58,11 +57,17 @@ public class SonarPositioningSubsystem implements Subsystem{
     }
 
     public void outputToSmartDashboard(){
+        System.out.println("SSS" + rearLeft.getRangeInches());
+        try {
+            //SmartDashboard.putNumber("Ultrasonic Left", left.getRangeInches());
+            //SmartDashboard.putNumber("Ultrasonic Right", right.getRangeInches());
+            SmartDashboard.putNumber("Ultrasonic Rear Left", rearLeft.getRangeInches());
+            //SmartDashboard.putNumber("Ultrasonic Rear Right", rearRight.getRangeInches());
 
-        SmartDashboard.putNumber("Ultrasonic Left", left.getRangeInches());
-        SmartDashboard.putNumber("Ultrasonic Right", right.getRangeInches());
-        SmartDashboard.putNumber("Ultrasonic Rear Left", rearLeft.getRangeInches());
-        SmartDashboard.putNumber("Ultrasonic Rear Right", rearRight.getRangeInches());
+        }
+        catch (Exception e){
+            System.out.println("SSS ultra sonic error");
+        }
     }
 
     public void stop(){

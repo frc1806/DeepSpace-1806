@@ -41,7 +41,7 @@ public class CargoIntakeSubsystem implements Subsystem {
     private CargoIntakeSubsystem(){
 
         extensionSolenoid = new DoubleSolenoid(RobotMap.cargoIntakeExtend, RobotMap.cargoIntakeRetract);
-        innerIntake = new IntakeSubsystem(Constants.kInnerIntakingSpeed, RobotMap.leftInnerIntake, RobotMap.rightInnerIntake, false, true);
+        innerIntake = new IntakeSubsystem(Constants.kInnerIntakingSpeed, RobotMap.leftInnerIntake, RobotMap.rightInnerIntake, false, false);
         outerIntake = new IntakeSubsystem(Constants.kOuterIntakingSpeed, RobotMap.leftOuterIntake, RobotMap.rightOuterIntake, false, false);
         liftSubsystem = LiftSubsystem.getInstance();
     }
@@ -83,7 +83,7 @@ public class CargoIntakeSubsystem implements Subsystem {
     innerIntake.intakeLeftSide(Constants.kInnerIntakingSpeed);
     innerIntake.intakeRightSide(Constants.kInnerIntakingSpeed);
     if(isOuterIntakeExtended()){
-        outerIntake.intakeLeftSide(Constants.kOuterIntakingSpeed +.2);
+        outerIntake.intakeLeftSide(Constants.kOuterIntakingSpeed);
         outerIntake.intakeRightSide(Constants.kOuterIntakingSpeed);
     }
     else{

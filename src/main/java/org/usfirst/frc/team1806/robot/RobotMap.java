@@ -62,8 +62,8 @@ public class RobotMap {
 
 	public static int liftBottomLimit = 0;
 	public static int liftHighLimit = 1;
-	public static int rearLeftTrigger = 6;
-	public static int rearLeftResponse = 7;
+	public static int rearLeftTrigger = 4;
+	public static int rearLeftResponse = 5;
 	public static int rearRightTrigger = 8;
 	public static int rearRightResponse = 9;
 	public static int leftTrigger = 10;
