@@ -79,6 +79,9 @@ public class CargoIntakeSubsystem implements Subsystem {
         return extensionSolenoid.get() == DoubleSolenoid.Value.kForward;
     }
 
+    /**
+     * function to enable the intake system
+     */
     public void intakeCargo(){
     innerIntake.intakeLeftSide(Constants.kInnerIntakingSpeed);
     innerIntake.intakeRightSide(Constants.kInnerIntakingSpeed);
@@ -102,7 +105,9 @@ public class CargoIntakeSubsystem implements Subsystem {
 
     }
 
-
+    /**
+     * when HatchMode is enabled it retracts outer intake
+     */
     public void goToHatchMode(){
         if(!liftSubsystem.isNeedingIntakeOut()){
             retractOuterIntake();
