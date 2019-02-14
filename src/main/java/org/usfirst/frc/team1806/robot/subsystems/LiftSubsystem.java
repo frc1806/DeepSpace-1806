@@ -170,7 +170,9 @@ public class LiftSubsystem  implements Subsystem {
 						}
 					}
 
-					if(needsIntakeOut && getHeightInCounts() > Constants.kMaxLiftHeightToNeedToExtendIntake){
+					if(needsIntakeOut
+							&& ((getHeightInCounts() > Constants.kMaxLiftHeightToNeedToExtendIntake && mLiftPosition.getHeight() > Constants.kMaxLiftHeightToNeedToExtendIntake)
+							||(	mLiftPosition.getHeight() <= Constants.kMaxLiftHeightToNeedToExtendIntake && isAtPosition()))){
 						needsIntakeOut = false;
 						if(!wasIntakeOut || Robot.getGamePieceMode() == Robot.GamePieceMode.HATCH_PANEL){
 							mCargoIntakeSubsystem.retractOuterIntake();
@@ -384,6 +386,8 @@ public class LiftSubsystem  implements Subsystem {
 		mLiftStates = LiftStates.POSITION_CONTROL;
         setBrakeMode();
     }
+
+
 	public synchronized void goToTeleOpHold(){
     	mLiftPosition = LiftPosition.TELEOP_HOLD;
     	mLiftStates = LiftStates.POSITION_CONTROL;
