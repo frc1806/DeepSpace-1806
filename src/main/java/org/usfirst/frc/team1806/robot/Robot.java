@@ -230,7 +230,7 @@ public class Robot extends TimedRobot {
       mRobotState.reset(Timer.getFPGATimestamp(), new RigidTransform2d());
 //        System.out.print("All Sensors zeroed!");
 
-    }
+}
     public synchronized void allPeriodic() {
       S_SubsystemManager.outputToSmartDashboard();
       mRobotState.outputToSmartDashboard();
