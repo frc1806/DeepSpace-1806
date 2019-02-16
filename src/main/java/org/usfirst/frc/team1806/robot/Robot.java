@@ -28,6 +28,7 @@ public class Robot extends TimedRobot {
 
     private DriveTrainSubsystem mDrive = DriveTrainSubsystem.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
+    private static PowerDistributionPanel mPdp = new PowerDistributionPanel();
     private AutoModeExecuter mAutoModeExecuter = null;
     public static OI m_oi;
     public static PowerDistributionPanel powerDistributionPanel;
@@ -38,6 +39,10 @@ public class Robot extends TimedRobot {
             Arrays.asList(DriveTrainSubsystem.getInstance(), SonarPositioningSubsystem.getInstance()));
 
     private Looper mEnabledLooper = new Looper();
+
+    public static PowerDistributionPanel getPDPInstance() {
+        return mPdp;
+    }
 
     public static AutoModeBase selectedAuto;
     public static boolean isBlue;
@@ -69,12 +74,14 @@ public class Robot extends TimedRobot {
       m_oi = new OI();
 
       //Sets up camera
+        /*
       camera = new UsbCamera("cam0", 0);
       camera.setFPS(30);
       camera.setBrightness(20);
       camera.getPath();
       cameraServer = new MjpegServer("camera",  5806);
       cameraServer.setSource(camera);
+      */
       zeroAllSensors();
 
       //adds in the iterative code to make the code run
