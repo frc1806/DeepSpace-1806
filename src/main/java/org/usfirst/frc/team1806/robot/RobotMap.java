@@ -12,10 +12,8 @@ public class RobotMap {
 	
 	//Drive train CAN
 
-	public static int rightA = 0; //
 	public static int masterRight = 1; //
 	public static int rightC = 2;
-	public static int leftA = 3;  //
 	public static int masterLeft = 4;  //
 	public static int leftC = 5; //
 
@@ -25,7 +23,12 @@ public class RobotMap {
 	public static int liftLead = 6;
 	public static int liftFollow = 7;
 
-	
+	//Climber CAN
+
+	public static int climberRight = 3;
+	public static int climberLeft = 8;
+
+
 	//Intake CAN Ports
 	
 	public static int leftInnerIntake = 11;
