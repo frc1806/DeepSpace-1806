@@ -216,7 +216,7 @@ public class PathSegment {
     /**
      * Gets the remaining distance left on the segment from point <code>point</code>
      * 
-     * @param point
+     * @param position
      *            result of <code>getClosestPoint()</code>
      * @return distance remaining
      */

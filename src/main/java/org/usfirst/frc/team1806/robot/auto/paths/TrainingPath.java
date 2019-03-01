@@ -21,27 +21,31 @@ public class TrainingPath implements PathContainer{
      */
     @Override
     public Path buildPath() {
-        ArrayList<PathBuilder.Waypoint> sWaypoints = new ArrayList<PathBuilder.Waypoint>();
-        sWaypoints.add(new PathBuilder.Waypoint(-11,-19,0,0));
-        //hope that's the starting point^ TODO: That ain't it, chief.
-        sWaypoints.add(new PathBuilder.Waypoint(-35,-4,0,50));
-        sWaypoints.add(new PathBuilder.Waypoint(0,-4.5,0,50));
-        //these puppies are gonna be adjusted once we get Mr. Roboto on the field
-        sWaypoints.add(new PathBuilder.Waypoint(120,220,0,50));
-        sWaypoints.add(new PathBuilder.Waypoint(110,200,0,50));
+        ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
+
+        sWaypoints.add(new Waypoint(40,45,0,0));
+        sWaypoints.add(new Waypoint(70,60,5,60));
+        sWaypoints.add(new Waypoint(140,79,20,60));
+        sWaypoints.add(new Waypoint(220,79,15,60));
+        sWaypoints.add(new Waypoint(275,75,13,60));
+        sWaypoints.add(new Waypoint(276,90,0,55));
+        sWaypoints.add(new Waypoint(284,110,0,60));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
 
     @Override
     public RigidTransform2d getStartPose() {
-        // TODO: Update startpoint, probably translate entire path based on that info.
-        return new RigidTransform2d(new Translation2d(-11, -19), Rotation2d.fromDegrees(0.0));
+        return new RigidTransform2d(new Translation2d(40, 45), Rotation2d.fromDegrees(0));
     }
+
 
     @Override
     public boolean isReversed() {
-        // TODO Auto-generated method stub
         return false;
     }
+    // WAYPOINT_DATA: [{"position":{"x":50,"y":50},"speed":0,"radius":0,"comment":""},{"position":{"x":100,"y":50},"speed":80,"radius":10,"comment":""},{"position":{"x":150,"y":90},"speed":80,"radius":10,"comment":""},{"position":{"x":150,"y":160},"speed":60,"radius":0,"comment":""}]
+    // IS_REVERSED: false
+    // FILE_NAME: UntitledPath
+
 }
