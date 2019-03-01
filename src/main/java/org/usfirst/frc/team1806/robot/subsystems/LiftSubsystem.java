@@ -14,6 +14,8 @@ import com.revrobotics.CANEncoder.*;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.DigitalInput;
 
+import javax.naming.ldap.Control;
+
 /**
  * Whew, this subsystem is for our liftactions, we will later implement this into a superstructure
  * so we can interact with our intake for doing things like shooting!
@@ -70,8 +72,6 @@ public class LiftSubsystem  implements Subsystem {
 	private LiftStates mLiftStates;
 	private LiftPosition mLiftPosition;
 
-	private CANPIDController canpidController;
-
 	private static LiftSubsystem mLiftSubsystem = new LiftSubsystem(); //only ever 1 lift
 
 	public LiftSubsystem() {
@@ -85,7 +85,8 @@ public class LiftSubsystem  implements Subsystem {
 		mLiftStates = LiftStates.IDLE;
 		mLiftPosition = LiftPosition.BOTTOM_LIMIT;
  		reloadGains();
- 		canpidController = new CANPIDController(liftLead);
+
+ 		liftLead.getEncoder().setPositionConversionFactor(48);
 
  		intakePneumaticWait = 0;
  		mCargoIntakeSubsystem = CargoIntakeSubsystem.getInstance();
@@ -166,7 +167,7 @@ public class LiftSubsystem  implements Subsystem {
 						intakePneumaticWait -= (timestamp - lastTimeStamp);
 						if(intakePneumaticWait <= 0)
 						{
-							liftLead.set(mLiftPosition.getHeight());
+							liftLead.getPIDController().setReference(mLiftPosition.getHeight(), ControlType.kPosition);
 						}
 					}
 
@@ -245,15 +246,15 @@ public class LiftSubsystem  implements Subsystem {
 		mLiftStates = LiftStates.POSITION_CONTROL;
 		mLiftPosition = setpoint;
 		setBrakeMode();
-		if(currentLiftCommandNeedsIntakeExtension(setpoint)){
+		/*if(currentLiftCommandNeedsIntakeExtension(setpoint)){
 			needsIntakeOut = true;
 			wasIntakeOut = mCargoIntakeSubsystem.isOuterIntakeExtended();
 			mCargoIntakeSubsystem.extendOuterIntake();
-			intakePneumaticWait = Constants.kLiftWaitForExtendIntake;
+			intakePneumaticWait =0; //Constants.kLiftWaitForExtendIntake;
 		}
-		else {
+		else {*/
 			liftLead.getPIDController().setReference(mLiftPosition.getHeight(), ControlType.kPosition);
-		}
+		//}
 		//System.out.println(mLiftWantedPosition + "  " + isReadyForSetpoint());
 	}
 	public synchronized void goToSetpoint(int setpoint) {

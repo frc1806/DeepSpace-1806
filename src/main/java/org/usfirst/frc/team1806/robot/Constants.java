@@ -12,7 +12,7 @@ public class Constants {
 
     public final static int kDriveTrainPIDSetTimeout = 30;
     public final static double kCountsPerInch = 323.8833166666667;
-    public final static double kDriveInchesPerCount = 0.0030875316774318;
+    public final static double kDriveInchesPerRevolution = 0.0030875316774318;
 
     ///Motion
     public final static double kMinLookAhead = 9; // inches
