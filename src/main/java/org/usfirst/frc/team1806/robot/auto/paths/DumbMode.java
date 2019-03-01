@@ -2,8 +2,6 @@ package org.usfirst.frc.team1806.robot.auto.paths;
 
 import java.util.ArrayList;
 
-import org.usfirst.frc.team1806.robot.auto.AutoModeBase;
-import org.usfirst.frc.team1806.robot.auto.AutoModeEndedException;
 import org.usfirst.frc.team1806.robot.path.Path;
 import org.usfirst.frc.team1806.robot.path.PathBuilder;
 import org.usfirst.frc.team1806.robot.path.PathBuilder.Waypoint;

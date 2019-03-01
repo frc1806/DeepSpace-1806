@@ -1,4 +1,4 @@
-package org.usfirst.frc.team1806.robot.auto;
+package org.usfirst.frc.team1806.robot.auto.modes.modesUtil;
 
 /**
  * Exception thrown when an auto mode ends unexpectedly

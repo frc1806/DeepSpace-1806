@@ -1,4 +1,4 @@
-package org.usfirst.frc.team1806.robot.auto;
+package org.usfirst.frc.team1806.robot.auto.modes.modesUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
