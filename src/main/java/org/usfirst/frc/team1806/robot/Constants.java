@@ -140,4 +140,11 @@ public class Constants {
     //controls
     public final static double kTriggerThreshold = .2;
 
+    //Action wait time constants
+    public final static double kOpenSquidTimeToWait = 0.5;
+    public final static double kCloseSquidTimeToWait = 0.5;
+    public final static double kRtractSquidTimeToWait = 0.5;
+    public final static double kExtendSquidTimeToWait = 0.5;
+
+
 }

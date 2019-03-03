@@ -59,6 +59,13 @@ public class Robot extends TimedRobot {
 
     private static GamePieceMode GamePieceMode;
 
+    public enum ControlMode{
+        SEQUENCE_CONTROL,
+        OPERATOR_CONTROL
+    }
+
+    private static ControlMode ControlMode;
+
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -66,6 +73,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         Robot.setGamePieceMode(GamePieceMode.HATCH_PANEL);
+        Robot.setControlMode(Robot.ControlMode.OPERATOR_CONTROL);
       m_oi = new OI();
 
       //Sets up camera
@@ -256,7 +264,7 @@ public class Robot extends TimedRobot {
                 S_SubsystemManager.goToCargoMode();
                 break;
             case HATCH_PANEL:
-                S_SubsystemManager.goToCargoMode();
+                S_SubsystemManager.goToHatchMode();
                 break;
             default:
                 break;
@@ -266,6 +274,12 @@ public class Robot extends TimedRobot {
     public static synchronized GamePieceMode getGamePieceMode(){
         return GamePieceMode;
     }
+
+    public static synchronized void setControlMode(ControlMode mode){
+        ControlMode = mode;
+    }
+
+    public static synchronized ControlMode getControlMode(){return ControlMode;}
 
     public static synchronized void RetractAll(){
         S_SubsystemManager.retractAll();

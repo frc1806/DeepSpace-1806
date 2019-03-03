@@ -28,6 +28,7 @@ public class OI {
 	private Latch autoInTeleOp = new Latch();
 	private Boolean wasSquidExtendButton = false;
 	private Boolean wasChangeModeButton = false;
+	private Boolean wasChangeControlModeButton = false;
 	private CargoIntakeSubsystem mCargoIntakeSubsystem = CargoIntakeSubsystem.getInstance();
 
 	public void runCommands(){
@@ -75,7 +76,7 @@ public class OI {
 					}
 
 
-					if (!wasSquidExtendButton && dc.getPOVRight()) {
+					if (!wasSquidExtendButton && dc.getRightTrigger() > Constants.kTriggerThreshold) {
 						if (mSquidSubsystem.isExtended()) {
 							mSquidSubsystem.retractSquid();
 						} else {
@@ -143,6 +144,23 @@ public class OI {
 				break;
 		}
 
+		switch (Robot.getControlMode()){
+			case OPERATOR_CONTROL:
+			default:
+				
+				if(!wasChangeControlModeButton && oc.getPOVUp()){
+					Robot.setControlMode(Robot.ControlMode.SEQUENCE_CONTROL);
+				}
+				break;
+
+			case SEQUENCE_CONTROL:
+
+				if(!wasChangeControlModeButton && oc.getPOVUp()){
+					Robot.setControlMode(Robot.ControlMode.OPERATOR_CONTROL);
+				}
+				break;
+		}
+
 		if(dc.getButtonBack() || oc.getPOVDown()){
 			Robot.RetractAll();
 		}
@@ -151,6 +169,7 @@ public class OI {
 
 		wasSquidExtendButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
 		wasChangeModeButton = dc.getButtonRB();
+		wasChangeControlModeButton = oc.getPOVUp();
 
 	}
 	public void resetAutoLatch(){
