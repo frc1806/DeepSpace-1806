@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.usfirst.frc.team1806.robot.Vision.VisionServer;
 import org.usfirst.frc.team1806.robot.auto.*;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 import org.usfirst.frc.team1806.robot.path.motion.RobotStateEstimator;
@@ -28,6 +29,7 @@ public class Robot extends TimedRobot {
 
     private DriveTrainSubsystem mDrive = DriveTrainSubsystem.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
+    private VisionServer mVisionServer = VisionServer.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
     public static OI m_oi;
     public static PowerDistributionPanel powerDistributionPanel;

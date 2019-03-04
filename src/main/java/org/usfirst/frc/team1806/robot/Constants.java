@@ -3,6 +3,9 @@ package org.usfirst.frc.team1806.robot;
 import org.usfirst.frc.team1806.robot.util.Translation2d;
 
 public class Constants {
+
+    public final static int kCoprocessorPort = 8806;
+
     public final static boolean enableAutoInTeleOp = false;
     public final static double kLooperDt = 0.005;
     public final static double kDriveWheelDiameterInches = 4;
