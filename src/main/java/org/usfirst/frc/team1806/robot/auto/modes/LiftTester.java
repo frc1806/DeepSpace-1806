@@ -1,5 +1,5 @@
 package org.usfirst.frc.team1806.robot.auto.modes;
-\
+
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.WaitAction;
 import org.usfirst.frc.team1806.robot.auto.actions.LiftToHeight;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;

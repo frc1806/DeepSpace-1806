@@ -1,8 +1,8 @@
 package org.usfirst.frc.team1806.robot.auto.modes;
 
-import org.usfirst.frc.team1806.robot.auto.AutoModeBase;
-import org.usfirst.frc.team1806.robot.auto.AutoModeEndedException;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.*;
+import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
+import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeEndedException;
 import org.usfirst.frc.team1806.robot.auto.paths.DumbMode;
 import org.usfirst.frc.team1806.robot.util.Translation2d;
 
