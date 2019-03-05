@@ -71,6 +71,10 @@ public class NavX {
         return mAngleAdjustment.rotateBy(Rotation2d.fromDegrees(getRawYawDegrees()));
     }
 
+    public double getRoll() {
+        return mAHRS.getRoll();
+    }
+
     public double getYawRateDegreesPerSec() {
         return mYawRateDegreesPerSecond;
     }
@@ -81,5 +85,17 @@ public class NavX {
 
     public double getRawAccelX() {
         return mAHRS.getRawAccelX();
+    }
+
+    public float getWorldLinearAccelX(){
+        return mAHRS.getWorldLinearAccelX();
+    }
+
+    public float getWorldLinearAccelY(){
+        return mAHRS.getWorldLinearAccelY();
+    }
+
+    public float getWorldLinearAccelZ(){
+        return mAHRS.getWorldLinearAccelZ();
     }
 }

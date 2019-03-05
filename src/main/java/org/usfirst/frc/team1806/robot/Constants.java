@@ -12,7 +12,7 @@ public class Constants {
 
     public final static int kDriveTrainPIDSetTimeout = 30;
     public final static double kCountsPerInch = 323.8833166666667;
-    public final static double kDriveInchesPerCount = 0.0030875316774318;
+    public final static double kDriveInchesPerRevolution = 0.0030875316774318;
 
     ///Motion
     public final static double kMinLookAhead = 9; // inches
@@ -99,5 +99,45 @@ public class Constants {
     public final static int kLiftTopLimitSwitchPosition = 500;
 
     public final static int kTeleOpHoldHeight = 1100;
+
+
+
+    //Compressor Control Constants
+    public final static int kPressureSensorSamplingLoops = 100; //each loop is 1/200 of a second
+    public final static double kPressureAverageMinimumToStart = 80; //PSI
+
+    public final static int kBatteryVoltageSamplingLoops = 100; //each loop is 1/200 of a second
+    public final static double kBatteryVoltageCompressorShutoffThreshold = 11.5; //volts
+    public final static double kBatteryVoltageAbsoluteCompressorShutoffThreshold = 8.0; //volts
+
+    public final static int kRobotDemandAmpsSamplingLoops = 100; // each loop is 1/200 of a second
+    public final static double kAverageAmpDemandToShutOffCompressor = 140; //Amps
+    public final static double kAbsoluteRobotCompressorShutOffAmps = 300; //Amps
+
+    public final static double kExpectedCompressorMaxCurrentDraw = 100;
+    public final static double kExpectedCompressorVoltageDrop = 1.5;
+
+
+    //Intake Constants
+    public final static double kInnerIntakingSpeed = .8;
+    public final static double kOuterIntakingSpeed = .8;
+
+    //Battery State Of Charge
+    public final static double kFullChargeBatteryCoulombCount = 25200;
+    public final static double kBatteryFullChargeVoltage = 12.7;
+    public final static double kBatteryDepletedVoltage = 11.8;
+    public final static double kLowAmpLoad = 10;
+
+    //Accelerometer Constants
+    public final static double habDropAccelerationThreshold = 1.0; //g force
+
+
+    //Lift interference avoidence
+    public final static double kLiftWaitForExtendIntake = 0.25;
+    public final static int kMaxLiftHeightToNeedToExtendIntake = 1000;
+    public final static int kSafeLiftHeightOffsetToNotHitIntake = 500; // total of this and the line above will be the setpoint
+
+    //controls
+    public final static double kTriggerThreshold = .2;
 
 }
