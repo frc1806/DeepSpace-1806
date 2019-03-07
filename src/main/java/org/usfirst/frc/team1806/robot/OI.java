@@ -147,18 +147,23 @@ public class OI {
 		switch (Robot.getControlMode()){
 			case OPERATOR_CONTROL:
 			default:
-				
+
 				if(!wasChangeControlModeButton && oc.getPOVUp()){
-					Robot.setControlMode(Robot.ControlMode.SEQUENCE_CONTROL);
+					Robot.setControlMode(Robot.ControlMode.HATCH_VISION_CONTROL);
 				}
 				break;
 
-			case SEQUENCE_CONTROL:
+			case HATCH_VISION_CONTROL:
+
+				if(!wasChangeControlModeButton && oc.getPOVUp()){
+					Robot.setControlMode(Robot.ControlMode.CARGO_VISION_CONTROL);
+				}
+				break;
+			case CARGO_VISION_CONTROL:
 
 				if(!wasChangeControlModeButton && oc.getPOVUp()){
 					Robot.setControlMode(Robot.ControlMode.OPERATOR_CONTROL);
 				}
-				break;
 		}
 
 		if(dc.getButtonBack() || oc.getPOVDown()){

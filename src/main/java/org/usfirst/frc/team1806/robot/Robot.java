@@ -60,7 +60,8 @@ public class Robot extends TimedRobot {
     private static GamePieceMode GamePieceMode;
 
     public enum ControlMode{
-        SEQUENCE_CONTROL,
+        HATCH_VISION_CONTROL,
+        CARGO_VISION_CONTROL,
         OPERATOR_CONTROL
     }
 
