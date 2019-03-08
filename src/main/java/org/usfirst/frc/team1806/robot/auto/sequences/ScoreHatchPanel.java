@@ -9,7 +9,7 @@ public class ScoreHatchPanel extends AutoModeBase {
 
     @Override
     protected void routine()throws AutoModeEndedException {
-
+        //Path from vision
         runAction(new CloseSquid(false));
         runAction(new RetractSquid(false));
     }

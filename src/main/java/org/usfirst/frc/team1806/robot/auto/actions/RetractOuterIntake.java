@@ -3,13 +3,11 @@ package org.usfirst.frc.team1806.robot.auto.actions;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.Action;
 import org.usfirst.frc.team1806.robot.subsystems.CargoIntakeSubsystem;
 
-public class Intake implements Action {
+public class RetractOuterIntake implements Action {
 
     private boolean instant;
-    private CargoIntakeSubsystem.ScoringPower scoringPower;
 
-    public Intake(CargoIntakeSubsystem.ScoringPower _power, boolean _instant){
-        scoringPower = _power;
+    public RetractOuterIntake(boolean _instant){
         instant = _instant;
     }
 
@@ -17,7 +15,7 @@ public class Intake implements Action {
 
     @Override
     public boolean isFinished() {
-        return instant; //We need a sensor
+        return !mCargoIntakeSubsystem.isOuterIntakeExtended() || instant;
     }
 
     @Override
@@ -27,12 +25,11 @@ public class Intake implements Action {
 
     @Override
     public void done() {
-        mCargoIntakeSubsystem.stop();
+
     }
 
     @Override
     public void start() {
-        //IRRESPONSIBLE is normal intake speed
-        mCargoIntakeSubsystem.intakeAtPower(scoringPower);
+        mCargoIntakeSubsystem.retractOuterIntake();
     }
 }

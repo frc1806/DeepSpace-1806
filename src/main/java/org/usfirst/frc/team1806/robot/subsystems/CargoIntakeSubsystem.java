@@ -85,6 +85,10 @@ public class CargoIntakeSubsystem implements Subsystem {
 
     }
 
+    public void intakeAtPower(ScoringPower power){
+        innerIntake.intakeAtPower(power.getPower(), power.getPower()) ;
+    }
+
     /**
      * Reverses the inner intake to shoot the ball.
      * @param power how much power should be used to shoot the ball.
