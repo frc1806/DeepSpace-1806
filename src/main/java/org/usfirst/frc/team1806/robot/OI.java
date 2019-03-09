@@ -27,126 +27,137 @@ public class OI {
 	private XboxController autoController = new XboxController(2);
 	private Latch autoInTeleOp = new Latch();
 	private Boolean wasSquidExtendButton = false;
+	private Boolean wasGrabHatchLeftButton = false;
+	private Boolean wasGrabHatchRightButton = false;
+	private Boolean wasScoreHatchButton = false;
+	private Boolean wasScoreCargoButton = false;
 	private Boolean wasChangeModeButton = false;
 	private Boolean wasChangeControlModeButton = false;
 	private CargoIntakeSubsystem mCargoIntakeSubsystem = CargoIntakeSubsystem.getInstance();
 
 	public void runCommands(){
 
-		//Controls in both modes
-		if(Constants.enableAutoInTeleOp){
-			autoInTeleOp.update(autoController.getButtonStart());
-		}
-		synchronized (mDriveTrainSubsystem) {
-			if(dc.getRightTrigger() > .2) {
-				mDriveTrainSubsystem.setCreepMode(mCheesyDriveHelper.cheesyDrive(
-						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
-			}else {
-				mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
-						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
+
+			//Controls in both modes
+			if (Constants.enableAutoInTeleOp) {
+				autoInTeleOp.update(autoController.getButtonStart());
 			}
-		}
-
-		//Controls that change based on mode
-		switch(Robot.getGamePieceMode()){
-			case HATCH_PANEL:
-			default:
-				synchronized (mLiftSubsystem) {
-					if(dc.getButtonA()) {
-						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_HATCH_LOW);
-					}
-					if(dc.getButtonX()) {
-						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_HATCH_MID);
-					}
-					if(dc.getButtonY()) {
-						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_HATCH_HIGH);
-					}
-					if(dc.getButtonB()) {
-						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.BOTTOM_LIMIT);
-					}
+			synchronized (mDriveTrainSubsystem) {
+				if (dc.getRightTrigger() > .2) {
+					mDriveTrainSubsystem.setCreepMode(mCheesyDriveHelper.cheesyDrive(
+							dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB(), mDriveTrainSubsystem.isHighGear()));
+				} else {
+					mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
+							dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB(), mDriveTrainSubsystem.isHighGear()));
 				}
+			}
 
-				synchronized (mSquidSubsystem) {
-					if (dc.getLeftTrigger() > Constants.kTriggerThreshold) {
-						mSquidSubsystem.openSquid();
-					}
+			if (dc.getButtonBack() || oc.getPOVDown()) {
+				Robot.RetractAll();
+			}
 
-					if (dc.getButtonLB()) {
-						mSquidSubsystem.closeSquid();
-					}
-
-
-					if (!wasSquidExtendButton && dc.getRightTrigger() > Constants.kTriggerThreshold) {
-						if (mSquidSubsystem.isExtended()) {
-							mSquidSubsystem.retractSquid();
-						} else {
-							mSquidSubsystem.isExtended();
+			//Controls that change based on mode
+			switch (Robot.getGamePieceMode()) {
+				case HATCH_PANEL:
+				default:
+					synchronized (mLiftSubsystem) {
+						if (dc.getButtonA()) {
+							mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_HATCH_LOW);
 						}
-					}
-				}
-
-
-				//TODO:Beaver controls
-
-
-				if(dc.getButtonRB() && !wasChangeModeButton){
-					Robot.setGamePieceMode(Robot.GamePieceMode.CARGO);
-				}
-
-				break;
-
-			case CARGO:
-
-				synchronized (mLiftSubsystem) {
-					if(dc.getButtonA()) {
-						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_CARGO_LOW);
-					}
-					if(dc.getButtonX()) {
-						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_CARGO_MID);
-					}
-					if(dc.getButtonY()) {
-						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_CARGO_HIGH);
-					}
-					if(dc.getButtonB()) {
-						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.BOTTOM_LIMIT);
-					}
-				}
-
-				synchronized (mCargoIntakeSubsystem) {
-					if (!mLiftSubsystem.isNeedingIntakeOut()) {
-						if (dc.getRightTrigger() >= Constants.kTriggerThreshold) {
-							mCargoIntakeSubsystem.extendOuterIntake();
-						} else {
-							mCargoIntakeSubsystem.retractOuterIntake();
+						if (dc.getButtonX()) {
+							mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_HATCH_MID);
+						}
+						if (dc.getButtonY()) {
+							mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_HATCH_HIGH);
+						}
+						if (dc.getButtonB()) {
+							mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.BOTTOM_LIMIT);
 						}
 					}
 
-					if (dc.getLeftTrigger() > Constants.kTriggerThreshold) {
-						mCargoIntakeSubsystem.intakeCargo();
-					} else if (dc.getPOVDown()) {
-						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.MEDIUM);
-					} else if (dc.getPOVLeft()) {
-						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.FAST);
-					} else if (dc.getPOVUp()) {
-						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.IRRESPONSIBLE);
-					} else if (dc.getButtonLB()) {
-						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.SLOW);
-					} else {
-						mCargoIntakeSubsystem.stop();
+					synchronized (mSquidSubsystem) {
+						if (dc.getLeftTrigger() > Constants.kTriggerThreshold) {
+							mSquidSubsystem.openSquid();
+						}
+
+						if (dc.getButtonLB()) {
+							mSquidSubsystem.closeSquid();
+						}
+
+
+						if (!wasSquidExtendButton && dc.getRightTrigger() > Constants.kTriggerThreshold) {
+							if (mSquidSubsystem.isExtended()) {
+								mSquidSubsystem.retractSquid();
+							} else {
+								mSquidSubsystem.isExtended();
+							}
+						}
 					}
 
-				}
 
-				if(dc.getButtonRB() && !wasChangeModeButton){
-					Robot.setGamePieceMode(Robot.GamePieceMode.HATCH_PANEL);
-				}
+					//TODO:Beaver controls
 
-				break;
-		}
+
+					if (dc.getButtonRB() && !wasChangeModeButton) {
+						Robot.setGamePieceMode(Robot.GamePieceMode.CARGO);
+					}
+
+					break;
+
+				case CARGO:
+
+					synchronized (mLiftSubsystem) {
+						if (dc.getButtonA()) {
+							mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_CARGO_LOW);
+						}
+						if (dc.getButtonX()) {
+							mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_CARGO_MID);
+						}
+						if (dc.getButtonY()) {
+							mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_CARGO_HIGH);
+						}
+						if (dc.getButtonB()) {
+							mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.BOTTOM_LIMIT);
+						}
+					}
+
+					synchronized (mCargoIntakeSubsystem) {
+						if (!mLiftSubsystem.isNeedingIntakeOut()) {
+							if (dc.getRightTrigger() >= Constants.kTriggerThreshold) {
+								mCargoIntakeSubsystem.extendOuterIntake();
+							} else {
+								mCargoIntakeSubsystem.retractOuterIntake();
+							}
+						}
+
+						if (dc.getLeftTrigger() > Constants.kTriggerThreshold) {
+							mCargoIntakeSubsystem.intakeCargo();
+						} else if (dc.getPOVDown()) {
+							mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.MEDIUM);
+						} else if (dc.getPOVLeft()) {
+							mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.FAST);
+						} else if (dc.getPOVUp()) {
+							mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.IRRESPONSIBLE);
+						} else if (dc.getButtonLB()) {
+							mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.SLOW);
+						} else {
+							mCargoIntakeSubsystem.stop();
+						}
+
+					}
+
+					if (dc.getButtonRB() && !wasChangeModeButton) {
+						Robot.setGamePieceMode(Robot.GamePieceMode.HATCH_PANEL);
+					}
+
+					break;
+			}
+
 
 		switch (Robot.getControlMode()){
 			case OPERATOR_CONTROL:
 			default:
+
 
 				if(!wasChangeControlModeButton && oc.getPOVUp()){
 					Robot.setControlMode(Robot.ControlMode.HATCH_VISION_CONTROL);
@@ -155,24 +166,55 @@ public class OI {
 
 			case HATCH_VISION_CONTROL:
 
+				if(!wasGrabHatchLeftButton && oc.getRightTrigger() > Constants.kTriggerThreshold){
+
+				}
+				else if(wasGrabHatchLeftButton && oc.getRightTrigger() < Constants.kTriggerThreshold){
+
+				}
+
+				if(!wasGrabHatchRightButton && oc.getLeftTrigger() > Constants.kTriggerThreshold){
+
+				}
+				else if(wasGrabHatchRightButton && oc.getLeftTrigger() < Constants.kTriggerThreshold){
+
+				}
+
+				if(!wasScoreHatchButton && oc.getButtonY()){
+
+				}
+				else if(wasScoreHatchButton && !oc.getButtonY()){
+
+				}
+
+
 				if(!wasChangeControlModeButton && oc.getPOVUp()){
 					Robot.setControlMode(Robot.ControlMode.CARGO_VISION_CONTROL);
 				}
 				break;
 			case CARGO_VISION_CONTROL:
 
+				if(!wasScoreCargoButton && oc.getButtonX()){
+
+				}
+				else if(wasScoreCargoButton && !oc.getButtonX()){
+
+				}
+
 				if(!wasChangeControlModeButton && oc.getPOVUp()){
 					Robot.setControlMode(Robot.ControlMode.OPERATOR_CONTROL);
 				}
 		}
 
-		if(dc.getButtonBack() || oc.getPOVDown()){
-			Robot.RetractAll();
-		}
+
 
 		mCompressorControlSubsystem.setOverride(oc.getButtonY());
 
 		wasSquidExtendButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
+		wasGrabHatchLeftButton = oc.getRightTrigger() > Constants.kTriggerThreshold;
+		wasGrabHatchRightButton = oc.getLeftTrigger() > Constants.kTriggerThreshold;
+		wasScoreHatchButton = oc.getButtonY();
+		wasScoreCargoButton = oc.getButtonX();
 		wasChangeModeButton = dc.getButtonRB();
 		wasChangeControlModeButton = oc.getPOVUp();
 
