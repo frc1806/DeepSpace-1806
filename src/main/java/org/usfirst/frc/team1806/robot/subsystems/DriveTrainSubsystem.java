@@ -179,6 +179,11 @@ public class DriveTrainSubsystem implements Subsystem {
 		// Follow for left side
         leftA.follow(masterLeft);
 
+        masterLeft.setSmartCurrentLimit(85);
+        leftA.setSmartCurrentLimit(85);
+        masterRight.setSmartCurrentLimit(85);
+        rightC.setSmartCurrentLimit(85);
+
 		//Set Encoders for each side of the talon
         //TODO: configure after REV updates their software. https://www.chiefdelphi.com/t/connecting-external-encoders-to-spark-max/345039
 		/*masterLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
@@ -186,7 +191,8 @@ public class DriveTrainSubsystem implements Subsystem {
 		masterRight.setSensorPhase(true);
 		masterLeft.setSensorPhase(true);
 		*/
-
+		masterLeft.setInverted(false);
+		leftA.setInverted(false);
 
 //		//Invert the right side
 		masterRight.setInverted(true);
@@ -312,12 +318,24 @@ public class DriveTrainSubsystem implements Subsystem {
 		SmartDashboard.putNumber("Left Side", masterLeft.getEncoder().getPosition());
 		SmartDashboard.putNumber("Right Side: ", masterRight.getEncoder().getPosition());
 		SmartDashboard.putNumber("Current Acceleration Value", navx.getWorldLinearAccelZ());
+		SmartDashboard.putNumber("LeftA", masterLeft.get());
+		SmartDashboard.putNumber("LeftB", leftA.get());
+		SmartDashboard.putNumber("RightA", masterRight.get());
+		SmartDashboard.putNumber("RightB", rightC.get());
 
 		SmartDashboard.putNumber("Right Motor Percent Output", masterRight.get());
 		SmartDashboard.putNumber("Left Motor Percent Output", masterLeft.get());
 		SmartDashboard.putString("Drive State", returnDriveState());
 		SmartDashboard.putNumber("NavX", getGyroYaw().getDegrees());
 		SmartDashboard.putBoolean("Are we in brake mode", mIsBrakeMode);
+		SmartDashboard.putNumber("Main Left Drive Temp", masterLeft.getMotorTemperature());
+		SmartDashboard.putNumber("Main LeftA Drive Temp", leftA.getMotorTemperature());
+		SmartDashboard.putNumber("Main Right Drive Temp", masterRight.getMotorTemperature());
+		SmartDashboard.putNumber("Main RightC Drive Temp", rightC.getMotorTemperature());
+		SmartDashboard.putNumber("Drive Left Main Amps", masterLeft.getOutputCurrent());
+		SmartDashboard.putNumber("Drive Left Follow Amps", leftA.getOutputCurrent());
+		SmartDashboard.putNumber("Drive Right Main Amps", masterRight.getOutputCurrent());
+		SmartDashboard.putNumber("Drive Right Follow Amps", rightC.getOutputCurrent());
 	}
 
 
@@ -552,7 +570,7 @@ public class DriveTrainSubsystem implements Subsystem {
 
 	@Override
 	public synchronized void stop() {
-		// TODO Auto-generated method stub
+		stopDrive();
 
 	}
 

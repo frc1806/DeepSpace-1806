@@ -31,15 +31,15 @@ public class LiftSubsystem  implements Subsystem {
 	}
 	public enum LiftPosition {
 		BOTTOM_LIMIT(0),
-        TOP_LIMIT(16000),
+        TOP_LIMIT(13000),
 		TELEOP_HOLD(600),
 		SHIP_CARGO(7000),
-		ROCKET_CARGO_LOW(6000),
-		ROCKET_CARGO_MID(10000),
-		ROCKET_CARGO_HIGH(16000),
-		ROCKET_HATCH_LOW(4000),
-		ROCKET_HATCH_MID(8000),
-		ROCKET_HATCH_HIGH(12000),
+		ROCKET_CARGO_LOW(4000),
+		ROCKET_CARGO_MID(8500),
+		ROCKET_CARGO_HIGH(12700),
+		ROCKET_HATCH_LOW(0),
+		ROCKET_HATCH_MID(5500),
+		ROCKET_HATCH_HIGH(10500),
 		TEMP_HOLD_POS(0);
 
 		int height;
@@ -78,8 +78,8 @@ public class LiftSubsystem  implements Subsystem {
 		liftLead = new CANSparkMax(RobotMap.liftLead, CANSparkMaxLowLevel.MotorType.kBrushless);
 		liftFollow = new CANSparkMax(RobotMap.liftFollow, CANSparkMaxLowLevel.MotorType.kBrushless);
 		liftFollow.follow(liftLead, true);
-		liftLead.setSmartCurrentLimit(130, 80);
-		liftFollow.setSmartCurrentLimit(130, 80);
+		/*liftLead.setSmartCurrentLimit(130, 80);
+		liftFollow.setSmartCurrentLimit(130, 80);*/
 		bottomLimit = new DigitalInput(RobotMap.liftBottomLimit);
 		topLimit = new DigitalInput(RobotMap.liftHighLimit);
 		mLiftStates = LiftStates.IDLE;
@@ -101,15 +101,20 @@ public class LiftSubsystem  implements Subsystem {
         SmartDashboard.putString("Lift State: ", returnLiftStates().toString());
         SmartDashboard.putString("Lift Position", returnLiftPosition().toString());
 		SmartDashboard.putNumber("Lift Encoder Position", liftLead.getEncoder().getPosition());
+		SmartDashboard.putNumber("Lift Velocity", liftLead.getEncoder().getVelocity());
 		SmartDashboard.putNumber("Lift Leader Power Sending", liftLead.getAppliedOutput());
 		SmartDashboard.putNumber("Lift Follow Power Sending", liftFollow.getAppliedOutput());
 		SmartDashboard.putBoolean("Lift Bottom limit triggered", areWeAtBottomLimit());
         SmartDashboard.putNumber("Lift Wanted Height", mLiftPosition.getHeight());
-    }
+        SmartDashboard.putNumber("Lift Lead Motor Temp", liftLead.getMotorTemperature());
+        SmartDashboard.putNumber("Lift Follow Motor Temp", liftFollow.getMotorTemperature());
+        SmartDashboard.putBoolean("Lift is at position?", isAtPosition());
+        }
 
 	@Override
 	public void stop() {
         mLiftStates = LiftStates.IDLE;
+        setLiftIdle();
 	}
 
 	@Override
@@ -158,32 +163,11 @@ public class LiftSubsystem  implements Subsystem {
 			 */
 			@Override
             public void onLoop(double timestamp) {
-            	synchronized (LiftSubsystem.this){
-
-            		//deal with intake interactions
-            		if(intakePneumaticWait > 0)
-					{
-						mCargoIntakeSubsystem.extendOuterIntake();
-						intakePneumaticWait -= (timestamp - lastTimeStamp);
-						if(intakePneumaticWait <= 0)
-						{
-							liftLead.getPIDController().setReference(mLiftPosition.getHeight(), ControlType.kPosition);
-						}
-					}
-
-					if(needsIntakeOut
-							&& ((getHeightInCounts() > Constants.kMaxLiftHeightToNeedToExtendIntake && mLiftPosition.getHeight() > Constants.kMaxLiftHeightToNeedToExtendIntake)
-							||(	mLiftPosition.getHeight() <= Constants.kMaxLiftHeightToNeedToExtendIntake && isAtPosition()))){
-						needsIntakeOut = false;
-						if(!wasIntakeOut || Robot.getGamePieceMode() == Robot.GamePieceMode.HATCH_PANEL){
-							mCargoIntakeSubsystem.retractOuterIntake();
-						}
-					}
 
             		//not moving and not manual
 					if(isAtPosition() && mLiftStates != LiftStates.MANUAL_CONTROL){
 						//not moving, at bottom
-						if(mLiftStates == LiftStates.RESET_TO_BOTTOM
+						if(mLiftStates == LiftStates.RESET_TO_BOTTOM || mLiftPosition == LiftPosition.BOTTOM_LIMIT
 								|| areWeAtBottomLimit()
 								){
 							mLiftStates = LiftStates.IDLE;
@@ -192,19 +176,19 @@ public class LiftSubsystem  implements Subsystem {
 						else{
 							mLiftStates = LiftStates.HOLD_POSITION;
 							holdPosition();
+
 						}
 					}
 					liftStateLoop();
 
 					lastTimeStamp = timestamp;
 				}
-            }
+
 
 
 			private void liftStateLoop(){
 				switch(mLiftStates) {
 					case POSITION_CONTROL:
-						setBrakeMode();
 						return;
 					case RESET_TO_BOTTOM:
 						mIsOnTarget = false;
@@ -213,12 +197,7 @@ public class LiftSubsystem  implements Subsystem {
 						mIsOnTarget = false;
 						return;
 					case HOLD_POSITION:
-						liftLead.set(Constants.kLiftHoldPercentOutput +
-								( mLiftPosition.getHeight() - liftLead.getEncoder().getPosition()) * Constants.kLiftHoldkPGain);
-						if(Math.abs(getHeightInCounts() - mLiftPosition.getHeight()) < Constants.kLiftPositionTolerance) {
-							mLiftStates = LiftStates.POSITION_CONTROL;
-							goToSetpoint(mLiftPosition);
-						}
+						holdPosition();
 						return;
 					case MANUAL_CONTROL:
 						return;
@@ -253,7 +232,7 @@ public class LiftSubsystem  implements Subsystem {
 			intakePneumaticWait =0; //Constants.kLiftWaitForExtendIntake;
 		}
 		else {*/
-			liftLead.getPIDController().setReference(mLiftPosition.getHeight(), ControlType.kPosition);
+		liftLead.getPIDController().setReference(mLiftPosition.getHeight(), ControlType.kPosition);
 		//}
 		//System.out.println(mLiftWantedPosition + "  " + isReadyForSetpoint());
 	}
@@ -410,9 +389,6 @@ public class LiftSubsystem  implements Subsystem {
     	mLiftStates = LiftStates.MANUAL_CONTROL;
 		liftLead.getPIDController().setReference(power, ControlType.kDutyCycle);
 	}
-	public void setupForManualMode(){
-
-	}
 
 	/**
 	 * Used to hold the cube when it is ready to be spat out
@@ -420,7 +396,7 @@ public class LiftSubsystem  implements Subsystem {
 	public synchronized void holdPosition(){
 		liftLead.getPIDController().setReference(Constants.kLiftHoldPercentOutput +
 				( mLiftPosition.getHeight() - liftLead.getEncoder().getPosition()) * Constants.kLiftHoldkPGain, ControlType.kDutyCycle);
-    	if(Math.abs(getHeightInCounts() - mLiftPosition.getHeight()) < Constants.kLiftPositionTolerance){
+    	if(Math.abs(getHeightInCounts() - mLiftPosition.getHeight()) > Constants.kLiftPositionTolerance){
     		mLiftStates = LiftStates.POSITION_CONTROL;
     		goToSetpoint(mLiftPosition);
 		}
@@ -457,14 +433,7 @@ public class LiftSubsystem  implements Subsystem {
 		return needsIntakeOut;
 	}
 
-	/**
-	 * Checks if the current lift command would need the intake to extend to avoid the mechanisms interfering.
-	 * @param setpoint The setpoint to check if it would require intake extention
-	 * @return TRUE if command
-	 */
-	private boolean currentLiftCommandNeedsIntakeExtension(LiftPosition setpoint){
-		return getHeightInCounts() < Constants.kMaxLiftHeightToNeedToExtendIntake || setpoint.getHeight() <Constants.kMaxLiftHeightToNeedToExtendIntake;
-	}
+
 
 	public void goToHatchMode(){
 		//cargo intake won't retract if the lift needs it out, then the lift's loop will retract it anyway
@@ -475,14 +444,7 @@ public class LiftSubsystem  implements Subsystem {
 	}
 
 	public void retractAll() {
-		if(mLiftStates == LiftStates.POSITION_CONTROL && currentLiftCommandNeedsIntakeExtension(mLiftPosition)){
-			if(getHeightInCounts() < Constants.kMaxLiftHeightToNeedToExtendIntake) {
-				setLiftIdle();
-			}
-			else{
 				LiftPosition.TEMP_HOLD_POS.setHeight(Constants.kMaxLiftHeightToNeedToExtendIntake + Constants.kSafeLiftHeightOffsetToNotHitIntake);
 				goToSetpoint(LiftPosition.TELEOP_HOLD);
-			}
-		}
 	}
 }

@@ -1,6 +1,7 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
 import org.usfirst.frc.team1806.robot.Constants;
+import org.usfirst.frc.team1806.robot.Robot;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.driver.AnalogPressureSensor;
 import org.usfirst.frc.team1806.robot.loop.Loop;
@@ -24,7 +25,6 @@ public class CompressorControlSubsystem implements Subsystem {
     private double lastTimeStamp;
     private AnalogPressureSensor pressureSensor;
     private Boolean override;
-    private PowerDistributionPanel powerDistributionPanel;
     private Double batteryCoulombCount = 0.0;
 
     private Boolean wasCompressorRunning;
@@ -52,11 +52,11 @@ public class CompressorControlSubsystem implements Subsystem {
                     runCompressor = true;
                 }
 
-                if(voltageSamplingFilter.update(powerDistributionPanel.getVoltage()) < Constants.kBatteryVoltageCompressorShutoffThreshold){
+                if(voltageSamplingFilter.update(Robot.powerDistributionPanel.getVoltage()) < Constants.kBatteryVoltageCompressorShutoffThreshold){
                     runCompressor = false;
                 }
 
-                if(amperageSamplingFilter.update(powerDistributionPanel.getTotalCurrent()) > Constants.kAverageAmpDemandToShutOffCompressor) {
+                if(amperageSamplingFilter.update(Robot.powerDistributionPanel.getTotalCurrent()) > Constants.kAverageAmpDemandToShutOffCompressor) {
                     runCompressor = false;
                 }
 
@@ -64,23 +64,23 @@ public class CompressorControlSubsystem implements Subsystem {
                     runCompressor = true;
                 }
 
-                if((wasCompressorRunning && powerDistributionPanel.getTotalCurrent() > Constants.kAbsoluteRobotCompressorShutOffAmps) ||
-                        (!wasCompressorRunning && powerDistributionPanel.getTotalCurrent() > Constants.kAbsoluteRobotCompressorShutOffAmps - Constants.kExpectedCompressorMaxCurrentDraw)){
+                if((wasCompressorRunning && Robot.powerDistributionPanel.getTotalCurrent() > Constants.kAbsoluteRobotCompressorShutOffAmps) ||
+                        (!wasCompressorRunning && Robot.powerDistributionPanel.getTotalCurrent() > Constants.kAbsoluteRobotCompressorShutOffAmps - Constants.kExpectedCompressorMaxCurrentDraw)){
                     runCompressor = false;
                 }
 
-                if((wasCompressorRunning && powerDistributionPanel.getVoltage() < Constants.kBatteryVoltageAbsoluteCompressorShutoffThreshold) ||
-                        (!wasCompressorRunning && powerDistributionPanel.getVoltage() < Constants.kBatteryVoltageAbsoluteCompressorShutoffThreshold + Constants.kExpectedCompressorVoltageDrop)) {
+                if((wasCompressorRunning && Robot.powerDistributionPanel.getVoltage() < Constants.kBatteryVoltageAbsoluteCompressorShutoffThreshold) ||
+                        (!wasCompressorRunning && Robot.powerDistributionPanel.getVoltage() < Constants.kBatteryVoltageAbsoluteCompressorShutoffThreshold + Constants.kExpectedCompressorVoltageDrop)) {
                     runCompressor = false;
                 }
 
                 compressor.setClosedLoopControl(runCompressor);
 
-                if(powerDistributionPanel.getTotalCurrent()<Constants.kLowAmpLoad){
-                    batteryCoulombCount = ((powerDistributionPanel.getVoltage() - Constants.kBatteryDepletedVoltage)/(Constants.kBatteryFullChargeVoltage -Constants.kBatteryDepletedVoltage))* Constants.kFullChargeBatteryCoulombCount;
+                if(Robot.powerDistributionPanel.getTotalCurrent()<Constants.kLowAmpLoad){
+                    batteryCoulombCount = ((Robot.powerDistributionPanel.getVoltage() - Constants.kBatteryDepletedVoltage)/(Constants.kBatteryFullChargeVoltage -Constants.kBatteryDepletedVoltage))* Constants.kFullChargeBatteryCoulombCount;
                 }
                 else {
-                    batteryCoulombCount -= powerDistributionPanel.getTotalCurrent() * (currentTimeStamp - lastTimeStamp);
+                    batteryCoulombCount -= Robot.powerDistributionPanel.getTotalCurrent() * (currentTimeStamp - lastTimeStamp);
                 }
 
                 }

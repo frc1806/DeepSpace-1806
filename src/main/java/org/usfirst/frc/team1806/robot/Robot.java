@@ -38,15 +38,13 @@ public class Robot extends TimedRobot {
 
 
     private static final SubsystemManager S_SubsystemManager = new SubsystemManager(
-            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance(), CompressorControlSubsystem.getInstance(), CargoIntakeSubsystem.getInstance(), SonarPositioningSubsystem.getInstance()));
+            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance(), CompressorControlSubsystem.getInstance(), CargoIntakeSubsystem.getInstance(), SquidSubsystem.getInstance()));
 
     private Looper mEnabledLooper = new Looper();
 
     public static AutoModeBase selectedAuto;
     public static boolean isBlue;
     public boolean arePathsInit = false;
-    public UsbCamera camera;
-    public MjpegServer cameraServer;
     public static boolean needToPositionControlInTele = false;
     public enum AutoInTeleOp{
       AUTO_DISABLED,
@@ -71,13 +69,6 @@ public class Robot extends TimedRobot {
         Robot.setGamePieceMode(GamePieceMode.HATCH_PANEL);
       m_oi = new OI();
 
-      //Sets up camera
-      camera = new UsbCamera("cam0", 0);
-      camera.setFPS(30);
-      camera.setBrightness(20);
-      camera.getPath();
-      cameraServer = new MjpegServer("camera",  5806);
-      cameraServer.setSource(camera);
       zeroAllSensors();
 
       //adds in the iterative code to make the code run
@@ -100,7 +91,6 @@ public class Robot extends TimedRobot {
 
       BluePathAdapter.initPaths();
       RedPathAdapter.initPaths();
-      SmartDashboard.putString("testingFieldValue", "LLR");
     }
 
 
@@ -123,10 +113,12 @@ public class Robot extends TimedRobot {
           isBlue = false;
         }
       }
-      allPeriodic();
+      //allPeriodic();
       AutoModeSelector.initAutoModeSelector();
       selectedAuto = AutoModeSelector.getSelectedAutoMode();
       autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
+      S_SubsystemManager.stop();
+      S_SubsystemManager.outputToSmartDashboard();
 
     }
 
@@ -235,11 +227,11 @@ public class Robot extends TimedRobot {
 
 }
     public synchronized void allPeriodic() {
-      S_SubsystemManager.outputToSmartDashboard();
-      mRobotState.outputToSmartDashboard();
-      mEnabledLooper.outputToSmartDashboard();
+      //S_SubsystemManager.outputToSmartDashboard();
+      //mRobotState.outputToSmartDashboard();
+      //mEnabledLooper.outputToSmartDashboard();
       SmartDashboard.putString("Auto We Are Running", AutoModeSelector.returnNameOfSelectedAuto());
-      SmartDashboard.putNumber("PDP Total", powerDistributionPanel.getTotalCurrent());
+     //SmartDashboard.putNumber("PDP Total", powerDistributionPanel.getTotalCurrent());
     }
     private void runTeleOp(){
       Scheduler.getInstance().run();
@@ -259,12 +251,13 @@ public class Robot extends TimedRobot {
                 S_SubsystemManager.goToCargoMode();
                 break;
             case HATCH_PANEL:
-                S_SubsystemManager.goToCargoMode();
+                S_SubsystemManager.goToHatchMode();
                 break;
             default:
                 break;
         }
     }
+
 
     public static synchronized GamePieceMode getGamePieceMode(){
         return GamePieceMode;

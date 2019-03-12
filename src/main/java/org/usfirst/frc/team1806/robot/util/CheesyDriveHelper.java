@@ -13,7 +13,7 @@ public class CheesyDriveHelper {
     private static final double kWheelDeadband = 0.15;
 
     // These factor determine how fast the wheel traverses the "non linear" sine curve.
-    private static final double kHighWheelNonLinearity = 0.65;
+    private static final double kHighWheelNonLinearity = 0.85;
     private static final double kLowWheelNonLinearity = 0.5;
 
     private static final double kHighNegInertiaScalar = 2.0;
@@ -23,7 +23,8 @@ public class CheesyDriveHelper {
     private static final double kLowNegInertiaCloseScalar = 2.0;
     private static final double kLowNegInertiaFarScalar = 2.0;
 
-    private static final double kHighSensitivity = 0.95;
+    private static final double kHighSensitivity = 0.45;
+    private static final double kHighSensitivityStoppedTurn = 0.95;
     private static final double kLowSensitiity = 0.8;
 
     private static final double kQuickStopDeadband = 0.2;
@@ -115,7 +116,7 @@ public class CheesyDriveHelper {
         } else {
             overPower = 0.0;
             if(Math.abs(throttle)< kThrottleDeadband) {
-            	angularPower = wheel * sensitivity - mQuickStopAccumlator;
+            	angularPower = wheel * kHighSensitivityStoppedTurn - mQuickStopAccumlator;
             }
             else{
             	angularPower = throttle * wheel * sensitivity - mQuickStopAccumlator;

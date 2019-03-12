@@ -16,7 +16,9 @@ import org.usfirst.frc.team1806.robot.util.XboxController;
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
  */
-public class OI {
+public class
+
+OI {
 	private DriveTrainSubsystem mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
 	private SquidSubsystem mSquidSubsystem = SquidSubsystem.getInstance();
 	private CompressorControlSubsystem mCompressorControlSubsystem = CompressorControlSubsystem.getInstance();
@@ -37,13 +39,9 @@ public class OI {
 			autoInTeleOp.update(autoController.getButtonStart());
 		}
 		synchronized (mDriveTrainSubsystem) {
-			if(dc.getRightTrigger() > .2) {
-				mDriveTrainSubsystem.setCreepMode(mCheesyDriveHelper.cheesyDrive(
-						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
-			}else {
+
 				mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
 						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
-			}
 		}
 
 		//Controls that change based on mode
@@ -51,6 +49,7 @@ public class OI {
 			case HATCH_PANEL:
 			default:
 				synchronized (mLiftSubsystem) {
+
 					if(dc.getButtonA()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_HATCH_LOW);
 					}
@@ -75,11 +74,11 @@ public class OI {
 					}
 
 
-					if (!wasSquidExtendButton && dc.getPOVRight()) {
+					if (!wasSquidExtendButton && dc.getRightTrigger() > Constants.kTriggerThreshold) {
 						if (mSquidSubsystem.isExtended()) {
 							mSquidSubsystem.retractSquid();
 						} else {
-							mSquidSubsystem.isExtended();
+							mSquidSubsystem.extendSquid();
 						}
 					}
 				}
@@ -146,6 +145,14 @@ public class OI {
 		if(dc.getButtonBack() || oc.getPOVDown()){
 			Robot.RetractAll();
 		}
+
+		if(Math.abs(oc.getLeftJoyY()) > 0.2){
+			mLiftSubsystem.manualMode(-oc.getLeftJoyY());
+		}
+		else if (mLiftSubsystem.returnLiftStates() == LiftSubsystem.LiftStates.MANUAL_CONTROL){
+			mLiftSubsystem.manualMode( 0);
+		}
+
 
 		mCompressorControlSubsystem.setOverride(oc.getButtonY());
 

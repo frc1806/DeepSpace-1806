@@ -13,7 +13,7 @@ public class CargoIntakeSubsystem implements Subsystem {
     private LiftSubsystem liftSubsystem;
     private DoubleSolenoid extensionSolenoid;
     private IntakeSubsystem innerIntake;
-    private IntakeSubsystem outerIntake;
+    //private IntakeSubsystem outerIntake;
 
     public enum ScoringPower {
         SLOW(.2),
@@ -42,7 +42,7 @@ public class CargoIntakeSubsystem implements Subsystem {
 
         extensionSolenoid = new DoubleSolenoid(RobotMap.cargoIntakeExtend, RobotMap.cargoIntakeRetract);
         innerIntake = new IntakeSubsystem(Constants.kInnerIntakingSpeed, RobotMap.leftInnerIntake, RobotMap.rightInnerIntake, false, false);
-        outerIntake = new IntakeSubsystem(Constants.kOuterIntakingSpeed, RobotMap.leftOuterIntake, RobotMap.rightOuterIntake, false, false);
+        //outerIntake = new IntakeSubsystem(Constants.kOuterIntakingSpeed, RobotMap.leftOuterIntake, RobotMap.rightOuterIntake, false, false);
         liftSubsystem = LiftSubsystem.getInstance();
     }
 
@@ -58,7 +58,7 @@ public class CargoIntakeSubsystem implements Subsystem {
 
     public void stop(){
         innerIntake.stop();
-        outerIntake.stop();
+       // outerIntake.stop();
     }
 
     public void zeroSensors(){
@@ -86,11 +86,11 @@ public class CargoIntakeSubsystem implements Subsystem {
     innerIntake.intakeLeftSide(Constants.kInnerIntakingSpeed);
     innerIntake.intakeRightSide(Constants.kInnerIntakingSpeed);
     if(isOuterIntakeExtended()){
-        outerIntake.intakeLeftSide(Constants.kOuterIntakingSpeed);
-        outerIntake.intakeRightSide(Constants.kOuterIntakingSpeed);
+        //outerIntake.intakeLeftSide(Constants.kOuterIntakingSpeed);
+       // outerIntake.intakeRightSide(Constants.kOuterIntakingSpeed);
     }
     else{
-        outerIntake.stop();
+        //outerIntake.stop();
     }
 
     }
@@ -101,7 +101,7 @@ public class CargoIntakeSubsystem implements Subsystem {
      */
     public void scoreCargo(ScoringPower power){
     innerIntake.outtaking(power.getPower());
-    outerIntake.stop();
+    //outerIntake.stop();
 
     }
 
@@ -109,9 +109,7 @@ public class CargoIntakeSubsystem implements Subsystem {
      * when HatchMode is enabled it retracts outer intake
      */
     public void goToHatchMode(){
-        if(!liftSubsystem.isNeedingIntakeOut()){
             retractOuterIntake();
-        }
     }
 
     public void goToCargoMode(){
