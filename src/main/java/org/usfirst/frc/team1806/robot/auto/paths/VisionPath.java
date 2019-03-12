@@ -1,5 +1,6 @@
 package org.usfirst.frc.team1806.robot.auto.paths;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1806.robot.RobotState;
 import org.usfirst.frc.team1806.robot.path.Path;
@@ -50,15 +51,14 @@ public class VisionPath implements PathContainer {
         }
         else {
             fps = SmartDashboard.getNumber("Vfps", 0);
-            RigidTransform2d roboPose = RobotState.getInstance().getPredictedFieldToVehicle(fps);
-            RigidTransform2d bayyPose = generateBayVisionPoseFromODO();
-
+            RigidTransform2d roboPose = RobotState.getInstance().getPredictedFieldToVehicle(Timer.getFPGATimestamp());
+            //RigidTransform2d bayyPose = generateBayVisionPoseFromODO();
+            RigidTransform2d bayyPose = odometry;
             sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose, 0, roboPose.getRotation().getRadians()), 0, speed));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose, 2, roboPose.getRotation().getRadians()), 0, speed));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, 24, bayyPose.getRotation().getRadians()), 0, speed));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, 22, bayyPose.getRotation().getRadians()), 0, speed));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, 20, bayyPose.getRotation().getRadians()), 0, speed));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, 18, bayyPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose, 0.5, roboPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, 25, bayyPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, 23, bayyPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, 21, bayyPose.getRotation().getRadians()), 0, speed));
 
         }
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
@@ -88,12 +88,6 @@ public class VisionPath implements PathContainer {
     public Translation2d interpolateAlongLine(RigidTransform2d point, double adjust, double heading) {
         double X = point.getTranslation().x() + adjust * Math.cos(heading);
         double Y = point.getTranslation().x() + adjust * Math.sin(heading);
-
-        return new Translation2d(new Translation2d(X,Y));
-
-    }public Translation2d interpolateAlongLine(Translation2d point, double adjust, double heading) {
-        double X = point.x() + adjust * Math.cos(heading);
-        double Y = point.x() + adjust * Math.sin(heading);
 
         return new Translation2d(new Translation2d(X,Y));
 

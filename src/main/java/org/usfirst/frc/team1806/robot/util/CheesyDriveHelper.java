@@ -9,7 +9,7 @@ package org.usfirst.frc.team1806.robot.util;
  */
 public class CheesyDriveHelper {
 
-    private static final double kThrottleDeadband = 0.15;
+    private static final double kThrottleDeadband = 0.05; //.15
     private static final double kWheelDeadband = 0.15;
 
     // These factor determine how fast the wheel traverses the "non linear" sine curve.
