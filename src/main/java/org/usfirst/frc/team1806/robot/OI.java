@@ -29,6 +29,7 @@ OI {
 	private XboxController autoController = new XboxController(2);
 	private Latch autoInTeleOp = new Latch();
 	private Boolean wasSquidExtendButton = false;
+	private Boolean wasSquidOpenButton = false;
 	private Boolean wasChangeModeButton = false;
 	private CargoIntakeSubsystem mCargoIntakeSubsystem = CargoIntakeSubsystem.getInstance();
 
@@ -51,7 +52,8 @@ OI {
 				synchronized (mLiftSubsystem) {
 
 					if(dc.getButtonA()) {
-						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_HATCH_LOW);
+						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.BOTTOM_LIMIT\
+						);
 					}
 					if(dc.getButtonX()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_HATCH_MID);
@@ -65,13 +67,14 @@ OI {
 				}
 
 				synchronized (mSquidSubsystem) {
-					if (dc.getLeftTrigger() > Constants.kTriggerThreshold) {
-						mSquidSubsystem.openSquid();
+					if (!wasSquidOpenButton && dc.getLeftTrigger() > Constants.kTriggerThreshold) {
+						if (mSquidSubsystem.isOpen()) {
+							mSquidSubsystem.closeSquid();
+						} else {
+							mSquidSubsystem.openSquid();
+						}
 					}
 
-					if (dc.getButtonLB()) {
-						mSquidSubsystem.closeSquid();
-					}
 
 
 					if (!wasSquidExtendButton && dc.getRightTrigger() > Constants.kTriggerThreshold) {
@@ -96,16 +99,16 @@ OI {
 			case CARGO:
 
 				synchronized (mLiftSubsystem) {
-					if(dc.getButtonA()) {
+					if(dc.getButtonX()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_CARGO_LOW);
 					}
-					if(dc.getButtonX()) {
+					if(dc.getButtonB()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_CARGO_MID);
 					}
 					if(dc.getButtonY()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_CARGO_HIGH);
 					}
-					if(dc.getButtonB()) {
+					if(dc.getButtonA()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.BOTTOM_LIMIT);
 					}
 				}
@@ -158,6 +161,7 @@ OI {
 
 		wasSquidExtendButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
 		wasChangeModeButton = dc.getButtonRB();
+		wasSquidOpenButton = dc.getLeftTrigger() > Constants.kTriggerThreshold;
 
 	}
 	public void resetAutoLatch(){

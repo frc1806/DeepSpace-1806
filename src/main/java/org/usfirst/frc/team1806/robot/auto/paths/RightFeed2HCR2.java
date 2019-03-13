@@ -21,10 +21,10 @@ public class RightFeed2HCR2 implements PathContainer{
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
 
         sWaypoints.add(new Waypoint(19,27,0,0));
-        sWaypoints.add(new Waypoint(89,27,20,100));
-        sWaypoints.add(new Waypoint(139,47,20,100));
-        sWaypoints.add(new Waypoint(235,88,20,100));
-        sWaypoints.add(new Waypoint(284,88,0,100));
+        sWaypoints.add(new Waypoint(89,27,20,115));
+        sWaypoints.add(new Waypoint(139,47,20,115));
+        sWaypoints.add(new Waypoint(235,88,20,115));
+        sWaypoints.add(new Waypoint(284,88,0,115));
 
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);

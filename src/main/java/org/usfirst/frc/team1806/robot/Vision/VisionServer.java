@@ -1,11 +1,17 @@
 package org.usfirst.frc.team1806.robot.Vision;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import edu.wpi.first.wpilibj.Timer;
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Vision.Message.HeartbeatMessage;
+import org.usfirst.frc.team1806.robot.Vision.Message.TargetsMessage;
 import org.usfirst.frc.team1806.robot.Vision.Message.UnknownTypeMessage;
 import org.usfirst.frc.team1806.robot.Vision.Message.VisionMessage;
 import org.usfirst.frc.team1806.robot.util.CrashTrackingRunnable;
+import org.usfirst.frc.team1806.robot.util.Target;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +29,9 @@ public class VisionServer extends CrashTrackingRunnable {
     private int m_port;
     double lastMessageReceivedTime = 0;
     private boolean m_use_java_time = false;
+
+    private Double targetsTimestamp;
+    private ArrayList<Target> targets;
 
     private ArrayList<ServerThread> serverThreads = new ArrayList<>();
     private volatile boolean mWantsAppRestart = false;
@@ -65,7 +74,21 @@ public class VisionServer extends CrashTrackingRunnable {
 
         public void handleMessage(VisionMessage message, double timestamp) {
             if ("targets".equals(message.getType())) {
-
+                try {
+                    JsonParser jsonParser = new JsonParser();
+                    JsonElement messgageElement = jsonParser.parse(message.toJson());
+                    JsonArray targetsArray = messgageElement.getAsJsonObject().getAsJsonObject("message").getAsJsonArray("targets");
+                    ArrayList<Target> newTargetsArray = new ArrayList<>();
+                    for (JsonElement targetElement : targetsArray) {
+                        newTargetsArray.add(new Target(targetElement.getAsJsonObject()));
+                    }
+                    synchronized (targets){
+                        targets = newTargetsArray;
+                    }
+                }
+                catch(Exception e){
+                    System.out.println("Could not parse targets message.");
+                }
             }
             if ("heartbeat".equals(message.getType())) {
                 send(new HeartbeatMessage(getTimestamp()));

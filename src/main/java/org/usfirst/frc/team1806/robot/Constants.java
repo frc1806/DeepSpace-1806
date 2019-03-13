@@ -15,8 +15,8 @@ public class Constants {
     
 
     public final static int kDriveTrainPIDSetTimeout = 30;
-    public final static double kCountsPerInch = 323.8833166666667;
-    public final static double kDriveInchesPerRevolution = 0.0030875316774318;
+    public final static double kCountsPerInch = 0.5828530947;
+    public final static double kDriveInchesPerRevolution = 1/kCountsPerInch;
 
     ///Motion
     public final static double kMinLookAhead = 9; // inches
@@ -44,10 +44,10 @@ public class Constants {
     //
     // PID gains for drive velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in counts per tenth of a second
-    public final static double kDriveHighGearVelocityKp = 1.01; // 1.2/1500;
-    public final static double kDriveHighGearVelocityKi = 0.0000000; //0.0;
-    public final static double kDriveHighGearVelocityKd =  7.8; //0.0001; //6.0/1500;
-    public final static double kDriveHighGearVelocityKf = 0.21; //.025;
+    public final static double kDriveHighGearVelocityKp = .0004;//.08;//.16; //1.01;
+    public final static double kDriveHighGearVelocityKi = 0.0000000;
+    public final static double kDriveHighGearVelocityKd =  .0030625; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
+    public final static double kDriveHighGearVelocityKf = .0000875;//.0175; //.035; //0.21; //.025;
     public final static int kDriveHighGearVelocityIZone = 0;
     public final static double kDriveHighGearVelocityRampRate = .1;
     public final static double kDriveHighGearNominalOutput = 0.25;
