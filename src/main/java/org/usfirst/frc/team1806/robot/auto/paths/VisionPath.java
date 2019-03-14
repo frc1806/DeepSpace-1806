@@ -55,18 +55,19 @@ public class VisionPath implements PathContainer {
             RigidTransform2d roboPose = RobotState.getInstance().getLatestFieldToVehicle().getValue();
             System.out.println("Field to vehicle: (" + roboPose.getTranslation().x() + ", " + roboPose.getTranslation().y() + ")");
             //RigidTransform2d bayyPose = generateBayVisionPoseFromODO();
-            RigidTransform2d bayyPose = interpolateAlongLine(roboPose, odometry.getTranslation().x(), odometry.getRotation().getRadians(), odometry.getRotation().getRadians());
+            RigidTransform2d bayyPose = new RigidTransform2d(new Translation2d(roboPose.getTranslation().x() - odometry.getTranslation().x(), roboPose.getTranslation().y() + odometry.getTranslation().y()), Rotation2d.fromDegrees(roboPose.getRotation().getDegrees() + odometry.getRotation().getDegrees()));
             sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose, 0, roboPose.getRotation().getRadians()), 0, speed));
             System.out.println("(" + interpolateAlongLine(roboPose, 0, roboPose.getRotation().getRadians()).x() + ", " + interpolateAlongLine(roboPose, 0, roboPose.getRotation().getRadians()).y() + ")");
             sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose, 0.5, roboPose.getRotation().getRadians()), 0, speed));
             System.out.println("(" + interpolateAlongLine(roboPose, 0.5, roboPose.getRotation().getRadians()).x() + ", " + interpolateAlongLine(roboPose, 0.5, roboPose.getRotation().getRadians()).y() + ")");
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, 31, bayyPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -30, bayyPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -26, bayyPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -23, bayyPose.getRotation().getRadians()), 0, speed));
             System.out.println("(" + interpolateAlongLine(bayyPose, 25, bayyPose.getRotation().getRadians()).x() + ", " + interpolateAlongLine(bayyPose, 25, bayyPose.getRotation().getRadians()).y() + ")");
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, 26, bayyPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -21, bayyPose.getRotation().getRadians()), 0, speed));
             System.out.println("(" + interpolateAlongLine(bayyPose, 23, bayyPose.getRotation().getRadians()).x() + ", " + interpolateAlongLine(bayyPose, 23, bayyPose.getRotation().getRadians()).y() + ")");
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, 21, bayyPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -18, bayyPose.getRotation().getRadians()), 0, speed));
             System.out.println("(" + interpolateAlongLine(bayyPose, 21, bayyPose.getRotation().getRadians()).x() + ", " + interpolateAlongLine(bayyPose, 21, bayyPose.getRotation().getRadians()).y() + ")");
-
         }
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
 

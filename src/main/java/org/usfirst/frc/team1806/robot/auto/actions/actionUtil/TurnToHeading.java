@@ -6,10 +6,10 @@ import org.usfirst.frc.team1806.robot.util.Rotation2d;
 
 public class TurnToHeading implements Action {
 
-    private Rotation2d mTargetHeading;
+    private int mTargetHeading;
     private DriveTrainSubsystem mDrive = DriveTrainSubsystem.getInstance();
 
-    public TurnToHeading(Rotation2d heading) {
+    public TurnToHeading(int heading) {
         mTargetHeading = heading;
     }
 
@@ -33,6 +33,6 @@ public class TurnToHeading implements Action {
     public void start() {
     	mDrive.setBrakeMode();
     	System.out.println("yooo turning");
-        mDrive.setWantTurnToHeading(mTargetHeading);
+        mDrive.setWantTurnToHeading(Rotation2d.fromDegrees(mTargetHeading));
     }
 }

@@ -82,6 +82,7 @@ public class VisionServer extends CrashTrackingRunnable {
                     for (JsonElement targetElement : targetsArray) {
                         newTargetsArray.add(new Target(targetElement.getAsJsonObject()));
                     }
+                    
                     synchronized (targets){
                         targets = newTargetsArray;
                     }
