@@ -34,7 +34,7 @@ public class VisionPath implements PathContainer {
 
     BayLocation trackedBay = BayLocation.CARGO_SHIP_FRONT_AUDIANCE;
     RigidTransform2d odometry;
-    public final int speed = 15;
+    public final int speed = 40;
     public VisionPath(RigidTransform2d odo) {
         odometry = odo;
     }
@@ -51,14 +51,21 @@ public class VisionPath implements PathContainer {
         }
         else {
             fps = SmartDashboard.getNumber("Vfps", 0);
-            RigidTransform2d roboPose = RobotState.getInstance().getPredictedFieldToVehicle(Timer.getFPGATimestamp());
+
+            RigidTransform2d roboPose = RobotState.getInstance().getLatestFieldToVehicle().getValue();
+            System.out.println("Field to vehicle: (" + roboPose.getTranslation().x() + ", " + roboPose.getTranslation().y() + ")");
             //RigidTransform2d bayyPose = generateBayVisionPoseFromODO();
-            RigidTransform2d bayyPose = odometry;
+            RigidTransform2d bayyPose = interpolateAlongLine(roboPose, odometry.getTranslation().x(), odometry.getRotation().getRadians(), odometry.getRotation().getRadians());
             sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose, 0, roboPose.getRotation().getRadians()), 0, speed));
+            System.out.println("(" + interpolateAlongLine(roboPose, 0, roboPose.getRotation().getRadians()).x() + ", " + interpolateAlongLine(roboPose, 0, roboPose.getRotation().getRadians()).y() + ")");
             sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose, 0.5, roboPose.getRotation().getRadians()), 0, speed));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, 25, bayyPose.getRotation().getRadians()), 0, speed));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, 23, bayyPose.getRotation().getRadians()), 0, speed));
+            System.out.println("(" + interpolateAlongLine(roboPose, 0.5, roboPose.getRotation().getRadians()).x() + ", " + interpolateAlongLine(roboPose, 0.5, roboPose.getRotation().getRadians()).y() + ")");
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, 31, bayyPose.getRotation().getRadians()), 0, speed));
+            System.out.println("(" + interpolateAlongLine(bayyPose, 25, bayyPose.getRotation().getRadians()).x() + ", " + interpolateAlongLine(bayyPose, 25, bayyPose.getRotation().getRadians()).y() + ")");
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, 26, bayyPose.getRotation().getRadians()), 0, speed));
+            System.out.println("(" + interpolateAlongLine(bayyPose, 23, bayyPose.getRotation().getRadians()).x() + ", " + interpolateAlongLine(bayyPose, 23, bayyPose.getRotation().getRadians()).y() + ")");
             sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, 21, bayyPose.getRotation().getRadians()), 0, speed));
+            System.out.println("(" + interpolateAlongLine(bayyPose, 21, bayyPose.getRotation().getRadians()).x() + ", " + interpolateAlongLine(bayyPose, 21, bayyPose.getRotation().getRadians()).y() + ")");
 
         }
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
@@ -87,14 +94,21 @@ public class VisionPath implements PathContainer {
 
     public Translation2d interpolateAlongLine(RigidTransform2d point, double adjust, double heading) {
         double X = point.getTranslation().x() + adjust * Math.cos(heading);
-        double Y = point.getTranslation().x() + adjust * Math.sin(heading);
+        double Y = point.getTranslation().y() + adjust * Math.sin(heading);
 
-        return new Translation2d(new Translation2d(X,Y));
+        return new Translation2d(X,Y);
+
+    }
+    public RigidTransform2d interpolateAlongLine(RigidTransform2d point, double adjust, double heading, double heading2) {
+        double X = point.getTranslation().x() + adjust * Math.cos(heading);
+        double Y = point.getTranslation().y() + adjust * Math.sin(heading);
+
+        return new RigidTransform2d(new Translation2d(X,Y), Rotation2d.fromRadians(heading2));
 
     }
     @Override
     public RigidTransform2d getStartPose() {
-        return odometry;
+        return RobotState.getInstance().getLatestFieldToVehicle().getValue();
     }
 
     @Override

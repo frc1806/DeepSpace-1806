@@ -10,8 +10,8 @@ public class Constants {
     public final static boolean enableDebugMode = true;
     public final static double kLooperDt = 0.005;
     public final static double kDriveWheelDiameterInches = 4;
-    public final static double kTrackWidthInches = 27.5;
-    public final static double kTrackScrubFactor = .978;
+    public final static double kTrackWidthInches = 15;
+    public final static double kTrackScrubFactor = .950;
     
 
     public final static int kDriveTrainPIDSetTimeout = 30;
@@ -19,10 +19,10 @@ public class Constants {
     public final static double kDriveInchesPerRevolution = 1/kCountsPerInch;
 
     ///Motion
-    public final static double kMinLookAhead = 9; // inches
-    public final static double kMinLookAheadSpeed = 9.0; // inches per second
+    public final static double kMinLookAhead = 2; // inches
+    public final static double kMinLookAheadSpeed = 3.0; // inches per second
     public final static double kMaxLookAhead = 42; // inches
-    public final static double kMaxLookAheadSpeed = 120.0; // inches per second
+    public final static double kMaxLookAheadSpeed = 144.0; // inches per second
     public final static double kDeltaLookAhead = kMaxLookAhead - kMinLookAhead;
     public final static double kDeltaLookAheadSpeed = kMaxLookAheadSpeed - kMinLookAheadSpeed;
 
@@ -39,7 +39,7 @@ public class Constants {
     public final static double kPathFollowingProfileKffa = 0.05;
     public final static double kPathFollowingGoalPosTolerance = 0.75;
     public final static double kPathFollowingGoalVelTolerance = 18.0;
-    public final static double kPathStopSteeringDistance = 9.0;
+    public final static double kPathStopSteeringDistance = 2.25;
 
     //
     // PID gains for drive velocity loop (HIGH GEAR)

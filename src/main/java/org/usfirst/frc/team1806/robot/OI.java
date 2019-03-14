@@ -52,8 +52,7 @@ OI {
 				synchronized (mLiftSubsystem) {
 
 					if(dc.getButtonA()) {
-						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.BOTTOM_LIMIT\
-						);
+						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.BOTTOM_LIMIT);
 					}
 					if(dc.getButtonX()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_HATCH_MID);
