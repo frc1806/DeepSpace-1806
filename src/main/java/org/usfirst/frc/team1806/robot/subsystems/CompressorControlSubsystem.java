@@ -115,7 +115,7 @@ public class CompressorControlSubsystem implements Subsystem {
 
     }
 
-    public void outputToSmartDashboard(){
+    public void outputToSmartDashboard(){/*
         SmartDashboard.putNumber("STORAGE PRESSURE", pressureSensor.getPressure());
         SmartDashboard.putNumber("Recent Average Pressure", pressureSamplingFilter.getCurrentAverage());
         SmartDashboard.putNumber("Compressor Current", compressor.getCompressorCurrent());
@@ -123,6 +123,7 @@ public class CompressorControlSubsystem implements Subsystem {
         SmartDashboard.putNumber("Recent Average PDP Total Current", amperageSamplingFilter.getCurrentAverage());
         SmartDashboard.putBoolean("Is Compressor Running?", compressor.getClosedLoopControl());
         SmartDashboard.putNumber("Battery Charge", (batteryCoulombCount/Constants.kFullChargeBatteryCoulombCount)* 100);
+        */
     }
 
     public void stop(){

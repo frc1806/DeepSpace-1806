@@ -103,6 +103,8 @@ public class DriveTrainSubsystem implements Subsystem {
 	private double rightHighGearMaxVel = 0;
 	private double currentTimeStamp;
 	private double lastTimeStamp;
+	private double leftEncoderDistance, rightEncoderDistance;
+	private double leftVelocity, rightVelocity;
 	// State Control
 	private DriveStates mDriveStates;
 	private RobotState mRobotState = RobotState.getInstance();
@@ -118,6 +120,10 @@ public class DriveTrainSubsystem implements Subsystem {
 			// TODO Auto-generated method stub
 			lastTimeStamp = currentTimeStamp;
 			currentTimeStamp = timestamp;
+			leftEncoderDistance = masterLeft.getEncoder().getPosition();
+			rightEncoderDistance = masterRight.getEncoder().getPosition();
+			leftVelocity = masterLeft.getEncoder().getVelocity();
+			rightVelocity = masterRight.getEncoder().getVelocity();
 			synchronized (DriveTrainSubsystem.this) {
 				switch (mDriveStates) {
 					case CREEP:
@@ -198,6 +204,11 @@ public class DriveTrainSubsystem implements Subsystem {
 		masterRight.setInverted(true);
 		rightC.setInverted(true);
 
+		leftEncoderDistance = 0;
+		rightEncoderDistance = 0;
+		leftVelocity = 0;
+		rightVelocity = 0;
+
 
 
 		// init solenoids
@@ -254,19 +265,19 @@ public class DriveTrainSubsystem implements Subsystem {
 	}
 
 	public double getLeftDistanceInches() {
-		return masterLeft.getEncoder().getPosition() * Constants.kDriveInchesPerRevolution;
+		return leftEncoderDistance * Constants.kDriveInchesPerRevolution;
 	}
 
 	public double getLeftVelocityInchesPerSec() {
-		return masterLeft.getEncoder().getVelocity() * Constants.kDriveInchesPerRevolution / 60;
+		return leftVelocity * Constants.kDriveInchesPerRevolution / 60;
 	}
 
 	public double getRightDistanceInches() {
-		return masterRight.getEncoder().getPosition() * Constants.kDriveInchesPerRevolution;
+		return rightEncoderDistance * Constants.kDriveInchesPerRevolution;
 	}
 
 	public double getRightVelocityInchesPerSec() {
-		return masterRight.getEncoder().getVelocity() * Constants.kDriveInchesPerRevolution / 60;
+		return rightVelocity * Constants.kDriveInchesPerRevolution / 60;
 	}
 
 	public boolean isCreeping() {
@@ -310,24 +321,14 @@ public class DriveTrainSubsystem implements Subsystem {
 
 	@Override
 	public void outputToSmartDashboard() {
-		SmartDashboard.putBoolean("HighGear?", isHighGear());
-		SmartDashboard.putNumber("driveLeftPosition", getLeftDistanceInches());
-		SmartDashboard.putNumber("driveRightPosition", getRightDistanceInches());
+		SmartDashboard.putNumber("AdriveLeftPosition", getLeftDistanceInches());
+		SmartDashboard.putNumber("AdriveRightPosition", getRightDistanceInches());
 		SmartDashboard.putNumber("driveLeftVelocity", getLeftVelocityInchesPerSec());
 		SmartDashboard.putNumber("driveRightVelocity", getRightVelocityInchesPerSec());
-		SmartDashboard.putNumber("Left Side", masterLeft.getEncoder().getPosition());
-		SmartDashboard.putNumber("Right Side: ", masterRight.getEncoder().getPosition());
-		SmartDashboard.putNumber("Current Acceleration Value", navx.getWorldLinearAccelZ());
-		SmartDashboard.putNumber("LeftA", masterLeft.get());
-		SmartDashboard.putNumber("LeftB", leftA.get());
-		SmartDashboard.putNumber("RightA", masterRight.get());
-		SmartDashboard.putNumber("RightB", rightC.get());
-
-		SmartDashboard.putNumber("Right Motor Percent Output", masterRight.get());
-		SmartDashboard.putNumber("Left Motor Percent Output", masterLeft.get());
+		SmartDashboard.putNumber("ALeft Side", leftEncoderDistance);
+		SmartDashboard.putNumber("ARight Side: ", rightEncoderDistance);
 		SmartDashboard.putString("Drive State", returnDriveState());
-		SmartDashboard.putNumber("NavX", getGyroYaw().getDegrees());
-		SmartDashboard.putBoolean("Are we in brake mode", mIsBrakeMode);
+		SmartDashboard.putNumber("ANavX", getGyroYaw().getDegrees());
 		SmartDashboard.putNumber("Main Left Drive Temp", masterLeft.getMotorTemperature());
 		SmartDashboard.putNumber("Main LeftA Drive Temp", leftA.getMotorTemperature());
 		SmartDashboard.putNumber("Main Right Drive Temp", masterRight.getMotorTemperature());
@@ -600,7 +601,8 @@ public class DriveTrainSubsystem implements Subsystem {
 			SmartDashboard.putNumber("Left Side Setpoint: ", setpoint.left);
 			SmartDashboard.putNumber("Right Side Setpoint: ", setpoint.right);
 		} else {
-			updateVelocitySetpoint(0, 0);
+			setOpenLoop(new DriveSignal(0, 0, false));
+			//updateVelocitySetpoint(0, 0);
 		}
 	}
 
@@ -689,6 +691,10 @@ public class DriveTrainSubsystem implements Subsystem {
 //		System.out.println("Zeroing drivetrain sensors...");
         masterLeft.getEncoder().setPosition(0);
         masterRight.getEncoder().setPosition(0);
+        leftVelocity = 0;
+        rightVelocity = 0;
+        leftEncoderDistance =0;
+        rightEncoderDistance = 0;
 		navx.zeroYaw();
 //   	 System.out.println("Drivetrain sensors zeroed!");
 	}
