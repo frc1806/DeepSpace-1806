@@ -15,6 +15,9 @@ public class CargoIntakeSubsystem implements Subsystem {
     private IntakeSubsystem innerIntake;
     //private IntakeSubsystem outerIntake;
 
+    /**
+     * Different power percentages for scoring a cargo
+     */
     public enum ScoringPower {
         SLOW(.2),
         MEDIUM(.4),
@@ -25,10 +28,19 @@ public class CargoIntakeSubsystem implements Subsystem {
 
         Double power;
 
+        /** Constructs a ScoringPower
+         *
+         * @param power this is the power value to use while using the Intake outwards to score the cargo
+          (in percentages from 0.0 to 1.0)
+         */
         ScoringPower(Double power) {
             this.power = power;
         }
 
+        /**
+         *
+         * @return the power of scoring the cargo
+         */
         Double getPower() {
             return power;
         }
@@ -37,7 +49,7 @@ public class CargoIntakeSubsystem implements Subsystem {
     public static CargoIntakeSubsystem getInstance(){
         return mCargoIntakeSubsystem;
     }
-
+    
     private CargoIntakeSubsystem(){
 
         extensionSolenoid = new DoubleSolenoid(RobotMap.cargoIntakeExtend, RobotMap.cargoIntakeRetract);
@@ -69,11 +81,13 @@ public class CargoIntakeSubsystem implements Subsystem {
 
     }
 
-    public void extendOuterIntake () { extensionSolenoid.set(DoubleSolenoid.Value.kForward);
+    public void extendOuterIntake () {
+        extensionSolenoid.set(DoubleSolenoid.Value.kForward);
 
     }
 
-    public void retractOuterIntake () { extensionSolenoid.set(DoubleSolenoid.Value.kReverse);}
+    public void retractOuterIntake () {
+        extensionSolenoid.set(DoubleSolenoid.Value.kReverse);}
 
     public boolean isOuterIntakeExtended() {
         return extensionSolenoid.get() == DoubleSolenoid.Value.kForward;

@@ -75,7 +75,9 @@ public class CompressorControlSubsystem implements Subsystem {
                 }
 
                 compressor.setClosedLoopControl(runCompressor);
-
+                /**
+                 * mathematical function for figuring out battery charge
+                 */
                 if(Robot.powerDistributionPanel.getTotalCurrent()<Constants.kLowAmpLoad){
                     batteryCoulombCount = ((Robot.powerDistributionPanel.getVoltage() - Constants.kBatteryDepletedVoltage)/(Constants.kBatteryFullChargeVoltage -Constants.kBatteryDepletedVoltage))* Constants.kFullChargeBatteryCoulombCount;
                 }
