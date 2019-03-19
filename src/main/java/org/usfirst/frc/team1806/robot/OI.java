@@ -23,6 +23,7 @@ OI {
 	private SquidSubsystem mSquidSubsystem = SquidSubsystem.getInstance();
 	private CompressorControlSubsystem mCompressorControlSubsystem = CompressorControlSubsystem.getInstance();
 	private LiftSubsystem mLiftSubsystem = LiftSubsystem.getInstance();
+	private HABinAGoodTime mHabClimber = HABinAGoodTime.getInstance();
 	private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
 	private XboxController dc = new XboxController(0);
 	private XboxController oc = new XboxController(1);
@@ -40,9 +41,18 @@ OI {
 			autoInTeleOp.update(autoController.getButtonStart());
 		}
 		synchronized (mDriveTrainSubsystem) {
-
+			if(Robot.mSequenceState != Robot.SequenceState.VISION || !Robot.mSequenceState.isActive()) {
 				mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
 						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
+			}
+
+		}
+
+		if(dc.getButtonStart()){
+			mHabClimber.goToSetpoint(HABinAGoodTime.ClimbPosition.EXTENSION_LIMIT);
+		}
+		if(dc.getButtonLS()){
+			mHabClimber.goToSetpoint((HABinAGoodTime.ClimbPosition.RETRACTION_LIMIT));
 		}
 
 		//Controls that change based on mode
@@ -143,7 +153,6 @@ OI {
 
 				break;
 		}
-
 		if(dc.getButtonBack() || oc.getPOVDown()){
 			Robot.RetractAll();
 		}
@@ -153,6 +162,13 @@ OI {
 		}
 		else if (mLiftSubsystem.returnLiftStates() == LiftSubsystem.LiftStates.MANUAL_CONTROL){
 			mLiftSubsystem.manualMode( 0);
+		}
+
+		if(Math.abs(oc.getRightJoyY()) > 0.2){
+			mHabClimber.manualHandler(true, oc.getRightJoyY(), oc.getRightJoyY() );
+		}
+		else if (mHabClimber.getmClimbStates() == HABinAGoodTime.ClimbStates.MANUAL_CONTROL) {
+			mHabClimber.manualHandler(true, 0, 0);
 		}
 
 
@@ -171,5 +187,12 @@ OI {
 	}
 	public boolean autoInTeleOpOn(){
 		return autoInTeleOp.returnStatus();
+	}
+	public boolean getAutomatedSequenceButton() {
+		return dc.getButtonLB();
+	}
+
+	public Robot.SequenceState getAutomatedSequenceMode() {
+		return Robot.SequenceState.VISION; //TODO FIXXXX
 	}
 }

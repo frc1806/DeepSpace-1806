@@ -29,7 +29,6 @@ public class VisionServer extends CrashTrackingRunnable {
     private int m_port;
     double lastMessageReceivedTime = 0;
     private boolean m_use_java_time = false;
-
     private Double targetsTimestamp;
     private ArrayList<Target> targets;
 
@@ -82,21 +81,22 @@ public class VisionServer extends CrashTrackingRunnable {
                     for (JsonElement targetElement : targetsArray) {
                         newTargetsArray.add(new Target(targetElement.getAsJsonObject()));
                     }
-                    double newTimestamp = messgageElement.getAsJsonObject().getAsJsonObject("message").getAsJsonObject("timestamp").getAsDouble();
+                    double newTimestamp = messgageElement.getAsJsonObject().getAsJsonObject("message").getAsJsonPrimitive("timestamp").getAsDouble();
                     synchronized (targets){
                         synchronized (targetsTimestamp){
                             targets = newTargetsArray;
                             targetsTimestamp = newTimestamp;
                         }
-
                     }
                 }
                 catch(Exception e){
-                    System.out.println("Could not parse targets message.");
+                    System.out.println("Could not parse targets message." + e.getMessage());
+                    e.printStackTrace();
                 }
             }
             if ("heartbeat".equals(message.getType())) {
-                send(new HeartbeatMessage(getTimestamp()));
+                HeartbeatMessage hb = new HeartbeatMessage(getTimestamp());
+                send(hb);
             }
         }
 
@@ -146,8 +146,12 @@ public class VisionServer extends CrashTrackingRunnable {
      * @param port network port
      */
     private VisionServer(int port) {
+        targets = new ArrayList<>();
+        targetsTimestamp = 0.0;
         try {
             m_port = port;
+
+            System.out.println("Starting vision server socket");
             m_server_socket = new ServerSocket(port);
             try {
                 String useJavaTime = System.getenv("USE_JAVA_TIME");
@@ -168,6 +172,7 @@ public class VisionServer extends CrashTrackingRunnable {
         while (m_running) {
             try {
                 Socket p = m_server_socket.accept();
+                System.out.println("Starting server socket");
                 ServerThread s = new ServerThread(p);
                 new Thread(s).start();
                 serverThreads.add(s);
@@ -203,10 +208,18 @@ public class VisionServer extends CrashTrackingRunnable {
     }
 
     private double getTimestamp() {
-        if (m_use_java_time) {
-            return System.currentTimeMillis();
-        } else {
             return Timer.getFPGATimestamp();
+    }
+
+    public ArrayList<Target> getTargets(){
+        synchronized (targets){
+            return targets;
+        }
+    }
+
+    public double getTargetsTimestamp(){
+        synchronized (targetsTimestamp){
+            return targetsTimestamp;
         }
     }
 }

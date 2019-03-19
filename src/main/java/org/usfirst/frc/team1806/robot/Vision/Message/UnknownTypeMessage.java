@@ -7,14 +7,12 @@ import com.google.gson.JsonParser;
 
 public class UnknownTypeMessage extends VisionMessage {
 
-    String jsonMessage;
+    JsonObject jsonMessage;
     boolean isValid;
     String type;
 
     public UnknownTypeMessage(String jsonMessage){
         isValid = true;
-        this.jsonMessage = jsonMessage;
-
         JsonElement messageElement;
         JsonParser messageParser = new JsonParser();
         try {
@@ -22,9 +20,10 @@ public class UnknownTypeMessage extends VisionMessage {
             JsonObject messageObject = messageElement.getAsJsonObject();
 
             type = messageObject.get("type").getAsJsonPrimitive().getAsString();
+            this.jsonMessage = messageObject.get("message").getAsJsonObject();
         }
         catch(JsonParseException parseException){
-            System.out.println("received invalid message");
+            System.out.println("received invalid message: " + jsonMessage);
             this.isValid = false;
         }
     }
@@ -33,7 +32,7 @@ public class UnknownTypeMessage extends VisionMessage {
         return type;
     }
 
-    public String getMessage(){
+    public JsonObject getMessage(){
         return jsonMessage;
     }
 

@@ -6,10 +6,10 @@ import org.usfirst.frc.team1806.robot.util.Rotation2d;
 
 public class TurnToHeading implements Action {
 
-    private int mTargetHeading;
+    private double mTargetHeading;
     private DriveTrainSubsystem mDrive = DriveTrainSubsystem.getInstance();
 
-    public TurnToHeading(int heading) {
+    public TurnToHeading(double heading) {
         mTargetHeading = heading;
     }
 

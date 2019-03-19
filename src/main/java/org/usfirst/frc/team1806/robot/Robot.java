@@ -1,7 +1,5 @@
 package org.usfirst.frc.team1806.robot;
 
-import edu.wpi.cscore.MjpegServer;
-import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -9,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1806.robot.Vision.VisionServer;
 import org.usfirst.frc.team1806.robot.auto.*;
+import org.usfirst.frc.team1806.robot.auto.modes.VisionMode;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeExecuter;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeSelector;
@@ -34,24 +33,34 @@ public class Robot extends TimedRobot {
     private RobotState mRobotState = RobotState.getInstance();
     private VisionServer mVisionServer = VisionServer.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
+    private AutoModeExecuter mAutomatedSequenceExecuter = null;
     public static OI m_oi;
     public static PowerDistributionPanel powerDistributionPanel;
     SendableChooser<Command> m_chooser = new SendableChooser<>();
 
 
     private static final SubsystemManager S_SubsystemManager = new SubsystemManager(
-            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance(), CompressorControlSubsystem.getInstance(), CargoIntakeSubsystem.getInstance(), SquidSubsystem.getInstance()));
+            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance(), CompressorControlSubsystem.getInstance(), CargoIntakeSubsystem.getInstance(), SquidSubsystem.getInstance(), HABinAGoodTime.getInstance()));
 
     private Looper mEnabledLooper = new Looper();
 
+    public static SequenceState mSequenceState = SequenceState.VISION;
     public static AutoModeBase selectedAuto;
     public static boolean isBlue;
     public boolean arePathsInit = false;
     public static boolean needToPositionControlInTele = false;
+    private boolean automatedSequenceEnabled = true;
+    private boolean sequenceStarting = false;
+    private boolean sequenceEnding = false;
+    private boolean wasAutomatedSequenceEnabled = false;
+    public static AutoModeBase currentSequence;
+
+
     public enum AutoInTeleOp{
       AUTO_DISABLED,
       AUTO_INIT,
-      AUTO_PERIODIC
+      AUTO_PERIODIC,
+        CONCURRENT_WITH_DC;
     }
     public AutoInTeleOp autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
 
@@ -70,7 +79,6 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         Robot.setGamePieceMode(GamePieceMode.HATCH_PANEL);
       m_oi = new OI();
-
       zeroAllSensors();
 
       //adds in the iterative code to make the code run
@@ -80,7 +88,9 @@ public class Robot extends TimedRobot {
       powerDistributionPanel = new PowerDistributionPanel();
       SmartDashboard.putData("Auto mode", m_chooser);
       mAutoModeExecuter = null;
+      mAutomatedSequenceExecuter = null;
       mAutoModeExecuter = new AutoModeExecuter();
+      mAutomatedSequenceExecuter = new AutoModeExecuter();
       //mAutoModeExecuter.setAutoMode(new QualMode()); TODO
       mDrive.setCoastMode();
       AutoModeSelector.initAutoModeSelector();
@@ -95,14 +105,36 @@ public class Robot extends TimedRobot {
       RedPathAdapter.initPaths();
     }
 
+    public enum SequenceState{
+        VISION(new VisionMode());
 
+        public AutoModeBase getAutoMode() {
+            return autoMode;
+        }
+        public boolean isActive() {
+            return bIsActive;
+        }
+        AutoModeBase autoMode;
+
+        public void setbIsActive(boolean bIsActive) {
+            this.bIsActive = bIsActive;
+        }
+
+        boolean bIsActive = false;
+        SequenceState(AutoModeBase _autoMode) {
+            autoMode = _autoMode;
+        }
+    }
     @Override
     public void disabledInit() {
       mEnabledLooper.stop();
-      if(mAutoModeExecuter != null) {
-        mAutoModeExecuter.stop();
-      }
-      autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
+        if(mAutoModeExecuter != null) {
+            mAutoModeExecuter.stop();
+        }
+        if(mAutomatedSequenceExecuter != null) {
+            mAutomatedSequenceExecuter.stop();
+        }
+        autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
       m_oi.resetAutoLatch();
     }
 
@@ -115,7 +147,8 @@ public class Robot extends TimedRobot {
           isBlue = false;
         }
       }
-      //allPeriodic();
+
+      allPeriodic();
       AutoModeSelector.initAutoModeSelector();
       selectedAuto = AutoModeSelector.getSelectedAutoMode();
       autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
@@ -130,7 +163,7 @@ public class Robot extends TimedRobot {
       try {
 			zeroAllSensors();
 			CrashTracker.logAutoInit();
-            System.out.println("Auto start timestamp: " + Timer.getFPGATimestamp());
+            System.out.println("Auto star t timestamp: " + Timer.getFPGATimestamp());
             if (mAutoModeExecuter != null) {
                 mAutoModeExecuter.stop();
             }
@@ -159,11 +192,16 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
       mEnabledLooper.start();
-      if(mAutoModeExecuter != null) {
-        mAutoModeExecuter.stop();
-        mAutoModeExecuter = null;
-        mAutoModeExecuter = new AutoModeExecuter();
-      }
+        if(mAutoModeExecuter != null) {
+            mAutoModeExecuter.stop();
+            mAutoModeExecuter = null;
+            mAutoModeExecuter = new AutoModeExecuter();
+        }
+        if(mAutomatedSequenceExecuter != null) {
+            mAutomatedSequenceExecuter.stop();
+            mAutomatedSequenceExecuter = null;
+            mAutomatedSequenceExecuter = new AutoModeExecuter();
+        }
       mDrive.setOpenLoop(DriveSignal.NEUTRAL);
       mDrive.setNeutralMode(false);
       autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
@@ -197,6 +235,7 @@ public class Robot extends TimedRobot {
               teleopInit();
             }
             break;
+
           case AUTO_PERIODIC:
             if(m_oi.autoInTeleOpOn()){
               autonomousPeriodic();
@@ -211,8 +250,31 @@ public class Robot extends TimedRobot {
             break;
         }
 
-      } else {
-        runTeleOp();
+      }
+      else {
+          //update boolean trackers
+          automatedSequenceEnabled = m_oi.getAutomatedSequenceButton();
+          sequenceStarting = automatedSequenceEnabled && !wasAutomatedSequenceEnabled;
+          sequenceEnding = !automatedSequenceEnabled && wasAutomatedSequenceEnabled;
+
+          if(automatedSequenceEnabled) {
+              if(sequenceStarting) {
+                  mSequenceState = m_oi.getAutomatedSequenceMode();
+                  mSequenceState.setbIsActive(true);
+                  mAutoModeExecuter.setAutoMode(mSequenceState.getAutoMode());
+                  mAutoModeExecuter.start();
+
+              }
+          }
+          else{
+              if(sequenceEnding) {
+                  mAutoModeExecuter.stop();
+                  mSequenceState.setbIsActive(false);
+              }
+
+          }
+          runTeleOp();
+          wasAutomatedSequenceEnabled = automatedSequenceEnabled;
       }
     }
 

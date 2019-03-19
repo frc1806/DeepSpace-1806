@@ -9,19 +9,15 @@ public class HeartbeatMessage extends VisionMessage {
     boolean valid;
 
     public HeartbeatMessage(double timeStamp){
-        this.timestamp = timestamp;
-        this.source = "Coprocessor";
+        this.timestamp = timeStamp;
+        this.source = "roborio";
         valid = true;
     }
 
-    public HeartbeatMessage(String message){
-        JsonElement messageElement;
-        JsonParser messageParser = new JsonParser();
+    public HeartbeatMessage(JsonObject message){
         try{
-            messageElement = messageParser.parse(message);
-            JsonObject messageObject = messageElement.getAsJsonObject();
 
-            JsonElement sourceJson = messageObject.get("source");
+            JsonElement sourceJson = message.get("source");
             this.valid = true;
             if(sourceJson != null){
                 this.source = sourceJson.getAsJsonPrimitive().getAsString();
@@ -31,7 +27,7 @@ public class HeartbeatMessage extends VisionMessage {
                 this.valid = false;
             }
 
-            JsonElement timeJson = messageObject.get("timestamp");
+            JsonElement timeJson = message.get("timestamp");
             if (timeJson != null) {
                 this.timestamp = timeJson.getAsJsonPrimitive().getAsBigDecimal().doubleValue();
             }
@@ -65,10 +61,10 @@ public class HeartbeatMessage extends VisionMessage {
         return valid;
     }
 
-    public String getMessage(){
+    public JsonObject getMessage(){
         JsonObject message = new JsonObject();
         message.add("source", new JsonPrimitive(source));
         message.add("timestamp", new JsonPrimitive(timestamp));
-        return message.getAsString();
+        return message;
     }
 }

@@ -4,6 +4,7 @@ package org.usfirst.frc.team1806.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.ControlType;
+import edu.wpi.first.wpilibj.Timer;
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Kinematics;
 import org.usfirst.frc.team1806.robot.RobotMap;
@@ -39,6 +40,7 @@ public class DriveTrainSubsystem implements Subsystem {
 		DRIVE_TO_POSITION, // Drive to Position using SRX PID
 		PATH_FOLLOWING,
 		VELOCITY_SETPOINT,
+		WIGGLE,
 		NOTHING // Used on init
 	}
 
@@ -145,6 +147,8 @@ public class DriveTrainSubsystem implements Subsystem {
 					case VELOCITY_SETPOINT:
 						return;
 					case VISION:
+						return;
+					case WIGGLE:
 						return;
 					default:
 						return;
@@ -569,6 +573,43 @@ public class DriveTrainSubsystem implements Subsystem {
 		}
 	}
 
+	boolean wasWigglin = false;
+	boolean startingWiggle = false;
+	boolean finishingWiggle = false;
+	double wiggleAdjust = 0;
+	double kWiggle = .05;
+	Timer wiggleTime = new Timer();
+
+	public synchronized void wiggleHandler(boolean wiggleReq) {
+		startingWiggle = wiggleReq && !wasWigglin;
+
+
+
+		if(startingWiggle) {
+			wiggleTime.reset();
+			wiggleTime.start();
+			mDriveStates = DriveStates.WIGGLE;
+		}
+		else if(finishingWiggle) {
+			wiggleTime.stop();
+			wiggleTime.reset();
+			mDriveStates = DriveStates.DRIVING;
+
+			leftDrive(0);
+			rightDrive(0);
+		}
+
+		if(wiggleReq) {
+			wiggleAdjust = Math.sin(wiggleTime.get() * kWiggle) * .2;
+
+			leftDrive(.5 + wiggleAdjust);
+			rightDrive(.5 + wiggleAdjust);
+		}
+
+
+		wasWigglin = wiggleReq;
+	}
+
 	@Override
 	public synchronized void stop() {
 		stopDrive();
@@ -634,7 +675,7 @@ public class DriveTrainSubsystem implements Subsystem {
 		final Rotation2d robot_to_target = field_to_robot.inverse().rotateBy(mTargetHeading);
 
 		// Check if we are on target
-		final double kGoalPosTolerance = 10; // degrees
+		final double kGoalPosTolerance = 4; // degrees
 		final double kGoalVelTolerance = 5.0; // inches per second
 		if (Math.abs(robot_to_target.getDegrees()) < kGoalPosTolerance
 				&& Math.abs(getLeftVelocityInchesPerSec()) < kGoalVelTolerance

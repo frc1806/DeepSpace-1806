@@ -22,7 +22,7 @@ public class TargetsMessage extends VisionMessage {
         return "targets";
     }
 
-    public String getMessage(){
+    public JsonObject getMessage(){
         JsonObject message = new JsonObject();
         message.add("timestamp", new JsonPrimitive(timestamp));
         JsonArray targetsArray = new JsonArray();
@@ -30,7 +30,8 @@ public class TargetsMessage extends VisionMessage {
             targetsArray.add(target.getTargetJson());
         }
         message.add("targets",targetsArray);
-        return message.getAsString();
+        return message;
+
     }
 
 }

@@ -14,11 +14,17 @@ public class DumbMode implements PathContainer {
 
 	@Override
 	public Path buildPath() {
+		double speed = 20;
 		System.out.println("well you're sitting here");
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(0,0,0,0));
-        sWaypoints.add(new Waypoint(150,0,0,70));
-        return PathBuilder.buildPathFromWaypoints(sWaypoints);
+		sWaypoints.add(new Waypoint(0,0,0,0));
+		sWaypoints.add(new Waypoint(0.5,0,0, speed));
+		sWaypoints.add(new Waypoint(12,0,0, speed));
+		sWaypoints.add(new Waypoint(24,12,0, speed));
+		sWaypoints.add(new Waypoint(36,12,0, speed));
+		sWaypoints.add(new Waypoint(48,0,0, speed));
+		sWaypoints.add(new Waypoint(60,0,0, speed));
+		return PathBuilder.buildPathFromWaypoints(sWaypoints);
 	}
 
 	@Override

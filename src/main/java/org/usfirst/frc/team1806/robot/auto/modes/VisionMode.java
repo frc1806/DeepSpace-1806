@@ -8,16 +8,25 @@ import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
 import org.usfirst.frc.team1806.robot.util.Rotation2d;
 import org.usfirst.frc.team1806.robot.util.Translation2d;
 
-public class VisionTestMode  extends AutoModeBase {
+public class VisionMode extends AutoModeBase {
+
+    boolean done = false;
     @Override
     protected void routine() throws AutoModeEndedException {
+        done = false;
         int testX = 72;
         int testY = 12;
         double testAngle = 0;
-        runAction(new WaitAction(1));
-        runAction(new DrivePathAction(new VisionPath(new RigidTransform2d(new Translation2d(testX, testY), Rotation2d.fromRadians(testAngle)))));
-        runAction(new TurnToHeading(0));
+        VisionPath visPath = new VisionPath(new RigidTransform2d(new Translation2d(testX, testY), Rotation2d.fromRadians(testAngle)));
+        runAction(new SwitchToLowPID());
+        runAction(new DrivePathAction(visPath));
+        runAction(new TurnTowardsPoint(visPath.bayyPose.getTranslation()));
+        done = true;
         runAction(new WaitAction(15));
 
+    }
+
+    public boolean getIsDone(){
+        return done;
     }
 }

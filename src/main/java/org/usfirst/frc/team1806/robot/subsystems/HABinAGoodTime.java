@@ -2,6 +2,7 @@ package org.usfirst.frc.team1806.robot.subsystems;
 
 import com.revrobotics.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
@@ -28,20 +29,21 @@ public class HABinAGoodTime implements Subsystem {
         leftHABArm = new CANSparkMax(RobotMap.HABLiftLeft, CANSparkMaxLowLevel.MotorType.kBrushless);
         rightHABArm = new CANSparkMax(RobotMap.HABLiftRight, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-        leftHABArm.setInverted(true); //TODO verify this is the correct motor to reverse
+        //leftHABArm.setInverted(true); //TODO verify this is the correct motor to reverse
 
         mClimbStates = ClimbStates.IDLE;
         mClimbPosition = ClimbPosition.RETRACTION_LIMIT;
         mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
+        reloadGains();
 
     }
 
     public enum ClimbPosition {
 
         RETRACTION_LIMIT(0),
-        EXTENSION_LIMIT(300),
-        LOW_POS(100),
-        HIGH_POS(200);
+        EXTENSION_LIMIT(70),
+        LOW_POS(50),
+        HIGH_POS(30);
 
         int height;
         ClimbPosition(int climbHeight){
@@ -105,6 +107,8 @@ public class HABinAGoodTime implements Subsystem {
     public synchronized void goToSetpoint(ClimbPosition setpoint) {
         mClimbStates = ClimbStates.POSITION_CONTROL;
         mClimbPosition = setpoint;
+        leftHABArm.getPIDController().setReference(mClimbPosition.getHeight(), ControlType.kPosition);
+        rightHABArm.getPIDController().setReference(mClimbPosition.getHeight(), ControlType.kPosition);
     }
 
 
@@ -131,10 +135,6 @@ public class HABinAGoodTime implements Subsystem {
                     case HOLD_POSITION:
                         stop(); //TODO create dumb hold position loop IF needed
                     case POSITION_CONTROL:
-                        rightPower = .5 + kPAngleCorrection * mDriveTrainSubsystem.getGyroRoll();
-                        leftPower = .5 - kPAngleCorrection * mDriveTrainSubsystem.getGyroRoll();
-                        rightHABArm.set(rightPower);
-                        leftHABArm.set(leftPower); //TODO maybe add stall protection?
                         if(Math.abs(error) < 1) {
                             mClimbStates = ClimbStates.HOLD_POSITION;
                         }
@@ -149,6 +149,21 @@ public class HABinAGoodTime implements Subsystem {
     }
 
 
+    public void reloadGains(){
+        reloadHABArmGains(leftHABArm);
+        reloadHABArmGains(rightHABArm);
+    }
+
+    public void reloadHABArmGains(CANSparkMax controllerToReload){
+        CANPIDController pidControllerToSet = controllerToReload.getPIDController();
+        pidControllerToSet.setP(Constants.kHABClimbPositionKp);
+        pidControllerToSet.setI(Constants.kHABClimbPositionKi);
+        pidControllerToSet.setD(Constants.kHABClimbPositionKd);
+        pidControllerToSet.setFF(Constants.kHABClimbPositionkf);
+        pidControllerToSet.setIZone(Constants.kHABClimbPositionKiZone);
+    }
+
+
     public void goToHatchMode(){
         //nothing to do here
     }
@@ -159,5 +174,9 @@ public class HABinAGoodTime implements Subsystem {
 
     public void retractAll() {
         //TODO
+    }
+
+    public ClimbStates getmClimbStates(){
+        return mClimbStates;
     }
 }

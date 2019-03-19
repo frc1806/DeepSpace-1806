@@ -1,0 +1,8 @@
+diff a/.gradle/buildOutputCleanup/cache.properties b/.gradle/buildOutputCleanup/cache.properties	(rejected hunks)
+@@ -2,2 +3,6 @@
+++<<<<<<< Updated upstream
+ +#Thu Feb 28 19:08:12 CST 2019
+++=======
++ #Mon Mar 04 20:07:01 CST 2019
+++>>>>>>> Stashed changes
+  gradle.version=5.0

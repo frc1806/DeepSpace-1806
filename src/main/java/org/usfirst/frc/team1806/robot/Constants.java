@@ -15,11 +15,11 @@ public class Constants {
     
 
     public final static int kDriveTrainPIDSetTimeout = 30;
-    public final static double kCountsPerInch = 0.5828530947;
+    public final static double kCountsPerInch = 0.5946;
     public final static double kDriveInchesPerRevolution = 1/kCountsPerInch;
 
     ///Motion
-    public final static double kMinLookAhead = 2; // inches
+    public final static double kMinLookAhead = 4; // inches
     public final static double kMinLookAheadSpeed = 3.0; // inches per second
     public final static double kMaxLookAhead = 42; // inches
     public final static double kMaxLookAheadSpeed = 144.0; // inches per second
@@ -30,11 +30,11 @@ public class Constants {
     // our speed
     // in inches per sec
     public final static double kSegmentCompletionTolerance = 0.75; // inches
-    public final static double kPathFollowingMaxAccel = 144; // inches per second^2
-    public final static double kPathFollowingMaxVel = 144; // inches per second
-    public final static double kPathFollowingProfileKp = 1.15;
-    public final static double kPathFollowingProfileKi = 0.05;
-    public final static double kPathFollowingProfileKv = 0.00002;
+    public final static double kPathFollowingMaxAccel = 132; // inches per second^2
+    public final static double kPathFollowingMaxVel = 132; // inches per second
+    public final static double kPathFollowingProfileKp = .95;
+    public final static double kPathFollowingProfileKi = 0.045;
+    public final static double kPathFollowingProfileKv = 0.000017;
     public final static double kPathFollowingProfileKffv = 1.2;
     public final static double kPathFollowingProfileKffa = 0.05;
     public final static double kPathFollowingGoalPosTolerance = 0.75;
@@ -44,10 +44,10 @@ public class Constants {
     //
     // PID gains for drive velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in counts per tenth of a second
-    public final static double kDriveHighGearVelocityKp = .0004;//.08;//.16; //1.01;
+    public final static double kDriveHighGearVelocityKp = .00065; //.0004;//.08;//.16; //1.01;
     public final static double kDriveHighGearVelocityKi = 0.0000000;
-    public final static double kDriveHighGearVelocityKd =  .0030625; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
-    public final static double kDriveHighGearVelocityKf = .0000875;//.0175; //.035; //0.21; //.025;
+    public final static double kDriveHighGearVelocityKd =  0.00155125; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
+    public final static double kDriveHighGearVelocityKf = 0.00004875;//.0175; //.035; //0.21; //.025;
     public final static int kDriveHighGearVelocityIZone = 0;
     public final static double kDriveHighGearVelocityRampRate = .1;
     public final static double kDriveHighGearNominalOutput = 0.25;
@@ -55,27 +55,34 @@ public class Constants {
 
     // PID gains for drive velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in counts per tenth of a second
-    public final static double kDriveHighGearVelocityLowKp = .082; // 1.2/1500;
+    public final static double kDriveHighGearVelocityLowKp = .0006; // 1.2/1500;
     public final static double kDriveHighGearVelocityLowKi = 0.0000000; //0.0;
-    public final static double kDriveHighGearVelocityLowKd = .42; //0.0001; //6.0/1500;
-    public final static double kDriveHighGearVelocityLowKf = 0.21; //.025;
+    public final static double kDriveHighGearVelocityLowKd = 0; //0.0001; //6.0/1500;
+    public final static double kDriveHighGearVelocityLowKf = 0; //.025;
     public final static int kDriveHighGearVelocityLowIZone = 0;
     public final static double kDriveHighGearVelocityLowRampRate = .1;
     public final static double kDriveHighGearLowNominalOutput = 0.25;
     public final static double kDriveHighGearLowMaxSetpoint = 10.5 * 12; //FPS
 
-    // PID gains for drive velocity loop (LOW GEAR)
+    // PID gains for drive velocity loop ***This should be high gear lollz sorry yall
     // Units: setpoint, error, and output are in counts
-    public final static double kDriveLowGearPositionKp = .15;
-    public final static double kDriveLowGearPositionKi = 0.00;
-    public final static double kDriveLowGearPositionKd = 0;
-    public final static double kDriveLowGearPositionKf = 0.0;
-    public final static int kDriveLowGearPositionIZone = 250;
-    public final static double kDriveLowGearPositionRampRate = 240.0; // V/s
-    public final static double kDriveLowGearNominalOutput = 0.5; // V
+    public final static double kDriveLowGearPositionKp = .008;
+    public final static double kDriveLowGearPositionKi = .00009;
+    public final static double kDriveLowGearPositionKd = 0.0035;
+    public final static double kDriveLowGearPositionKf = 0.00;
+    public final static int kDriveLowGearPositionIZone = 2;
     public final static int kDriveLowGearMaxVelocity = 20146; // Counts
     public final static int kDriveLowGearMaxAccel = 20146; // Counts
     public final static double kDriveTurnMaxPower = .6;
+
+    // PID gains for drive velocity loop ***This should be high gear lollz sorry yall
+    // Units: setpoint, error, and output are in counts
+    public final static double kDriveVisionTurnKp = 0;
+    public final static double kDriveVisionTurnKi = 0;
+    public final static double kDriveVisionTurnKd = .0;
+    public final static double kDriveVisionTurnKf = 0.0;
+    public final static int kDriveVisionTurnIZone = 4;
+
 
     public final static double kLiftHoldPercentOutput = .025;
     // Encoder constants used by Rocket Elevator system
@@ -135,7 +142,6 @@ public class Constants {
     //Accelerometer Constants
     public final static double habDropAccelerationThreshold = 1.0; //g force
 
-
     //Lift interference avoidence
     public final static double kLiftWaitForExtendIntake = 0.25;
     public final static int kMaxLiftHeightToNeedToExtendIntake = 1000;
@@ -143,5 +149,13 @@ public class Constants {
 
     //controls
     public final static double kTriggerThreshold = .2;
+
+
+    //HAB Climb Constnats
+    public final static double kHABClimbPositionKp = 0.005;
+    public final static double kHABClimbPositionKi = 0.0;
+    public final static double kHABClimbPositionKd = 0.0;
+    public final static double kHABClimbPositionkf = 0.0;
+    public final static double kHABClimbPositionKiZone = 1;
 
 }

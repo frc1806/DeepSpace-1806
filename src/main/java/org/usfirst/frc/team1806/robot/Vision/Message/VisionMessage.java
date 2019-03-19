@@ -10,17 +10,17 @@ public abstract class VisionMessage {
 
     public abstract String getType();
 
-    public abstract String getMessage();
+    public abstract JsonObject getMessage();
 
     public String toJson() {
         JsonObject j = new JsonObject();
         try {
             j.addProperty("type", getType());
-            j.addProperty("message", getMessage());
+            j.add("message", getMessage());
         } catch (JsonSyntaxException e) {
             System.out.println("VisionMessage.java:" + "Could not encode JSON");
         }
-        return j.toString();
+        return j.toString() + "\n";
     }
 }
 

@@ -3,11 +3,13 @@ package org.usfirst.frc.team1806.robot.auto.paths;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1806.robot.RobotState;
+import org.usfirst.frc.team1806.robot.Vision.VisionServer;
 import org.usfirst.frc.team1806.robot.path.Path;
 import org.usfirst.frc.team1806.robot.path.PathBuilder;
 import org.usfirst.frc.team1806.robot.path.PathContainer;
 import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
 import org.usfirst.frc.team1806.robot.util.Rotation2d;
+import org.usfirst.frc.team1806.robot.util.Target;
 import org.usfirst.frc.team1806.robot.util.Translation2d;
 
 import java.util.ArrayList;
@@ -35,6 +37,10 @@ public class VisionPath implements PathContainer {
     BayLocation trackedBay = BayLocation.CARGO_SHIP_FRONT_AUDIANCE;
     RigidTransform2d odometry;
     public final int speed = 40;
+    private VisionServer mVisionServer = VisionServer.getInstance();
+    ArrayList<Target> targets;
+    public RigidTransform2d bayyPose;
+    public Double targetsTimestamp;
     public VisionPath(RigidTransform2d odo) {
         odometry = odo;
     }
@@ -50,24 +56,24 @@ public class VisionPath implements PathContainer {
             sWaypoints.add(new PathBuilder.Waypoint(0, 18, 0, speed));
         }
         else {
-            fps = SmartDashboard.getNumber("Vfps", 0);
+            targets = mVisionServer.getTargets();
 
+            //System.out.println("SSS target info" + targets.get(0).getDistance());
+            targetsTimestamp = mVisionServer.getTargetsTimestamp();
             RigidTransform2d roboPose = RobotState.getInstance().getLatestFieldToVehicle().getValue();
             System.out.println("Field to vehicle: (" + roboPose.getTranslation().x() + ", " + roboPose.getTranslation().y() + ")");
-            //RigidTransform2d bayyPose = generateBayVisionPoseFromODO();
-            RigidTransform2d bayyPose = new RigidTransform2d(new Translation2d(roboPose.getTranslation().x() - odometry.getTranslation().x(), roboPose.getTranslation().y() + odometry.getTranslation().y()), Rotation2d.fromDegrees(roboPose.getRotation().getDegrees() + odometry.getRotation().getDegrees()));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose, 0, roboPose.getRotation().getRadians()), 0, speed));
-            System.out.println("(" + interpolateAlongLine(roboPose, 0, roboPose.getRotation().getRadians()).x() + ", " + interpolateAlongLine(roboPose, 0, roboPose.getRotation().getRadians()).y() + ")");
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose, 0.5, roboPose.getRotation().getRadians()), 0, speed));
-            System.out.println("(" + interpolateAlongLine(roboPose, 0.5, roboPose.getRotation().getRadians()).x() + ", " + interpolateAlongLine(roboPose, 0.5, roboPose.getRotation().getRadians()).y() + ")");
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -30, bayyPose.getRotation().getRadians()), 0, speed));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -26, bayyPose.getRotation().getRadians()), 0, speed));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -23, bayyPose.getRotation().getRadians()), 0, speed));
-            System.out.println("(" + interpolateAlongLine(bayyPose, 25, bayyPose.getRotation().getRadians()).x() + ", " + interpolateAlongLine(bayyPose, 25, bayyPose.getRotation().getRadians()).y() + ")");
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -21, bayyPose.getRotation().getRadians()), 0, speed));
-            System.out.println("(" + interpolateAlongLine(bayyPose, 23, bayyPose.getRotation().getRadians()).x() + ", " + interpolateAlongLine(bayyPose, 23, bayyPose.getRotation().getRadians()).y() + ")");
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -18, bayyPose.getRotation().getRadians()), 0, speed));
-            System.out.println("(" + interpolateAlongLine(bayyPose, 21, bayyPose.getRotation().getRadians()).x() + ", " + interpolateAlongLine(bayyPose, 21, bayyPose.getRotation().getRadians()).y() + ")");
+            //RigidTransform2d bayyPose = new RigidTransform2d(new Translation2d(roboPose.getTranslation().x() - odometry.getTranslation().x(), roboPose.getTranslation().y() + odometry.getTranslation().y()), Rotation2d.fromDegrees(roboPose.getRotation().getDegrees() + odometry.getRotation().getDegrees()));
+            bayyPose = generateBayVisionPoseFromODO();
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose.getTranslation(), 0, roboPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose.getTranslation(), 0.5, roboPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose.getTranslation(), -25, bayyPose.getRotation().getRadians()), 0, speed));
+            //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(interpolateAlongLine(bayyPose.getTranslation(), -27, bayyPose.getRotation().getRadians()), 3, roboPose.getRotation().getRadians()), 0, speed));
+            //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -26, bayyPose.getRotation().getRadians()), 0, speed));
+            //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -23, bayyPose.getRotation().getRadians()), 0, speed));
+            //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -21, bayyPose.getRotation().getRadians()), 0, speed));
+            //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -19, bayyPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose.getTranslation(), -22, bayyPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose.getTranslation(), -19, bayyPose.getRotation().getRadians()), 0, speed));
         }
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
 
@@ -82,29 +88,70 @@ public class VisionPath implements PathContainer {
         return new RigidTransform2d(new Translation2d(x,y), Rotation2d.fromDegrees(angle));
     }
     public RigidTransform2d generateBayVisionPoseFromODO() {
-        double fps  = SmartDashboard.getNumber("Vfps", 0);
-        double dist = SmartDashboard.getNumber("Vdistance", 0);
-        double correctionAngle= SmartDashboard.getNumber("Vangle", 0);
+        Target goalTarget = targets.get(0);
+        for(int i = 1; i < targets.size(); i++){
+            if(targets.get(i).getDistance() < goalTarget.getDistance()){
+                goalTarget = targets.get(i);
+            }
+        }
+        RigidTransform2d bayPose = new RigidTransform2d();
+        if(targets.size() != 0) {
+            RigidTransform2d robotPose = RobotState.getInstance().getFieldToVehicle(targetsTimestamp);
+            double goalHeading = robotPose.getRotation().getDegrees() - goalTarget.getTargetHeadingOffset();
+            RigidTransform2d correctedRobotPose = interpolateAlongLine(robotPose, -3.5, robotPose.getRotation().getRadians() + Math.toRadians(90), Rotation2d.fromRadians(robotPose.getRotation().getRadians()).getRadians());
+            bayPose = interpolateAlongLine(correctedRobotPose, goalTarget.getDistance(), Math.toRadians(-goalTarget.getRobotToTarget()+ robotPose.getRotation().getDegrees()), Math.toRadians(-goalTarget.getTargetHeadingOffset() + robotPose.getRotation().getDegrees()));
+        }
 
-        RigidTransform2d robotPose = RobotState.getInstance().getPredictedFieldToVehicle(1/fps);
-        double goalHeading = robotPose.getRotation().getDegrees() - correctionAngle;
-        Translation2d bayPose = interpolateAlongLine(robotPose, dist, goalHeading);
-
-        return new RigidTransform2d(new Translation2d(bayPose.x(),bayPose.y()), Rotation2d.fromDegrees(goalHeading));
+        return bayPose;
     }
 
-    public Translation2d interpolateAlongLine(RigidTransform2d point, double adjust, double heading) {
-        double X = point.getTranslation().x() + adjust * Math.cos(heading);
-        double Y = point.getTranslation().y() + adjust * Math.sin(heading);
-
-        return new Translation2d(X,Y);
+    public Translation2d interpolateAlongLine(Translation2d point, double adjust, double heading) {
+        double x = 0;
+        double y = 0;
+            x = point.x() + adjust * Math.cos(heading);
+            y = point.y() + adjust * Math.sin(heading);
+/*        }
+        else if (heading >= Math.toRadians(90) && heading < Math.toRadians(180) ){
+            x = point.getTranslation().x() + adjust * -Math.cos(heading);
+            y = point.getTranslation().y() + adjust * Math.sin(heading);
+        }
+        else if ((heading >= Math.toRadians(180) && heading < Math.toRadians(270)) || (heading>= Math.toRadians(-180) && heading < Math.toRadians(-90))){
+            x = point.getTranslation().x() + adjust * -Math.cos(heading);
+            y = point.getTranslation().y() + adjust * -Math.sin(heading);
+        }
+        else if ((heading >= Math.toRadians(270) && heading < Math.toRadians(360)) || (heading>= Math.toRadians(-90) && heading < 0)){
+            x = point.getTranslation().x() + adjust * -Math.cos(heading);
+            y = point.getTranslation().y() + adjust * Math.sin(heading);
+        }
+        else{
+            System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAA VISION PATH.java : interpolateAlongLing : Angle didn't fit into defined quadrants");
+        }
+*/        return new Translation2d(x,y);
 
     }
     public RigidTransform2d interpolateAlongLine(RigidTransform2d point, double adjust, double heading, double heading2) {
-        double X = point.getTranslation().x() + adjust * Math.cos(heading);
-        double Y = point.getTranslation().y() + adjust * Math.sin(heading);
-
-        return new RigidTransform2d(new Translation2d(X,Y), Rotation2d.fromRadians(heading2));
+        double x = 0;
+        double y = 0;
+            x = point.getTranslation().x() + adjust * Math.cos(heading);
+            y = point.getTranslation().y() + adjust * Math.sin(heading);
+/*        }
+        else if (heading >= Math.toRadians(90) && heading < Math.toRadians(180) ){
+            x = point.getTranslation().x() + adjust * -Math.cos(heading);
+            y = point.getTranslation().y() + adjust * Math.sin(heading);
+        }
+        else if ((heading >= Math.toRadians(180) && heading < Math.toRadians(270)) || (heading>= Math.toRadians(-180) && heading < Math.toRadians(-90))){
+            x = point.getTranslation().x() + adjust * -Math.cos(heading);
+            y = point.getTranslation().y() + adjust * -Math.sin(heading);
+        }
+        else if ((heading >= Math.toRadians(270) && heading < Math.toRadians(360)) || (heading>= Math.toRadians(-90) && heading < 0)){
+            x = point.getTranslation().x() + adjust * -Math.cos(heading);
+            y = point.getTranslation().y() + adjust * Math.sin(heading);
+        }
+        else{
+            System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAA VISION PATH.java : interpolateAlongLing : Angle didn't fit into defined quadrants");
+        }
+*/
+        return new RigidTransform2d(new Translation2d(x,y), Rotation2d.fromRadians(heading2));
 
     }
     @Override
