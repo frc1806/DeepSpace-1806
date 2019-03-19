@@ -70,7 +70,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	}
 
 	/**
-	 * Check if the drive talons are configured for position control
+	 * Check if the current drive state is using position control.
 	 */
 	protected static boolean usesTalonPositionControl(DriveStates state) {
 		if (state == DriveStates.DRIVE_TO_POSITION ||
@@ -80,6 +80,11 @@ public class DriveTrainSubsystem implements Subsystem {
 		return false;
 	}
 
+	/**
+	 * Check if the proposed DriveStates needs VelocityControl
+	 * @param state the DriveStates to determine if velocity control is needed
+	 * @return true or false depending on if the VelocityControl is needed or not
+	 */
 	protected static boolean usesTalonVelocityControl(DriveStates state) {
 		if (state == DriveStates.VELOCITY_SETPOINT || state == DriveStates.PATH_FOLLOWING) {
 			return true;
@@ -116,10 +121,12 @@ public class DriveTrainSubsystem implements Subsystem {
 	private boolean mIsBrakeMode = false;
 
 	private Loop mLoop = new Loop() {
-
+		/** Different states that constantly need to be ran
+		 * 	Runs different functions based on the current state of the DriveTrain
+		 * @param timestamp current robot runtime in seconds
+		 */
 		@Override
 		public synchronized void onLoop(double timestamp) {
-			// TODO Auto-generated method stub
 			lastTimeStamp = currentTimeStamp;
 			currentTimeStamp = timestamp;
 			leftEncoderDistance = masterLeft.getEncoder().getPosition();
@@ -175,6 +182,9 @@ public class DriveTrainSubsystem implements Subsystem {
 		}
 	};
 
+	/** instantiating the motors
+	 *  sets currentLimit
+	 */
 	public DriveTrainSubsystem() {
 		//init the all of the motor controllers
 		masterLeft = new CANSparkMax(RobotMap.masterLeft, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -355,6 +365,10 @@ public class DriveTrainSubsystem implements Subsystem {
 		reloadHighGearVelocityGains();
 	}
 
+	/** sets a pid on a motor controller position (high gear high speed)
+	 *
+	 * @param motorController to set the pid values on
+	 */
 	public synchronized void reloadHighGearPositionGainsForController(CANSparkMax motorController) {
 	    motorController.getPIDController().setP(Constants.kDriveHighGearVelocityKp, kHighGearVelocityControlSlot);
         motorController.getPIDController().setI(Constants.kDriveHighGearVelocityKi, kHighGearVelocityControlSlot);
@@ -367,6 +381,10 @@ public class DriveTrainSubsystem implements Subsystem {
          */
 	}
 
+	/** sets a pid on a motor controller position (high gear low speed)
+	 *
+	 * @param motorController to set the pid values on
+	 */
 	public synchronized void reloadHighGearPositionGainsForControllerLowPID(CANSparkMax motorController) {
         motorController.getPIDController().setP(Constants.kDriveHighGearVelocityLowKp, kHighGearVelocityControlSlot);
         motorController.getPIDController().setI(Constants.kDriveHighGearVelocityLowKi, kHighGearVelocityControlSlot);
@@ -379,6 +397,9 @@ public class DriveTrainSubsystem implements Subsystem {
          */
 	}
 
+	/** reloads the velocity pid based on whether or not the current wanted pid is high speed or low speed
+	 *
+	 */
 	public synchronized void reloadHighGearVelocityGains() {
 		if (isWantedLowPID) {
 			System.out.println("low PID");
@@ -391,11 +412,17 @@ public class DriveTrainSubsystem implements Subsystem {
 		}
 	}
 
+	/** Resets masterLeft and materRight low gear position gains
+	 *
+	 */
 	public synchronized void reloadLowGearPositionGains() {
 		reloadLowGearPositionGainsForController(masterLeft);
 		reloadLowGearPositionGainsForController(masterRight);
 	}
-
+	/** sets a pid on a motor controller position (low gear)
+	 *
+	 * @param motorController to set the pid values on
+	 */
 	public synchronized void reloadLowGearPositionGainsForController(CANSparkMax motorController) {
         motorController.getPIDController().setP(Constants.kDriveLowGearPositionKp,kLowGearPositionControlSlot);
         motorController.getPIDController().setI(Constants.kDriveLowGearPositionKi,kLowGearPositionControlSlot);

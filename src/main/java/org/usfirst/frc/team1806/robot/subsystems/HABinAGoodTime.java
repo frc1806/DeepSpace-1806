@@ -25,6 +25,9 @@ public class HABinAGoodTime implements Subsystem {
         return mHabANiceDay;
     }
 
+    /** instantiating the left and right HABArm
+     *  sets default states for the HABClimber
+     */
     private HABinAGoodTime(){
         leftHABArm = new CANSparkMax(RobotMap.HABLiftLeft, CANSparkMaxLowLevel.MotorType.kBrushless);
         rightHABArm = new CANSparkMax(RobotMap.HABLiftRight, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -38,6 +41,9 @@ public class HABinAGoodTime implements Subsystem {
 
     }
 
+    /** Different presets for the climber (climber heights)
+     *
+     */
     public enum ClimbPosition {
 
         RETRACTION_LIMIT(0),
@@ -46,19 +52,28 @@ public class HABinAGoodTime implements Subsystem {
         HIGH_POS(30);
 
         int height;
+
+        /**
+         * Constructing an instance of climbHeight
+         * @param climbHeight height of the set point that is being creating
+         */
         ClimbPosition(int climbHeight){
             height = climbHeight;
         }
 
+        /**
+         * returns the height of the ClimbPosition
+         * @return
+         */
         int getHeight(){
             return height;
-        }
 
-        ClimbPosition setHeight(int liftHeight) {
-            height = liftHeight;
-            return this;
         }
     }
+
+    /**
+     * Different states of control of the HABClimber
+     */
     public enum ClimbStates {
         POSITION_CONTROL,
         RESET_RETRACT,
