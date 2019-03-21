@@ -4,6 +4,7 @@ import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.Action;
 import org.usfirst.frc.team1806.robot.path.Path;
 import org.usfirst.frc.team1806.robot.path.PathContainer;
 import org.usfirst.frc.team1806.robot.subsystems.DriveTrainSubsystem;
+import org.usfirst.frc.team1806.robot.util.DriveSignal;
 import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
 import org.usfirst.frc.team1806.robot.util.Translation2d;
 
@@ -34,7 +35,7 @@ public class VisionPathAction implements Action {
 
     @Override
     public void done() {
-
+        mDrive.setOpenLoop(new DriveSignal(0, 0, true));
     }
 
     @Override

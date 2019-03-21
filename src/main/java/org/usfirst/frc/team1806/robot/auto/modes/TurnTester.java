@@ -12,9 +12,19 @@ public class TurnTester extends AutoModeBase {
 
         runAction(new ResetPoseFromPathAction(new DumbMode()));
         runAction(new WaitAction(1));
-        runAction(new TurnTowardsPoint(new Translation2d(0,1)));
+        runAction(new TurnTowardsPoint(new Translation2d(30,10)));
+        runAction(new TurnTowardsPoint(new Translation2d(30,10)));
+        System.out.println("Finished 1st point");
         runAction(new WaitAction(1));
-        runAction(new TurnTowardsPoint(new Translation2d(0,-1)));
-
+        runAction(new TurnTowardsPoint(new Translation2d(30,0)));
+        System.out.println("Finished 2nd point");
+        runAction(new WaitAction(1));
+        runAction(new TurnTowardsPoint(new Translation2d(30,-10)));
+        System.out.println("Finished 3nd point");
+        runAction(new WaitAction(1));
+        runAction(new TurnTowardsPoint(new Translation2d(30,0)));
+        System.out.println("Finished 4nd point");
+        runAction(new TurnTowardsPoint(new Translation2d(0,-10)));
+        runAction(new TurnTowardsPoint(new Translation2d(30,10)));
     }
 }

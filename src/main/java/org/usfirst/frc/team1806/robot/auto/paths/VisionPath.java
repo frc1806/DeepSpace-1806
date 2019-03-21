@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1806.robot.RobotState;
 import org.usfirst.frc.team1806.robot.Vision.VisionServer;
+import org.usfirst.frc.team1806.robot.auto.modes.VisionMode;
 import org.usfirst.frc.team1806.robot.path.Path;
 import org.usfirst.frc.team1806.robot.path.PathBuilder;
 import org.usfirst.frc.team1806.robot.path.PathContainer;
@@ -66,21 +67,21 @@ public class VisionPath implements PathContainer {
             bayyPose = generateBayVisionPoseFromODO();
             sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose.getTranslation(), 0, roboPose.getRotation().getRadians()), 0, speed));
             sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose.getTranslation(), 0.5, roboPose.getRotation().getRadians()), 0, speed));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose.getTranslation(), -25, bayyPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose.getTranslation(), -18, bayyPose.getRotation().getRadians()), 4, speed));
             //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(interpolateAlongLine(bayyPose.getTranslation(), -27, bayyPose.getRotation().getRadians()), 3, roboPose.getRotation().getRadians()), 0, speed));
             //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -26, bayyPose.getRotation().getRadians()), 0, speed));
             //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -23, bayyPose.getRotation().getRadians()), 0, speed));
             //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -21, bayyPose.getRotation().getRadians()), 0, speed));
             //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -19, bayyPose.getRotation().getRadians()), 0, speed));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose.getTranslation(), -22, bayyPose.getRotation().getRadians()), 0, speed));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose.getTranslation(), -19, bayyPose.getRotation().getRadians()), 0, speed));
+            //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose.getTranslation(), -13.5, bayyPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose.getTranslation(), -12.0, bayyPose.getRotation().getRadians()), 0, speed));
         }
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
 
     }
     public RigidTransform2d generateTemporaryVisionPose() {
         double dist = SmartDashboard.getNumber("Vdistance", 0);
-        double angle= SmartDashboard.getNumber("Vangle", 0);
+        double angle = SmartDashboard.getNumber("Vangle", 0);
 
         double x = dist * Math.sin(angle);
         double y = dist * Math.cos(angle);
@@ -94,11 +95,13 @@ public class VisionPath implements PathContainer {
                 goalTarget = targets.get(i);
             }
         }
+        VisionMode.mAngle = goalTarget.getTargetHeadingOffset();
         RigidTransform2d bayPose = new RigidTransform2d();
         if(targets.size() != 0) {
             RigidTransform2d robotPose = RobotState.getInstance().getFieldToVehicle(targetsTimestamp);
             double goalHeading = robotPose.getRotation().getDegrees() - goalTarget.getTargetHeadingOffset();
-            RigidTransform2d correctedRobotPose = interpolateAlongLine(robotPose, -3.5, robotPose.getRotation().getRadians() + Math.toRadians(90), Rotation2d.fromRadians(robotPose.getRotation().getRadians()).getRadians());
+            RigidTransform2d xCorrectedRobotPose = interpolateAlongLine(robotPose, -2, robotPose.getRotation().getRadians(), robotPose.getRotation().getRadians());
+            RigidTransform2d correctedRobotPose = interpolateAlongLine(xCorrectedRobotPose, -8.5, robotPose.getRotation().getRadians() + Math.toRadians(90), Rotation2d.fromRadians(robotPose.getRotation().getRadians()).getRadians());
             bayPose = interpolateAlongLine(correctedRobotPose, goalTarget.getDistance(), Math.toRadians(-goalTarget.getRobotToTarget()+ robotPose.getRotation().getDegrees()), Math.toRadians(-goalTarget.getTargetHeadingOffset() + robotPose.getRotation().getDegrees()));
         }
 

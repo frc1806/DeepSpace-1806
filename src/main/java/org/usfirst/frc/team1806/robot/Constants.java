@@ -11,7 +11,7 @@ public class Constants {
     public final static double kLooperDt = 0.005;
     public final static double kDriveWheelDiameterInches = 4;
     public final static double kTrackWidthInches = 15;
-    public final static double kTrackScrubFactor = .950;
+    public final static double kTrackScrubFactor = .915;
     
 
     public final static int kDriveTrainPIDSetTimeout = 30;
@@ -32,9 +32,9 @@ public class Constants {
     public final static double kSegmentCompletionTolerance = 0.75; // inches
     public final static double kPathFollowingMaxAccel = 132; // inches per second^2
     public final static double kPathFollowingMaxVel = 132; // inches per second
-    public final static double kPathFollowingProfileKp = .95;
-    public final static double kPathFollowingProfileKi = 0.045;
-    public final static double kPathFollowingProfileKv = 0.000017;
+    public final static double kPathFollowingProfileKp = .99;
+    public final static double kPathFollowingProfileKi = 0.049;
+    public final static double kPathFollowingProfileKv = 0.000013;
     public final static double kPathFollowingProfileKffv = 1.2;
     public final static double kPathFollowingProfileKffa = 0.05;
     public final static double kPathFollowingGoalPosTolerance = 0.75;
@@ -58,21 +58,22 @@ public class Constants {
     public final static double kDriveHighGearVelocityLowKp = .0006; // 1.2/1500;
     public final static double kDriveHighGearVelocityLowKi = 0.0000000; //0.0;
     public final static double kDriveHighGearVelocityLowKd = 0; //0.0001; //6.0/1500;
-    public final static double kDriveHighGearVelocityLowKf = 0; //.025;
+    public final static double kDriveHighGearVelocityLowKf = 0.00001806;//0; //.025;
     public final static int kDriveHighGearVelocityLowIZone = 0;
     public final static double kDriveHighGearVelocityLowRampRate = .1;
     public final static double kDriveHighGearLowNominalOutput = 0.25;
     public final static double kDriveHighGearLowMaxSetpoint = 10.5 * 12; //FPS
 
     // PID gains for drive velocity loop ***This should be high gear lollz sorry yall
+    // This is typically used in the most in the TurnToPoint action
     // Units: setpoint, error, and output are in counts
-    public final static double kDriveLowGearPositionKp = .008;
-    public final static double kDriveLowGearPositionKi = .00009;
-    public final static double kDriveLowGearPositionKd = 0.0035;
-    public final static double kDriveLowGearPositionKf = 0.00;
-    public final static int kDriveLowGearPositionIZone = 2;
-    public final static int kDriveLowGearMaxVelocity = 20146; // Counts
-    public final static int kDriveLowGearMaxAccel = 20146; // Counts
+    public final static double kDriveLowGearPositionKp = .1; //.008
+    public final static double kDriveLowGearPositionKi = .00044;
+    public final static double kDriveLowGearPositionKd = 0.1; //0.0035
+    public final static double kDriveLowGearPositionKf = 0.000;
+    public final static double kDriveLowGearPositionIZone = 1.5;
+    public final static int kDriveLowGearMaxVelocity = 700; // Counts
+    public final static int kDriveLowGearMaxAccel = 1000; // Counts
     public final static double kDriveTurnMaxPower = .6;
 
     // PID gains for drive velocity loop ***This should be high gear lollz sorry yall

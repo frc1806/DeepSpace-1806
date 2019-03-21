@@ -41,6 +41,7 @@ public class DriveTrainSubsystem implements Subsystem {
 		PATH_FOLLOWING,
 		VELOCITY_SETPOINT,
 		WIGGLE,
+		DRIVE_TO_STALL,
 		NOTHING // Used on init
 	}
 
@@ -112,6 +113,11 @@ public class DriveTrainSubsystem implements Subsystem {
 	private double lastTimeStamp;
 	private double leftEncoderDistance, rightEncoderDistance;
 	private double leftVelocity, rightVelocity;
+
+	public DriveStates getmDriveStates() {
+		return mDriveStates;
+	}
+
 	// State Control
 	private DriveStates mDriveStates;
 	private RobotState mRobotState = RobotState.getInstance();
@@ -156,6 +162,11 @@ public class DriveTrainSubsystem implements Subsystem {
 					case VISION:
 						return;
 					case WIGGLE:
+						return;
+					case DRIVE_TO_STALL:
+
+						leftDrive(.3);
+						rightDrive(.3);
 						return;
 					default:
 						return;
@@ -263,6 +274,9 @@ public class DriveTrainSubsystem implements Subsystem {
 		} else {
 			System.out.println("Robot is not in path following mode");
 		}
+		mDriveStates = DriveStates.DRIVING;
+		setOpenLoop(new DriveSignal(0, 0 , true));
+		mPathFollower = null;
 	}
 
 	public synchronized Rotation2d getGyroYaw() {
@@ -300,9 +314,14 @@ public class DriveTrainSubsystem implements Subsystem {
 
 	public synchronized boolean isDoneWithPath() {
 		if (mDriveStates == DriveStates.PATH_FOLLOWING && mPathFollower != null) {
-			return mPathFollower.isFinished();
+			boolean isFinished = mPathFollower.isFinished();
+			if(isFinished){
+				mPathFollower = null;
+			}
+			return isFinished;
 		} else {
 			System.out.println("Robot is not in path following mode");
+			mPathFollower = null;
 			return true;
 		}
 	}
@@ -364,6 +383,8 @@ public class DriveTrainSubsystem implements Subsystem {
 		reloadLowGearPositionGains();
 		reloadHighGearVelocityGains();
 	}
+
+
 
 	/** sets a pid on a motor controller position (high gear high speed)
 	 *
@@ -450,6 +471,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	}
 
 	/**
+	 *
 	 * Drives only the right side at a percent
 	 *
 	 * @param output Wanted percent
@@ -637,6 +659,35 @@ public class DriveTrainSubsystem implements Subsystem {
 		wasWigglin = wiggleReq;
 	}
 
+
+	boolean wasPushing = false;
+	boolean startingPush = false;
+	boolean finishingPush = false;
+	boolean isTimedOut = false;
+	double pushTimeStamp = 0;
+
+	public synchronized void driveToStall(boolean pushReq) {
+		startingPush = pushReq && !wasPushing;
+		isTimedOut = (pushTimeStamp - currentTimeStamp > 4);
+		finishingPush = (leftVelocity < 10) && pushTimeStamp - currentTimeStamp > 1 && !isTimedOut;
+		wasPushing = pushReq;
+
+		if(startingPush) {
+			mDriveStates = DriveStates.DRIVE_TO_STALL;
+			leftDrive(.3);
+			rightDrive(.3);
+			pushTimeStamp = currentTimeStamp;
+		}
+		if(finishingPush) {
+			mDriveStates = DriveStates.DRIVING;
+			pushTimeStamp = 0;
+			leftDrive(0);
+			rightDrive(0);
+		}
+	}
+
+
+
 	@Override
 	public synchronized void stop() {
 		stopDrive();
@@ -702,8 +753,8 @@ public class DriveTrainSubsystem implements Subsystem {
 		final Rotation2d robot_to_target = field_to_robot.inverse().rotateBy(mTargetHeading);
 
 		// Check if we are on target
-		final double kGoalPosTolerance = 4; // degrees
-		final double kGoalVelTolerance = 5.0; // inches per second
+		final double kGoalPosTolerance = 3; // degrees TODO:CONSTANTS
+		final double kGoalVelTolerance = 25.0; // inches per second
 		if (Math.abs(robot_to_target.getDegrees()) < kGoalPosTolerance
 				&& Math.abs(getLeftVelocityInchesPerSec()) < kGoalVelTolerance
 				&& Math.abs(getRightVelocityInchesPerSec()) < kGoalVelTolerance) {

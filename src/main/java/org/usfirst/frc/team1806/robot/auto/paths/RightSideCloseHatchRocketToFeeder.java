@@ -16,7 +16,7 @@ public class RightSideCloseHatchRocketToFeeder implements PathContainer {
         ArrayList<PathBuilder.Waypoint> sWaypoints = new ArrayList<PathBuilder.Waypoint>();
         sWaypoints.add(new PathBuilder.Waypoint(188,38,0,60));
         sWaypoints.add(new PathBuilder.Waypoint(187,38,0,60));
-        sWaypoints.add(new PathBuilder.Waypoint(70,36,0,60));
+        sWaypoints.add(new PathBuilder.Waypoint(70,30,0,60));
 
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);

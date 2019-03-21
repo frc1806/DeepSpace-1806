@@ -19,6 +19,7 @@ public class TurnTowardsPoint implements Action {
     
     public TurnTowardsPoint(Translation2d point) {
             mTargetHeading = new Rotation2d(point.subtract(RobotState.getInstance().getLatestFieldToVehicle().getValue().getTranslation()), true);
+            System.out.println("target heading " + mTargetHeading.getDegrees());
         }
 
         @Override

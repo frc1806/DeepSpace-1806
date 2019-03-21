@@ -293,7 +293,7 @@ public class Robot extends TimedRobot {
     public synchronized void allPeriodic() {
       S_SubsystemManager.outputToSmartDashboard();
       mRobotState.outputToSmartDashboard();
-      //mEnabledLooper.outputToSmartDashboard();
+      mEnabledLooper.outputToSmartDashboard();
       SmartDashboard.putString("Auto We Are Running", AutoModeSelector.returnNameOfSelectedAuto());
      //SmartDashboard.putNumber("PDP Total", powerDistributionPanel.getTotalCurrent());
     }

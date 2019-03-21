@@ -41,18 +41,21 @@ OI {
 			autoInTeleOp.update(autoController.getButtonStart());
 		}
 		synchronized (mDriveTrainSubsystem) {
-			if(Robot.mSequenceState != Robot.SequenceState.VISION || !Robot.mSequenceState.isActive()) {
+			if(!((mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.DRIVE_TO_STALL || Robot.mSequenceState == Robot.SequenceState.VISION) && Robot.mSequenceState.isActive()))
+			{
 				mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
 						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
 			}
-
+			mDriveTrainSubsystem.driveToStall(oc.getButtonA());
 		}
+
+
 
 		if(dc.getButtonStart()){
-			mHabClimber.goToSetpoint(HABinAGoodTime.ClimbPosition.EXTENSION_LIMIT);
+			//mHabClimber.goToSetpoint(HABinAGoodTime.ClimbPosition.EXTENSION_LIMIT);
 		}
 		if(dc.getButtonLS()){
-			mHabClimber.goToSetpoint((HABinAGoodTime.ClimbPosition.RETRACTION_LIMIT));
+			//mHabClimber.goToSetpoint((HABinAGoodTime.ClimbPosition.RETRACTION_LIMIT));
 		}
 
 		//Controls that change based on mode

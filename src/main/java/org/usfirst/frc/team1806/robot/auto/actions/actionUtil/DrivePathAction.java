@@ -36,7 +36,7 @@ public class DrivePathAction implements Action {
     @Override
     public void done() {
         mDrive.stopDrive();
-        System.out.println("Done with pathfollowing!");
+        System.out.println("Done with path following!");
     }
 
     @Override

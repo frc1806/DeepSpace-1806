@@ -22,7 +22,7 @@ public class UnknownTypeMessage extends VisionMessage {
             type = messageObject.get("type").getAsJsonPrimitive().getAsString();
             this.jsonMessage = messageObject.get("message").getAsJsonObject();
         }
-        catch(JsonParseException parseException){
+        catch(JsonParseException | IllegalStateException parseException){
             System.out.println("received invalid message: " + jsonMessage);
             this.isValid = false;
         }

@@ -41,7 +41,7 @@ public class DriveStraightPath implements PathContainer {
 
     @Override
     public boolean isReversed() {
-        return false;
+        return dist <= 0;
     }
     public Translation2d interpolateAlongLine(Translation2d point, double adjust, double heading) {
         double x = 0;
