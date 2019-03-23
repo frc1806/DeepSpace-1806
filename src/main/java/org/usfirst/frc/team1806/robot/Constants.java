@@ -115,19 +115,19 @@ public class Constants {
 
 
     //Compressor Control Constants
-    public final static int kPressureSensorSamplingLoops = 100; //each loop is 1/200 of a second
-    public final static double kPressureAverageMinimumToStart = 80; //PSI
+    public final static int kPressureSensorSamplingLoops = 60; //each loop is 1/200 of a second
+    public final static double kPressureAverageMinimumToStart = 110; //PSI
 
-    public final static int kBatteryVoltageSamplingLoops = 100; //each loop is 1/200 of a second
+    public final static int kBatteryVoltageSamplingLoops = 60; //each loop is 1/200 of a second
     public final static double kBatteryVoltageCompressorShutoffThreshold = 11.5; //volts
     public final static double kBatteryVoltageAbsoluteCompressorShutoffThreshold = 8.0; //volts
 
-    public final static int kRobotDemandAmpsSamplingLoops = 100; // each loop is 1/200 of a second
+    public final static int kRobotDemandAmpsSamplingLoops = 60; // each loop is 1/200 of a second
     public final static double kAverageAmpDemandToShutOffCompressor = 140; //Amps
     public final static double kAbsoluteRobotCompressorShutOffAmps = 300; //Amps
 
-    public final static double kExpectedCompressorMaxCurrentDraw = 100;
-    public final static double kExpectedCompressorVoltageDrop = 1.5;
+    public final static double kExpectedCompressorMaxCurrentDraw = 40;
+    public final static double kExpectedCompressorVoltageDrop = .5;
 
 
     //Intake Constants

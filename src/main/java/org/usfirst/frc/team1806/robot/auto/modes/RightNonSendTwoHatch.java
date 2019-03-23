@@ -1,5 +1,7 @@
 package org.usfirst.frc.team1806.robot.auto.modes;
 
+import org.usfirst.frc.team1806.robot.FeatureFlags;
+import org.usfirst.frc.team1806.robot.auto.actions.LiftActions.StandUpLift;
 import org.usfirst.frc.team1806.robot.auto.actions.SquidActions.CloseSquid;
 import org.usfirst.frc.team1806.robot.auto.actions.SquidActions.ExtendSquid;
 import org.usfirst.frc.team1806.robot.auto.actions.SquidActions.OpenSquid;
@@ -21,6 +23,9 @@ public class RightNonSendTwoHatch extends AutoModeBase {
     @Override
     public void routine() throws AutoModeEndedException {
         runAction(new ExtendSquid());
+        if(FeatureFlags.FF_LIFT_TILT){
+            runAction(new StandUpLift());
+        }
         runAction(new SwitchToLowPID());
 
         PathContainer startPath = new RightSideHAB1ToCloseHatchRocket();

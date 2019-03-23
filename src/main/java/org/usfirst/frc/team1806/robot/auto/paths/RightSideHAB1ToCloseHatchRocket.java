@@ -20,7 +20,7 @@ public class RightSideHAB1ToCloseHatchRocket implements PathContainer {
         sWaypoints.add(new PathBuilder.Waypoint(67,115,0,10));
         sWaypoints.add(new PathBuilder.Waypoint(116,115,0,20));
         sWaypoints.add(new PathBuilder.Waypoint(136,74,10,50));
-        sWaypoints.add(new PathBuilder.Waypoint(166,41,10,80));
+        sWaypoints.add(new PathBuilder.Waypoint(166,50,0,80));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }

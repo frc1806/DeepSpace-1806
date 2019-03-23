@@ -49,6 +49,18 @@ OI {
 			mDriveTrainSubsystem.driveToStall(oc.getButtonA());
 		}
 
+		if(FeatureFlags.FF_LIFT_TILT){
+			synchronized (mLiftSubsystem){
+				if (oc.getButtonRB()){
+					mLiftSubsystem.standLiftUp();
+				}
+				if (oc.getButtonLB()){
+					mLiftSubsystem.leanLiftBack();
+				}
+			}
+		}
+
+
 
 		/*
 		if(oc.getPOVUp()){
@@ -123,19 +135,13 @@ OI {
 					if(dc.getButtonA()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.BOTTOM_LIMIT);
 					}
-					if(dc.getButtonStart()) {
+					if(dc.getRightTrigger() >= Constants.kTriggerThreshold || dc.getButtonStart()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.SHIP_CARGO);
 					}
 				}
 
 				synchronized (mCargoIntakeSubsystem) {
-					if (!mLiftSubsystem.isNeedingIntakeOut()) {
-						if (dc.getRightTrigger() >= Constants.kTriggerThreshold) {
-							mCargoIntakeSubsystem.extendOuterIntake();
-						} else {
-							mCargoIntakeSubsystem.retractOuterIntake();
-						}
-					}
+
 
 					if (dc.getLeftTrigger() > Constants.kTriggerThreshold) {
 						mCargoIntakeSubsystem.intakeCargo();

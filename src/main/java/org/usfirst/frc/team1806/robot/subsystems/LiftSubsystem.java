@@ -1,7 +1,10 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 import com.revrobotics.*;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1806.robot.Constants;
+import org.usfirst.frc.team1806.robot.FeatureFlags;
 import org.usfirst.frc.team1806.robot.Robot;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Loop;
@@ -71,6 +74,8 @@ public class LiftSubsystem  implements Subsystem {
 	private LiftStates mLiftStates;
 	private LiftPosition mLiftPosition;
 
+	private DoubleSolenoid liftLeaner;
+
 	private static LiftSubsystem mLiftSubsystem = new LiftSubsystem(); //only ever 1 lift
 
 	public LiftSubsystem() {
@@ -92,6 +97,10 @@ public class LiftSubsystem  implements Subsystem {
  		lastTimeStamp = 0;
  		needsIntakeOut = false;
  		wasIntakeOut = false;
+
+ 		if(FeatureFlags.FF_LIFT_TILT){
+ 		    liftLeaner = new DoubleSolenoid(RobotMap.liftStandUp, RobotMap.liftLeanBack);
+        }
 	}
 
 
@@ -108,6 +117,9 @@ public class LiftSubsystem  implements Subsystem {
         SmartDashboard.putNumber("Lift Lead Motor Temp", liftLead.getMotorTemperature());
         SmartDashboard.putNumber("Lift Follow Motor Temp", liftFollow.getMotorTemperature());
         SmartDashboard.putBoolean("Lift is at position?", isAtPosition());
+        if(FeatureFlags.FF_LIFT_TILT){
+            SmartDashboard.putBoolean("Lift Leaning?", liftLeaner.get() == DoubleSolenoid.Value.kReverse);
+        }
         }
 
 	@Override
@@ -431,6 +443,18 @@ public class LiftSubsystem  implements Subsystem {
 	public synchronized boolean isNeedingIntakeOut(){
 		return needsIntakeOut;
 	}
+
+	public void standLiftUp(){
+	    if(FeatureFlags.FF_LIFT_TILT){
+	        liftLeaner.set(DoubleSolenoid.Value.kForward);
+        }
+    }
+
+    public void leanLiftBack(){
+	    if(FeatureFlags.FF_LIFT_TILT){
+	        liftLeaner.set(DoubleSolenoid.Value.kReverse);
+        }
+    }
 
 
 

@@ -49,9 +49,9 @@ public class RobotMap {
 	public static int beaverTailEjectExtend = 6;
 	public static int beaverTailEjectRetract = 7;
 
-	//CargoIntakeSubsystem
-	public static int cargoIntakeExtend = 6;
-	public static int cargoIntakeRetract = 7;
+	//LiftStand
+	public static int liftStandUp = 6;
+	public static int liftLeanBack = 7;
 
 
 
