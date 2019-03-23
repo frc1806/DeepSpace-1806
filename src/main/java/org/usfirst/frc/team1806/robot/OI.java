@@ -50,20 +50,20 @@ OI {
 		}
 
 
-
-		if(dc.getButtonStart()){
+		/*
+		if(oc.getPOVUp()){
 			//mHabClimber.goToSetpoint(HABinAGoodTime.ClimbPosition.EXTENSION_LIMIT);
 		}
 		if(dc.getButtonLS()){
 			//mHabClimber.goToSetpoint((HABinAGoodTime.ClimbPosition.RETRACTION_LIMIT));
 		}
-
+		*/
 		//Controls that change based on mode
 		switch(Robot.getGamePieceMode()){
 			case HATCH_PANEL:
 			default:
+				dc.rumble(0, 0);
 				synchronized (mLiftSubsystem) {
-
 					if(dc.getButtonA()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.BOTTOM_LIMIT);
 					}
@@ -79,7 +79,7 @@ OI {
 				}
 
 				synchronized (mSquidSubsystem) {
-					if (!wasSquidOpenButton && dc.getLeftTrigger() > Constants.kTriggerThreshold) {
+					if (!wasSquidOpenButton && dc.getRightTrigger() > Constants.kTriggerThreshold) {
 						if (mSquidSubsystem.isOpen()) {
 							mSquidSubsystem.closeSquid();
 						} else {
@@ -89,7 +89,7 @@ OI {
 
 
 
-					if (!wasSquidExtendButton && dc.getRightTrigger() > Constants.kTriggerThreshold) {
+					if (!wasSquidExtendButton && dc.getLeftTrigger() > Constants.kTriggerThreshold) {
 						if (mSquidSubsystem.isExtended()) {
 							mSquidSubsystem.retractSquid();
 						} else {
@@ -109,7 +109,7 @@ OI {
 				break;
 
 			case CARGO:
-
+				dc.rumble(0.7, 0.7);
 				synchronized (mLiftSubsystem) {
 					if(dc.getButtonX()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.ROCKET_CARGO_LOW);
@@ -122,6 +122,9 @@ OI {
 					}
 					if(dc.getButtonA()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.BOTTOM_LIMIT);
+					}
+					if(dc.getButtonStart()) {
+						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.SHIP_CARGO);
 					}
 				}
 
@@ -177,9 +180,9 @@ OI {
 
 		mCompressorControlSubsystem.setOverride(oc.getButtonY());
 
-		wasSquidExtendButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
+		wasSquidExtendButton = dc.getLeftTrigger() > Constants.kTriggerThreshold;
 		wasChangeModeButton = dc.getButtonRB();
-		wasSquidOpenButton = dc.getLeftTrigger() > Constants.kTriggerThreshold;
+		wasSquidOpenButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
 
 	}
 	public void resetAutoLatch(){
@@ -194,6 +197,10 @@ OI {
 	public boolean getAutomatedSequenceButton() {
 		return dc.getButtonLB();
 	}
+	public boolean getDisableAutoButton() {
+		return oc.getButtonB();
+	}
+
 
 	public Robot.SequenceState getAutomatedSequenceMode() {
 		return Robot.SequenceState.VISION; //TODO FIXXXX

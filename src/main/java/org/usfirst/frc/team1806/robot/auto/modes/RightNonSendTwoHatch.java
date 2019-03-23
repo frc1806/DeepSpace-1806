@@ -20,6 +20,7 @@ import java.util.Arrays;
 public class RightNonSendTwoHatch extends AutoModeBase {
     @Override
     public void routine() throws AutoModeEndedException {
+        runAction(new ExtendSquid());
         runAction(new SwitchToLowPID());
 
         PathContainer startPath = new RightSideHAB1ToCloseHatchRocket();
@@ -64,7 +65,7 @@ public class RightNonSendTwoHatch extends AutoModeBase {
         runAction(new WaitAction(1.5));
         runAction(new ParallelAction(Arrays.asList(new RetractSquid(), new DrivePathAction(new DriveStraightPath(-4, 20)))));
 
-        runAction(new WaitAction(15));
+        //runAction(new WaitAction(15));
     }
 
 }

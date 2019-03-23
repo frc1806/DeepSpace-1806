@@ -1,5 +1,6 @@
 package org.usfirst.frc.team1806.robot.auto.modes;
 
+import org.usfirst.frc.team1806.robot.auto.actions.SquidActions.ExtendSquid;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.SwitchToLowPID;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeEndedException;
@@ -13,6 +14,7 @@ import org.usfirst.frc.team1806.robot.util.Translation2d;
 public class DummyMode extends AutoModeBase {
 	@Override
 	protected void routine() throws AutoModeEndedException {
+		runAction(new ExtendSquid());
 		PathContainer dumbMode = new DumbMode();
 		runAction(new SwitchToLowPID());
 		runAction(new ResetPoseFromPathAction(dumbMode));

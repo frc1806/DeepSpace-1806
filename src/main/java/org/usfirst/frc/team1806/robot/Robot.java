@@ -183,10 +183,18 @@ public class Robot extends TimedRobot {
     /**
      * This function is called periodically during autonomous.
      */
+    boolean isAutoInterrupted = false;
     @Override
     public void autonomousPeriodic() {
       allPeriodic();
       Scheduler.getInstance().run();
+      if((m_oi.getDisableAutoButton() || mAutoModeExecuter.isStopped()) && !isAutoInterrupted) {
+          isAutoInterrupted = true;
+          teleopInit();
+      }
+      else if(isAutoInterrupted) {
+          teleopPeriodic();
+      }
     }
 
     @Override
@@ -204,6 +212,7 @@ public class Robot extends TimedRobot {
         }
       mDrive.setOpenLoop(DriveSignal.NEUTRAL);
       mDrive.setNeutralMode(false);
+      SquidSubsystem.getInstance().extendSquid();
       autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
     }
 

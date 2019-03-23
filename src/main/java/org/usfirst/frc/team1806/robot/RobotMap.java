@@ -23,11 +23,6 @@ public class RobotMap {
 	public static int liftLead = 6;
 	public static int liftFollow = 7;
 
-	//Climber CAN
-
-	public static int climberRight = 3;
-	public static int climberLeft = 8;
-
 
 	//Intake CAN Ports
 	
@@ -45,9 +40,9 @@ public class RobotMap {
 	//Squid
 
 	public static int squidOpenPort = 0;
-	public static int squidClosePort = 1;
-	public static int squidExtendForward = 2;
-	public static int squidExtendBackward = 3;
+	public static int squidClosePort = 4; //1
+	public static int squidExtendForward = 3;
+	public static int squidExtendBackward = 2;
 
 	//BeaverTail
 
@@ -55,8 +50,8 @@ public class RobotMap {
 	public static int beaverTailEjectRetract = 7;
 
 	//CargoIntakeSubsystem
-	public static int cargoIntakeExtend = 4;
-	public static int cargoIntakeRetract = 5;
+	public static int cargoIntakeExtend = 6;
+	public static int cargoIntakeRetract = 7;
 
 
 

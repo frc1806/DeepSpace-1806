@@ -10,7 +10,7 @@ package org.usfirst.frc.team1806.robot.util;
 public class CheesyDriveHelper {
 
     private static final double kThrottleDeadband = 0.05; //.15
-    private static final double kWheelDeadband = 0.15;
+    private static final double kWheelDeadband = 0.10;
 
     // These factor determine how fast the wheel traverses the "non linear" sine curve.
     private static final double kHighWheelNonLinearity = 0.85;
@@ -23,8 +23,8 @@ public class CheesyDriveHelper {
     private static final double kLowNegInertiaCloseScalar = 2.0;
     private static final double kLowNegInertiaFarScalar = 2.0;
 
-    private static final double kHighSensitivity = 0.45;
-    private static final double kHighSensitivityStoppedTurn = 0.4;
+    private static final double kHighSensitivity = 0.2;
+    private static final double kHighSensitivityStoppedTurn = 0.3;
     private static final double kLowSensitiity = 0.8;
 
     private static final double kQuickStopDeadband = 0.2;
