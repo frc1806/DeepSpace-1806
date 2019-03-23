@@ -115,13 +115,13 @@ public class SparkMaxMechanismSynchronizer {
 
     public void updateMovingSetpoints(){
         double leftEncoder = getEncoderPosLeft();
-        boolean leftUp = leftEncoder - wantedPosition < 0;
         double rightEncoder = getEncoderPosRight();
-        boolean rightUp = rightEncoder - wantedPosition < 0;
-        double leftTargetSpeed = (rightEncoder - leftEncoder)* (leftUp?synchronizerProportional:-synchronizerProportional) + Math.min(wantedSpeed, (wantedSpeed*Math.abs(wantedPosition-leftEncoder)/throttleLetOffDistance));
-        double rightTargetSpeed = (leftEncoder - rightEncoder)* (rightUp?synchronizerProportional: -synchronizerProportional) + Math.min(wantedSpeed, (wantedSpeed*Math.abs(wantedPosition-rightEncoder)/throttleLetOffDistance));
-        left.getPIDController().setReference(leftUp?leftTargetSpeed:-leftTargetSpeed,ControlType.kVelocity);
-        right.getPIDController().setReference(rightUp?rightTargetSpeed:-rightTargetSpeed,ControlType.kVelocity);
+        boolean leftMovementPositive = leftEncoder - wantedPosition < 0;
+        boolean rightMovementPositive = rightEncoder - wantedPosition < 0;
+        double leftTargetSpeed = (rightEncoder - leftEncoder)* (leftMovementPositive?synchronizerProportional:-synchronizerProportional) + Math.min(wantedSpeed, (wantedSpeed*Math.abs(wantedPosition-leftEncoder)/throttleLetOffDistance));
+        double rightTargetSpeed = (leftEncoder - rightEncoder)* (rightMovementPositive?synchronizerProportional: -synchronizerProportional) + Math.min(wantedSpeed, (wantedSpeed*Math.abs(wantedPosition-rightEncoder)/throttleLetOffDistance));
+        left.getPIDController().setReference(leftMovementPositive?leftTargetSpeed:-leftTargetSpeed,ControlType.kVelocity);
+        right.getPIDController().setReference(rightMovementPositive?rightTargetSpeed:-rightTargetSpeed,ControlType.kVelocity);
     }
 
     private boolean isFinished(){

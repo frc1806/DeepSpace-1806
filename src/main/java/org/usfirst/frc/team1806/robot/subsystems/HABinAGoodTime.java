@@ -32,8 +32,6 @@ public class HABinAGoodTime implements Subsystem {
         leftHABArm = new CANSparkMax(RobotMap.HABLiftLeft, CANSparkMaxLowLevel.MotorType.kBrushless);
         rightHABArm = new CANSparkMax(RobotMap.HABLiftRight, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-        //leftHABArm.setInverted(true); //TODO verify this is the correct motor to reverse
-
         mClimbStates = ClimbStates.IDLE;
         mClimbPosition = ClimbPosition.RETRACTION_LIMIT;
         mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();

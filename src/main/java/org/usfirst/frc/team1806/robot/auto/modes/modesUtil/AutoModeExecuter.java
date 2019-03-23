@@ -37,4 +37,17 @@ public class AutoModeExecuter {
         m_thread = null;
     }
 
+    public boolean isStopped() {
+        if(m_thread == null){
+            return true;
+        }
+        return m_thread.getState() == Thread.State.TERMINATED;
+    }
+
+    public void forceKill(){
+        m_thread.interrupt();
+    }
+
+
+
 }
