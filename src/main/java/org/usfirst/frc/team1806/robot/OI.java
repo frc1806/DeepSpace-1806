@@ -97,8 +97,16 @@ OI {
 						} else {
 							mSquidSubsystem.openSquid();
 						}
+
+
 					}
 
+					if(oc.getPOVLeft()){
+						mSquidSubsystem.openSquid();
+					}
+					if(oc.getPOVRight()){
+						mSquidSubsystem.closeSquid();
+					}
 
 
 					if (!wasSquidExtendButton && dc.getLeftTrigger() > Constants.kTriggerThreshold) {
@@ -135,8 +143,11 @@ OI {
 					if(dc.getButtonA()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.BOTTOM_LIMIT);
 					}
-					if(dc.getRightTrigger() >= Constants.kTriggerThreshold || dc.getButtonStart()) {
+					if(dc.getButtonStart()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.SHIP_CARGO);
+					}
+					if(dc.getRightTrigger() >= Constants.kTriggerThreshold){
+						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.CARGO_FEEDER);
 					}
 				}
 

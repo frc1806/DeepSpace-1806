@@ -37,6 +37,7 @@ public class LiftSubsystem  implements Subsystem {
         TOP_LIMIT(13000),
 		TELEOP_HOLD(600),
 		SHIP_CARGO(7400),
+		CARGO_FEEDER(8250),
 		ROCKET_CARGO_LOW(5500),
 		ROCKET_CARGO_MID(10000),
 		ROCKET_CARGO_HIGH(15000),

@@ -153,7 +153,7 @@ public class Robot extends TimedRobot {
       selectedAuto = AutoModeSelector.getSelectedAutoMode();
       autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
       S_SubsystemManager.stop();
-      S_SubsystemManager.outputToSmartDashboard();
+      //S_SubsystemManager.outputToSmartDashboard();
 
     }
 
@@ -212,7 +212,7 @@ public class Robot extends TimedRobot {
         }
       mDrive.setOpenLoop(DriveSignal.NEUTRAL);
       mDrive.setNeutralMode(false);
-      SquidSubsystem.getInstance().extendSquid();
+      //SquidSubsystem.getInstance().extendSquid();
       autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
     }
 

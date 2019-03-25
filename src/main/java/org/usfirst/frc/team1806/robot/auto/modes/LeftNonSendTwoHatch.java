@@ -52,7 +52,7 @@ public class LeftNonSendTwoHatch extends AutoModeBase {
         //runAction(new SwitchToHighPID());
 
         //Give some time to lower lift to a safe driving height
-
+/*
         //Concurrently finish lowering lift shoot backwards towards feeder station, turn towards it
         runAction(new DrivePathAction(new LeftSideCloseHatchRocketToFeeder()));
         runAction(new TurnTowardsPoint(new Translation2d(0,289)));
@@ -69,6 +69,7 @@ public class LeftNonSendTwoHatch extends AutoModeBase {
         runAction(new ParallelAction(Arrays.asList(new RetractSquid(), new DrivePathAction(new DriveStraightPath(-4, 20)))));
 
         //runAction(new WaitAction(15));
+        */
     }
 
 }
