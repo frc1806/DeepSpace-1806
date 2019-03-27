@@ -39,7 +39,7 @@ public class RobotMap {
 
 	//Squid
 
-	public static int squidOpenPort = 4;
+	public static int squidOpenPort = 1;
 	public static int squidClosePort = 0; //1
 	public static int squidExtendForward = 3;
 	public static int squidExtendBackward = 2;
