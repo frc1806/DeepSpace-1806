@@ -32,6 +32,7 @@ OI {
 	private Boolean wasSquidExtendButton = false;
 	private Boolean wasSquidOpenButton = false;
 	private Boolean wasChangeModeButton = false;
+	private Boolean wasOuterIntakeButton = false;
 	private CargoIntakeSubsystem mCargoIntakeSubsystem = CargoIntakeSubsystem.getInstance();
 
 	public void runCommands(){
@@ -160,12 +161,18 @@ OI {
 						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.MEDIUM);
 					} else if (dc.getPOVLeft()) {
 						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.FAST);
-					} else if (dc.getPOVUp()) {
-						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.IRRESPONSIBLE);
 					} else if (dc.getButtonLB()) {
 						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.SLOW);
 					} else {
 						mCargoIntakeSubsystem.stop();
+					}
+
+					if (dc.getPOVUp() && !wasOuterIntakeButton){
+						if (mCargoIntakeSubsystem.isExtended()){
+							mCargoIntakeSubsystem.retractOuterIntake();
+						} else{
+							mCargoIntakeSubsystem.extendOuterIntake();
+						}
 					}
 
 				}
@@ -200,6 +207,7 @@ OI {
 		wasSquidExtendButton = dc.getLeftTrigger() > Constants.kTriggerThreshold;
 		wasChangeModeButton = dc.getButtonRB();
 		wasSquidOpenButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
+		wasOuterIntakeButton = dc.getPOVUp();
 
 	}
 	public void resetAutoLatch(){
