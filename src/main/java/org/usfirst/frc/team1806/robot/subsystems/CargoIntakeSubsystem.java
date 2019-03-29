@@ -8,7 +8,7 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class CargoIntakeSubsystem implements Subsystem {
-
+    boolean debug = false;
     private static CargoIntakeSubsystem mCargoIntakeSubsystem = new CargoIntakeSubsystem();
     //private LiftSubsystem liftSubsystem;
     //private DoubleSolenoid extensionSolenoid;
@@ -79,6 +79,11 @@ public class CargoIntakeSubsystem implements Subsystem {
 
     public void registerEnabledLoops(Looper enabledLooper){
 
+    }
+
+    @Override
+    public void setDebug(boolean _debug) {
+        debug = _debug;
     }
 
     /**

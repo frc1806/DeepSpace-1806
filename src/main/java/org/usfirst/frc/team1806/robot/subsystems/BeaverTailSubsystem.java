@@ -6,7 +6,7 @@ import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 
 public class BeaverTailSubsystem implements Subsystem {
-
+    boolean debug = false;
 
     public static BeaverTailSubsystem mBeaverTailSubsystem = new BeaverTailSubsystem();
     public static  BeaverTailSubsystem getInstance(){
@@ -40,6 +40,11 @@ public class BeaverTailSubsystem implements Subsystem {
 
     public void registerEnabledLoops(Looper enabledLooper){
 
+    }
+
+    @Override
+    public void setDebug(boolean _debug) {
+        debug = _debug;
     }
 
     public boolean isOut(){

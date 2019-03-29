@@ -24,6 +24,9 @@ import javax.naming.ldap.Control;
  * so we can interact with our intake for doing things like shooting!
  */
 public class LiftSubsystem  implements Subsystem {
+	boolean debug = false;
+
+
 	public enum LiftStates {
 		POSITION_CONTROL,
 		RESET_TO_BOTTOM,
@@ -107,20 +110,23 @@ public class LiftSubsystem  implements Subsystem {
 
 	@Override
 	public void outputToSmartDashboard() {
-        SmartDashboard.putString("Lift State: ", returnLiftStates().toString());
-        SmartDashboard.putString("Lift Position", returnLiftPosition().toString());
-		SmartDashboard.putNumber("Lift Encoder Position", liftLead.getEncoder().getPosition());
-		SmartDashboard.putNumber("Lift Velocity", liftLead.getEncoder().getVelocity());
-		SmartDashboard.putNumber("Lift Leader Power Sending", liftLead.getAppliedOutput());
-		SmartDashboard.putNumber("Lift Follow Power Sending", liftFollow.getAppliedOutput());
-		SmartDashboard.putBoolean("Lift Bottom limit triggered", areWeAtBottomLimit());
-        SmartDashboard.putNumber("Lift Wanted Height", mLiftPosition.getHeight());
-        SmartDashboard.putNumber("Lift Lead Motor Temp", liftLead.getMotorTemperature());
-        SmartDashboard.putNumber("Lift Follow Motor Temp", liftFollow.getMotorTemperature());
-        SmartDashboard.putBoolean("Lift is at position?", isAtPosition());
-        if(FeatureFlags.FF_LIFT_TILT){
-            SmartDashboard.putBoolean("Lift Leaning?", liftLeaner.get() == DoubleSolenoid.Value.kReverse);
-        }
+		if(debug) {
+			SmartDashboard.putString("Lift State: ", returnLiftStates().toString());
+			SmartDashboard.putString("Lift Position", returnLiftPosition().toString());
+			SmartDashboard.putNumber("Lift Encoder Position", liftLead.getEncoder().getPosition());
+			SmartDashboard.putNumber("Lift Velocity", liftLead.getEncoder().getVelocity());
+			SmartDashboard.putNumber("Lift Leader Power Sending", liftLead.getAppliedOutput());
+			SmartDashboard.putNumber("Lift Follow Power Sending", liftFollow.getAppliedOutput());
+			SmartDashboard.putBoolean("Lift Bottom limit triggered", areWeAtBottomLimit());
+			SmartDashboard.putNumber("Lift Wanted Height", mLiftPosition.getHeight());
+			SmartDashboard.putNumber("Lift Lead Motor Temp", liftLead.getMotorTemperature());
+			SmartDashboard.putNumber("Lift Follow Motor Temp", liftFollow.getMotorTemperature());
+			SmartDashboard.putBoolean("Lift is at position?", isAtPosition());
+			if(FeatureFlags.FF_LIFT_TILT){
+				SmartDashboard.putBoolean("Lift Leaning?", liftLeaner.get() == DoubleSolenoid.Value.kReverse);
+			}
+		}
+
         }
 
 	@Override
@@ -222,6 +228,11 @@ public class LiftSubsystem  implements Subsystem {
 				}
 			}
         });
+	}
+
+	@Override
+	public void setDebug(boolean _debug) {
+		debug = _debug;
 	}
 
 	@Override

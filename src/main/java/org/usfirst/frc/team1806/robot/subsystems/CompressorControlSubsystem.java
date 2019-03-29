@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class CompressorControlSubsystem implements Subsystem {
 
+    boolean debug = false;
+
     private static CompressorControlSubsystem compressorControlSubsystem = new CompressorControlSubsystem();
 
     public static CompressorControlSubsystem getInstance(){
@@ -117,15 +119,16 @@ public class CompressorControlSubsystem implements Subsystem {
 
     }
 
-    public void outputToSmartDashboard(){/*
-        SmartDashboard.putNumber("STORAGE PRESSURE", pressureSensor.getPressure());
-        SmartDashboard.putNumber("Recent Average Pressure", pressureSamplingFilter.getCurrentAverage());
-        SmartDashboard.putNumber("Compressor Current", compressor.getCompressorCurrent());
-        SmartDashboard.putNumber("Recent Average Battery Voltage", voltageSamplingFilter.getCurrentAverage());
-        SmartDashboard.putNumber("Recent Average PDP Total Current", amperageSamplingFilter.getCurrentAverage());
-        SmartDashboard.putBoolean("Is Compressor Running?", compressor.getClosedLoopControl());
-        SmartDashboard.putNumber("Battery Charge", (batteryCoulombCount/Constants.kFullChargeBatteryCoulombCount)* 100);
-        */
+    public void outputToSmartDashboard(){
+        if(debug) {
+            SmartDashboard.putNumber("STORAGE PRESSURE", pressureSensor.getPressure());
+            SmartDashboard.putNumber("Recent Average Pressure", pressureSamplingFilter.getCurrentAverage());
+            SmartDashboard.putNumber("Compressor Current", compressor.getCompressorCurrent());
+            SmartDashboard.putNumber("Recent Average Battery Voltage", voltageSamplingFilter.getCurrentAverage());
+            SmartDashboard.putNumber("Recent Average PDP Total Current", amperageSamplingFilter.getCurrentAverage());
+            SmartDashboard.putBoolean("Is Compressor Running?", compressor.getClosedLoopControl());
+            SmartDashboard.putNumber("Battery Charge", (batteryCoulombCount / Constants.kFullChargeBatteryCoulombCount) * 100);
+        }
     }
 
     public void stop(){
@@ -139,6 +142,11 @@ public class CompressorControlSubsystem implements Subsystem {
 
     public void registerEnabledLoops(Looper enabledLooper){
         enabledLooper.register(mLoop);
+    }
+
+    @Override
+    public void setDebug(boolean _debug) {
+        debug = _debug;
     }
 
     public void setOverride(boolean override){

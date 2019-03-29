@@ -12,10 +12,8 @@ import org.usfirst.frc.team1806.robot.auto.actions.VisionPathExecuter;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.*;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeEndedException;
-import org.usfirst.frc.team1806.robot.auto.paths.DriveStraightPath;
-import org.usfirst.frc.team1806.robot.auto.paths.RightSideCloseHatchRocketToFeeder;
-import org.usfirst.frc.team1806.robot.auto.paths.RightSideHAB1ToCloseHatchRocket;
-import org.usfirst.frc.team1806.robot.auto.paths.RightSideHAB1ToCloseHatchRocketNoVision;
+import org.usfirst.frc.team1806.robot.auto.paths.*;
+import org.usfirst.frc.team1806.robot.path.Path;
 import org.usfirst.frc.team1806.robot.path.PathContainer;
 import org.usfirst.frc.team1806.robot.subsystems.LiftSubsystem;
 import org.usfirst.frc.team1806.robot.util.Translation2d;
@@ -23,25 +21,35 @@ import org.usfirst.frc.team1806.robot.util.Translation2d;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
-public class RightNonSendTwoHatchNoVision extends AutoModeBase {    @Override
-public void routine() throws AutoModeEndedException {
+public class PurePathingNonSendTwoHatchRight extends AutoModeBase {
+    @Override
+    public void routine() throws AutoModeEndedException {
     runAction(new ExtendSquid());
+    runAction(new OpenSquid());
+    runAction(new WaitAction(.15));
     if(FeatureFlags.FF_LIFT_TILT){
         runAction(new StandUpLift());
     }
     runAction(new SwitchToLowPID());
-
-    PathContainer startPath = new RightSideHAB1ToCloseHatchRocketNoVision();
-
     //Drive out to close side of rocket
-    runAction(new ResetPoseFromPathAction(startPath));
-    runAction(new DrivePathAction(startPath));
+
+    runAction(new DrivePathAction(new RightHabDriveOff()));
+    PathContainer pc = new RightSideHAB1ToCloseHatchRocketNoVision();
+    runAction(new ResetPoseFromPathAction(pc));
+    runAction(new DrivePathAction(pc));
+
+    pc = new DriveStraightPath(32, 35);
+    runAction(new ResetPoseFromPathAction(pc));
+    runAction(new DrivePathAction(pc));
+    runAction(new CloseSquid());
+    runAction(new WaitAction(15));
+//runAction(new ResetPoseFromPathAction(new RightSideHAB1ToCloseHatchRocketNoVision()));
 
     //runAction(new TurnTowardsPoint(new Translation2d(210, 10)));
 
 
 
-    runAction(new BeelineAF(.25, .35));
+    //runAction(new BeelineAF(.25, .35));
     //Scoring sequence
 
 

@@ -18,6 +18,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
  */
 
 public class IntakeSubsystem implements Subsystem{
+	boolean debug = false;
+
 	private TalonSRX leftOuterIntake, rightOuterIntake;
 	private double mIntakingSpeed = 0;
 	Timer timer, stopperTimer;
@@ -99,6 +101,12 @@ public class IntakeSubsystem implements Subsystem{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void setDebug(boolean _debug) {
+		debug = _debug;
+	}
+
 	public void intaking(){
 		circularBufferTotal = 0;
 		//  double totalCurrent = Robot.powerDistributionPanel.getCurrent(5) + Robot.powerDistributionPanel.getCurrent(6);

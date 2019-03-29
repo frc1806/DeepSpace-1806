@@ -33,7 +33,7 @@ public class RobotMap {
 
 
 
-	////////// These are all of the solenoids for the robot
+	////////// These are all of the solenoids for the robotri
 	
 	//Shifting
 

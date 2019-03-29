@@ -39,15 +39,15 @@ public class Constants {
     public final static double kPathFollowingProfileKffa = 0.05;
     public final static double kPathFollowingGoalPosTolerance = 0.75;
     public final static double kPathFollowingGoalVelTolerance = 18.0;
-    public final static double kPathStopSteeringDistance = 2.25;
+    public final static double kPathStopSteeringDistance = 8; //2.25
 
     //
     // PID gains for drive velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in counts per tenth of a second
-    public final static double kDriveHighGearVelocityKp = .00065; //.0004;//.08;//.16; //1.01;
-    public final static double kDriveHighGearVelocityKi = 0.0000000;
-    public final static double kDriveHighGearVelocityKd =  0.00155125; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
-    public final static double kDriveHighGearVelocityKf = 0.00004875;//.0175; //.035; //0.21; //.025;
+    public final static double kDriveHighGearVelocityKp = .0007; //.0004;//.08;//.16; //1.01;
+    public final static double kDriveHighGearVelocityKi = 0.00000001;
+    public final static double kDriveHighGearVelocityKd =  0.002; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
+    public final static double kDriveHighGearVelocityKf = 0.00004;//.0175; //.035; //0.21; //.025;
     public final static int kDriveHighGearVelocityIZone = 0;
     public final static double kDriveHighGearVelocityRampRate = .1;
     public final static double kDriveHighGearNominalOutput = 0.25;

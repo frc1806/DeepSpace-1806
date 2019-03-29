@@ -9,7 +9,7 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 //import com.revrobotics.CANSparkMax;
 
 public class HABinAGoodTime implements Subsystem {
-
+    boolean debug = false;
     private static HABinAGoodTime mHabANiceDay = new HABinAGoodTime();
 
     private CANSparkMax leftHABArm, rightHABArm;
@@ -97,13 +97,15 @@ public class HABinAGoodTime implements Subsystem {
     }
 
     public void outputToSmartDashboard(){
-        SmartDashboard.putNumber("Climb rightVel", rightHABArm.getEncoder().getVelocity());
-        SmartDashboard.putNumber("Climb leftVel", leftHABArm.getEncoder().getVelocity());
-        SmartDashboard.putNumber("Climb right encoder pos", rightHABArm.getEncoder().getPosition());
-        SmartDashboard.putNumber("Climb left encoder pos", leftHABArm.getEncoder().getPosition());
-        SmartDashboard.putNumber("Climb angleOffset", mDriveTrainSubsystem.getGyroRoll());
-        SmartDashboard.putString("Climb Position" , mClimbPosition.toString());
-        SmartDashboard.putString("Climb States" , mClimbStates.toString());
+        if(debug) {
+            SmartDashboard.putNumber("Climb rightVel", rightHABArm.getEncoder().getVelocity());
+            SmartDashboard.putNumber("Climb leftVel", leftHABArm.getEncoder().getVelocity());
+            SmartDashboard.putNumber("Climb right encoder pos", rightHABArm.getEncoder().getPosition());
+            SmartDashboard.putNumber("Climb left encoder pos", leftHABArm.getEncoder().getPosition());
+            SmartDashboard.putNumber("Climb angleOffset", mDriveTrainSubsystem.getGyroRoll());
+            SmartDashboard.putString("Climb Position", mClimbPosition.toString());
+            SmartDashboard.putString("Climb States", mClimbStates.toString());
+        }
     }
 
     public void stop(){
@@ -159,6 +161,11 @@ public class HABinAGoodTime implements Subsystem {
 
             }
         });
+    }
+
+    @Override
+    public void setDebug(boolean _debug) {
+        debug = _debug;
     }
 
 

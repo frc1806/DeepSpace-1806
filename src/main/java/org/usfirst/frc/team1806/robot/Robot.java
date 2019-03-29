@@ -135,6 +135,7 @@ public class Robot extends TimedRobot {
             mAutomatedSequenceExecuter.stop();
         }
         autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
+
       m_oi.resetAutoLatch();
     }
 
@@ -153,7 +154,7 @@ public class Robot extends TimedRobot {
       selectedAuto = AutoModeSelector.getSelectedAutoMode();
       autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
       S_SubsystemManager.stop();
-      //S_SubsystemManager.outputToSmartDashboard();
+      S_SubsystemManager.outputToSmartDashboard();
 
     }
 

@@ -13,6 +13,8 @@ public interface Subsystem {
 
     public abstract void registerEnabledLoops(Looper enabledLooper);
 
+    public abstract void setDebug(boolean _debug);
+
     //2019 Specific
 
     public abstract void goToHatchMode();

@@ -32,6 +32,8 @@ import edu.wpi.first.wpilibj.SPI;
  */
 public class DriveTrainSubsystem implements Subsystem {
 
+	boolean debug = false;
+
 	public enum DriveStates {
 		DRIVING, // Ya old normal dirivng
 		CREEP, // Creep for percise movement
@@ -354,22 +356,24 @@ public class DriveTrainSubsystem implements Subsystem {
 
 	@Override
 	public void outputToSmartDashboard() {
-		SmartDashboard.putNumber("AdriveLeftPosition", getLeftDistanceInches());
-		SmartDashboard.putNumber("AdriveRightPosition", getRightDistanceInches());
-		SmartDashboard.putNumber("driveLeftVelocity", getLeftVelocityInchesPerSec());
-		SmartDashboard.putNumber("driveRightVelocity", getRightVelocityInchesPerSec());
-		SmartDashboard.putNumber("ALeft Side", leftEncoderDistance);
-		SmartDashboard.putNumber("ARight Side: ", rightEncoderDistance);
-		SmartDashboard.putString("Drive State", returnDriveState());
-		SmartDashboard.putNumber("ANavX", getGyroYaw().getDegrees());
-		SmartDashboard.putNumber("Main Left Drive Temp", masterLeft.getMotorTemperature());
-		SmartDashboard.putNumber("Main LeftA Drive Temp", leftA.getMotorTemperature());
-		SmartDashboard.putNumber("Main Right Drive Temp", masterRight.getMotorTemperature());
-		SmartDashboard.putNumber("Main RightC Drive Temp", rightC.getMotorTemperature());
-		SmartDashboard.putNumber("Drive Left Main Amps", masterLeft.getOutputCurrent());
-		SmartDashboard.putNumber("Drive Left Follow Amps", leftA.getOutputCurrent());
-		SmartDashboard.putNumber("Drive Right Main Amps", masterRight.getOutputCurrent());
-		SmartDashboard.putNumber("Drive Right Follow Amps", rightC.getOutputCurrent());
+		if(debug) {
+			SmartDashboard.putNumber("AdriveLeftPosition", getLeftDistanceInches());
+			SmartDashboard.putNumber("AdriveRightPosition", getRightDistanceInches());
+			SmartDashboard.putNumber("driveLeftVelocity", getLeftVelocityInchesPerSec());
+			SmartDashboard.putNumber("driveRightVelocity", getRightVelocityInchesPerSec());
+			SmartDashboard.putNumber("ALeft Side", leftEncoderDistance);
+			SmartDashboard.putNumber("ARight Side: ", rightEncoderDistance);
+			SmartDashboard.putString("Drive State", returnDriveState());
+			SmartDashboard.putNumber("ANavX", getGyroYaw().getDegrees());
+			SmartDashboard.putNumber("Main Left Drive Temp", masterLeft.getMotorTemperature());
+			SmartDashboard.putNumber("Main LeftA Drive Temp", leftA.getMotorTemperature());
+			SmartDashboard.putNumber("Main Right Drive Temp", masterRight.getMotorTemperature());
+			SmartDashboard.putNumber("Main RightC Drive Temp", rightC.getMotorTemperature());
+			SmartDashboard.putNumber("Drive Left Main Amps", masterLeft.getOutputCurrent());
+			SmartDashboard.putNumber("Drive Left Follow Amps", leftA.getOutputCurrent());
+			SmartDashboard.putNumber("Drive Right Main Amps", masterRight.getOutputCurrent());
+			SmartDashboard.putNumber("Drive Right Follow Amps", rightC.getOutputCurrent());
+		}
 	}
 
 
@@ -377,6 +381,11 @@ public class DriveTrainSubsystem implements Subsystem {
 	public synchronized void registerEnabledLoops(Looper enabledLooper) {
 		enabledLooper.register(mLoop);
 
+	}
+
+	@Override
+	public void setDebug(boolean _debug) {
+		debug = _debug;
 	}
 
 	public synchronized void reloadGains() {

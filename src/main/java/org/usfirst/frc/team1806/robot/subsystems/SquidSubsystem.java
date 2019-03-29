@@ -9,7 +9,7 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 
 public class SquidSubsystem implements Subsystem {
 
-
+    boolean debug = false;
     private static SquidSubsystem mSquidSubsystem = new SquidSubsystem();
     private DoubleSolenoid mSquidSolenoid;
     private DoubleSolenoid mSquidExtender;
@@ -30,8 +30,10 @@ public class SquidSubsystem implements Subsystem {
     }
 
     public void outputToSmartDashboard(){
-    SmartDashboard.putString("Squid State", mSquidSolenoid.get().name());
-    SmartDashboard.putString("Squid Extend" , mSquidExtender.get().name());
+    if(debug) {
+        SmartDashboard.putString("Squid State", mSquidSolenoid.get().name());
+        SmartDashboard.putString("Squid Extend" , mSquidExtender.get().name());
+    }
 
     }
 
@@ -62,6 +64,11 @@ public class SquidSubsystem implements Subsystem {
 
     public void registerEnabledLoops(Looper enabledLooper){
 
+    }
+
+    @Override
+    public void setDebug(boolean _debug) {
+        debug = _debug;
     }
 
     /**

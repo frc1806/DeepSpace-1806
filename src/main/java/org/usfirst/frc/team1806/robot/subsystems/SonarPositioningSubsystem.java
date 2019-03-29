@@ -10,6 +10,9 @@ import org.usfirst.frc.team1806.robot.util.Translation2d;
 
 public class SonarPositioningSubsystem implements Subsystem{
 
+    boolean debug = false;
+
+
     private static SonarPositioningSubsystem mSonarPositioningSubsystem = new SonarPositioningSubsystem();
     private Ultrasonic rearLeftSonar, rearRightSonar, leftSonar, rightSonar;
     public static SonarPositioningSubsystem getInstance() {return mSonarPositioningSubsystem;}
@@ -137,6 +140,11 @@ public class SonarPositioningSubsystem implements Subsystem{
      */
     public void registerEnabledLoops(Looper enabledLooper){
 
+    }
+
+    @Override
+    public void setDebug(boolean _debug) {
+        debug = _debug;
     }
 
     /**
