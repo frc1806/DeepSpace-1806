@@ -11,7 +11,7 @@ public class CargoIntakeSubsystem implements Subsystem {
     boolean debug = false;
     private static CargoIntakeSubsystem mCargoIntakeSubsystem = new CargoIntakeSubsystem();
     //private LiftSubsystem liftSubsystem;
-    //private DoubleSolenoid extensionSolenoid;
+    private DoubleSolenoid extensionSolenoid;
     private IntakeSubsystem innerIntake;
     //private IntakeSubsystem outerIntake;
 
@@ -52,7 +52,7 @@ public class CargoIntakeSubsystem implements Subsystem {
     
     private CargoIntakeSubsystem(){
 
-        //extensionSolenoid = new DoubleSolenoid(RobotMap.cargoIntakeExtend, RobotMap.cargoIntakeRetract);
+        extensionSolenoid = new DoubleSolenoid(RobotMap.cargoIntakeExtend, RobotMap.cargoIntakeRetract);
         innerIntake = new IntakeSubsystem(Constants.kInnerIntakingSpeed, RobotMap.leftInnerIntake, RobotMap.rightInnerIntake, true, false);
         //outerIntake = new IntakeSubsystem(Constants.kOuterIntakingSpeed, RobotMap.leftOuterIntake, RobotMap.rightOuterIntake, false, false);
         //liftSubsystem = LiftSubsystem.getInstance();
@@ -105,11 +105,23 @@ public class CargoIntakeSubsystem implements Subsystem {
 
     }
 
+    public void extendOuterIntake(){
+        extensionSolenoid.set(DoubleSolenoid.Value.kForward);
+    }
+
+    public void retractOuterIntake(){
+        extensionSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
+
+    public boolean isExtended(){
+        return extensionSolenoid.get() == DoubleSolenoid.Value.kForward;
+    }
+
     /**
      * when HatchMode is enabled it retracts outer intake
      */
     public void goToHatchMode(){
-
+        retractOuterIntake();
     }
 
     public void goToCargoMode(){
@@ -117,5 +129,6 @@ public class CargoIntakeSubsystem implements Subsystem {
     }
 
     public void retractAll() {
+        retractOuterIntake();
     }
 }
