@@ -35,17 +35,14 @@ public class AutoModeSelector {
         //SmartDashboard.putString(SELECTED_AUTO_MODE_DASHBOARD_KEY, mDefaultMode.mDashboardName);
 
 
-        //TODO resolve reflections
     }
     
     
     /**
      * Checks the returned automode against every mode in the defined auto modes package. If there is a problem instantiating it, or the mode selected doesn't exist, will return a default auto.
      */
-    public static AutoModeBase getSelectedAutoMode() {
-        String selectedModeName = SmartDashboard.getString(
-                SELECTED_AUTO_MODE_DASHBOARD_KEY,
-                "org.usfirst.frc.team1806.robot.auto.modes.DummyMode");
+    public static AutoModeBase getSelectedAutoMode(String selectedModeName) {
+
 
         Reflections reflections = new Reflections(AUTO_MODES_PACKAGE);
         Set<Class<? extends AutoModeBase>> modes = reflections.getSubTypesOf(AutoModeBase.class);

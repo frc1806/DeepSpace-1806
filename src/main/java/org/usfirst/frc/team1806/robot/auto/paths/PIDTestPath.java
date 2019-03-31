@@ -16,10 +16,10 @@ public class PIDTestPath implements PathContainer {
         double pathSpeed = 70;
         sWaypoints.add(new PathBuilder.Waypoint(115,116,0,0));
         sWaypoints.add(new PathBuilder.Waypoint(116,116,0,pathSpeed));
-        sWaypoints.add(new PathBuilder.Waypoint(135,116,8,pathSpeed));
-        sWaypoints.add(new PathBuilder.Waypoint(160,70,8,pathSpeed));
-        sWaypoints.add(new PathBuilder.Waypoint(200,70,0,pathSpeed));
-
+        sWaypoints.add(new PathBuilder.Waypoint(150,100,10,pathSpeed));
+        sWaypoints.add(new PathBuilder.Waypoint(180,100,10,pathSpeed));
+        sWaypoints.add(new PathBuilder.Waypoint(200,80,10,pathSpeed));
+        sWaypoints.add(new PathBuilder.Waypoint(220,80,0,pathSpeed));
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
 

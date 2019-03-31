@@ -24,8 +24,9 @@ import java.util.Arrays;
 public class PurePathingNonSendTwoHatchRight extends AutoModeBase {
     @Override
     public void routine() throws AutoModeEndedException {
-    runAction(new ExtendSquid());
     runAction(new OpenSquid());
+    runAction(new RetractSquid());
+
     runAction(new WaitAction(.15));
     if(FeatureFlags.FF_LIFT_TILT){
         runAction(new StandUpLift());
@@ -38,10 +39,17 @@ public class PurePathingNonSendTwoHatchRight extends AutoModeBase {
     runAction(new ResetPoseFromPathAction(pc));
     runAction(new DrivePathAction(pc));
 
-    pc = new DriveStraightPath(32, 35);
+    pc = new DriveStraightPath(29, 35);
     runAction(new ResetPoseFromPathAction(pc));
     runAction(new DrivePathAction(pc));
+    runAction(new ExtendSquid());
+
+    runAction(new WaitAction(.8));
     runAction(new CloseSquid());
+    runAction(new WaitAction(.8));
+    pc = new DriveStraightPath(-4, 35);
+    runAction(new ResetPoseFromPathAction(pc));
+    runAction(new DrivePathAction(pc));
     runAction(new WaitAction(15));
 //runAction(new ResetPoseFromPathAction(new RightSideHAB1ToCloseHatchRocketNoVision()));
 

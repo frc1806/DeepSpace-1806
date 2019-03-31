@@ -16,10 +16,10 @@ public class RightSideHAB1ToCloseHatchRocketNoVision implements PathContainer {
         ArrayList<PathBuilder.Waypoint> sWaypoints = new ArrayList<PathBuilder.Waypoint>();
 
         sWaypoints.add(new PathBuilder.Waypoint(116,115,0,0));
-        sWaypoints.add(new PathBuilder.Waypoint(117,115,0,35));
-        sWaypoints.add(new PathBuilder.Waypoint(136,100,6,35));
-        sWaypoints.add(new PathBuilder.Waypoint(156,49,6,40));
-        sWaypoints.add(new PathBuilder.Waypoint(176,37,0,20));
+        sWaypoints.add(new PathBuilder.Waypoint(117,115,0,60));
+        sWaypoints.add(new PathBuilder.Waypoint(136,100,6,60));
+        sWaypoints.add(new PathBuilder.Waypoint(156,49,6,50));
+        sWaypoints.add(new PathBuilder.Waypoint(176,37,0,50));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }

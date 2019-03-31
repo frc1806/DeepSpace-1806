@@ -36,6 +36,9 @@ public class Robot extends TimedRobot {
     private AutoModeExecuter mAutomatedSequenceExecuter = null;
     public static OI m_oi;
     public static PowerDistributionPanel powerDistributionPanel;
+    private String selectedModeName;
+    private String lastSelectedModeName;
+    private boolean bAutoModeStale = false;
     SendableChooser<Command> m_chooser = new SendableChooser<>();
 
 
@@ -78,9 +81,11 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         Robot.setGamePieceMode(GamePieceMode.HATCH_PANEL);
+        selectedModeName = "";
+        lastSelectedModeName = "";
       m_oi = new OI();
       zeroAllSensors();
-
+      mDrive.setDebug(true);
       //adds in the iterative code to make the code run
       mEnabledLooper.register(RobotStateEstimator.getInstance());
       S_SubsystemManager.registerEnabledLoops(mEnabledLooper);
@@ -127,9 +132,12 @@ public class Robot extends TimedRobot {
     }
     @Override
     public void disabledInit() {
+      mDrive.setCoastMode();
       mEnabledLooper.stop();
         if(mAutoModeExecuter != null) {
             mAutoModeExecuter.stop();
+            AutoModeSelector.initAutoModeSelector();
+            selectedAuto = AutoModeSelector.getSelectedAutoMode(selectedModeName);
         }
         if(mAutomatedSequenceExecuter != null) {
             mAutomatedSequenceExecuter.stop();
@@ -150,17 +158,27 @@ public class Robot extends TimedRobot {
       }
 
       allPeriodic();
-      AutoModeSelector.initAutoModeSelector();
-      selectedAuto = AutoModeSelector.getSelectedAutoMode();
+      selectedModeName = SmartDashboard.getString(
+                AutoModeSelector.SELECTED_AUTO_MODE_DASHBOARD_KEY,
+                "org.usfirst.frc.team1806.robot.auto.modes.DummyMode");
+      if(!selectedModeName.equals(lastSelectedModeName) || bAutoModeStale){
+          bAutoModeStale = false;
+          AutoModeSelector.initAutoModeSelector();
+          selectedAuto = AutoModeSelector.getSelectedAutoMode(selectedModeName);
+      }
+
       autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
       S_SubsystemManager.stop();
       S_SubsystemManager.outputToSmartDashboard();
+
+      lastSelectedModeName = selectedModeName;
 
     }
 
 
     @Override
     public void autonomousInit() {
+      bAutoModeStale = true;
       try {
 			zeroAllSensors();
 			CrashTracker.logAutoInit();
@@ -212,7 +230,7 @@ public class Robot extends TimedRobot {
             mAutomatedSequenceExecuter = new AutoModeExecuter();
         }
       mDrive.setOpenLoop(DriveSignal.NEUTRAL);
-      mDrive.setNeutralMode(false);
+      mDrive.setNeutralMode(true);
       //SquidSubsystem.getInstance().extendSquid();
       autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
     }
@@ -230,7 +248,7 @@ public class Robot extends TimedRobot {
             }
             break;
           case AUTO_INIT:
-            selectedAuto = AutoModeSelector.getSelectedAutoMode();
+            selectedAuto = AutoModeSelector.getSelectedAutoMode(selectedModeName);
             if(m_oi.autoInTeleOpOn()){
               zeroAllSensors();
               if (mAutoModeExecuter != null) {

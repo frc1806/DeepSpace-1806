@@ -42,12 +42,13 @@ OI {
 			autoInTeleOp.update(autoController.getButtonStart());
 		}
 		synchronized (mDriveTrainSubsystem) {
-			if(!((mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.DRIVE_TO_STALL || Robot.mSequenceState == Robot.SequenceState.VISION) && Robot.mSequenceState.isActive()))
+			if(!((mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.DRIVE_TO_STALL || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.WIGGLE ) ||(Robot.mSequenceState == Robot.SequenceState.VISION) && Robot.mSequenceState.isActive()))
 			{
 				mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
 						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
 			}
 			mDriveTrainSubsystem.driveToStall(oc.getButtonA());
+			mDriveTrainSubsystem.wiggleHandler(oc.getButtonX());
 		}
 
 		if(FeatureFlags.FF_LIFT_TILT){

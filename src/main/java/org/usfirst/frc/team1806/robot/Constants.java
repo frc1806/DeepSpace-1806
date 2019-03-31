@@ -12,7 +12,14 @@ public class Constants {
     public final static double kDriveWheelDiameterInches = 4;
     public final static double kTrackWidthInches = 15;
     public final static double kTrackScrubFactor = .915;
-    
+
+    public final static double kVisionExpectedCameraLag = 0.031;
+
+    public final static double kStallTimeout = 2;
+    public final static double kStallWaitPeriod = 25;
+    public final static double kStallSpeed = 500;
+    public final static double kStallPower = .2;
+
 
     public final static int kDriveTrainPIDSetTimeout = 30;
     public final static double kCountsPerInch = 0.5946;
@@ -30,13 +37,13 @@ public class Constants {
     // our speed
     // in inches per sec
     public final static double kSegmentCompletionTolerance = 0.75; // inches
-    public final static double kPathFollowingMaxAccel = 132; // inches per second^2
+    public final static double kPathFollowingMaxAccel = 60; // inches per second^2
     public final static double kPathFollowingMaxVel = 132; // inches per second
-    public final static double kPathFollowingProfileKp = .99;
-    public final static double kPathFollowingProfileKi = 0.049;
-    public final static double kPathFollowingProfileKv = 0.000013;
-    public final static double kPathFollowingProfileKffv = 1.2;
-    public final static double kPathFollowingProfileKffa = 0.05;
+    public final static double kPathFollowingProfileKp = 1.1; //.99
+    public final static double kPathFollowingProfileKi = 0.049; //.049
+    public final static double kPathFollowingProfileKv = 0.000013; //0.000013
+    public final static double kPathFollowingProfileKffv = 1.2; //1.2
+    public final static double kPathFollowingProfileKffa = 0.05; //.05
     public final static double kPathFollowingGoalPosTolerance = 0.75;
     public final static double kPathFollowingGoalVelTolerance = 18.0;
     public final static double kPathStopSteeringDistance = 8; //2.25
@@ -44,7 +51,7 @@ public class Constants {
     //
     // PID gains for drive velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in counts per tenth of a second
-    public final static double kDriveHighGearVelocityKp = .0007; //.0004;//.08;//.16; //1.01;
+    public final static double kDriveHighGearVelocityKp = .001; //.0004;//.08;//.16; //1.01;
     public final static double kDriveHighGearVelocityKi = 0.00000001;
     public final static double kDriveHighGearVelocityKd =  0.002; //.6125; //1.25; //7.8; //0.0001; //6.0/1500;
     public final static double kDriveHighGearVelocityKf = 0.00004;//.0175; //.035; //0.21; //.025;

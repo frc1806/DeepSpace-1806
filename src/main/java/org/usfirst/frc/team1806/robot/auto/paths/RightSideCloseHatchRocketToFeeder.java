@@ -14,9 +14,8 @@ public class RightSideCloseHatchRocketToFeeder implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<PathBuilder.Waypoint> sWaypoints = new ArrayList<PathBuilder.Waypoint>();
-        sWaypoints.add(new PathBuilder.Waypoint(188,38,0,60));
-        sWaypoints.add(new PathBuilder.Waypoint(187,38,0,60));
-        sWaypoints.add(new PathBuilder.Waypoint(70,30,0,60));
+        sWaypoints.add(new PathBuilder.Waypoint(190,30,0,0));
+        sWaypoints.add(new PathBuilder.Waypoint(60,30,0,60));
 
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
@@ -29,6 +28,6 @@ public class RightSideCloseHatchRocketToFeeder implements PathContainer {
 
     @Override
     public boolean isReversed() {
-        return true;
+        return false;
     }
 }

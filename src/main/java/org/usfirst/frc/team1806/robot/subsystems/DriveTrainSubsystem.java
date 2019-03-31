@@ -167,8 +167,8 @@ public class DriveTrainSubsystem implements Subsystem {
 						return;
 					case DRIVE_TO_STALL:
 
-						leftDrive(.3);
-						rightDrive(.3);
+						leftDrive(Constants.kStallPower);
+						rightDrive(Constants.kStallPower);
 						return;
 					default:
 						return;
@@ -567,7 +567,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	public synchronized void setOpenLoop(DriveSignal signal) {
 		if (mDriveStates != DriveStates.DRIVING) {
 			mDriveStates = DriveStates.DRIVING;
-			setNeutralMode(false);
+			setNeutralMode(true);
 		}
         masterLeft.getPIDController().setReference(signal.getLeft(), ControlType.kDutyCycle);
 		masterRight.getPIDController().setReference(signal.getRight(), ControlType.kDutyCycle);
@@ -635,12 +635,13 @@ public class DriveTrainSubsystem implements Subsystem {
 	boolean startingWiggle = false;
 	boolean finishingWiggle = false;
 	double wiggleAdjust = 0;
-	double kWiggle = .05;
+	double kWiggle = 6*3.1415;
+	double kWiggleAmplitude = .15;
 	Timer wiggleTime = new Timer();
 
 	public synchronized void wiggleHandler(boolean wiggleReq) {
 		startingWiggle = wiggleReq && !wasWigglin;
-
+		finishingWiggle = !wiggleReq && wasWigglin;
 
 
 		if(startingWiggle) {
@@ -660,8 +661,8 @@ public class DriveTrainSubsystem implements Subsystem {
 		if(wiggleReq) {
 			wiggleAdjust = Math.sin(wiggleTime.get() * kWiggle) * .2;
 
-			leftDrive(.5 + wiggleAdjust);
-			rightDrive(.5 + wiggleAdjust);
+			leftDrive(.25 - wiggleAdjust);
+			rightDrive(.25 + wiggleAdjust);
 		}
 
 
@@ -677,22 +678,34 @@ public class DriveTrainSubsystem implements Subsystem {
 
 	public synchronized void driveToStall(boolean pushReq) {
 		startingPush = pushReq && !wasPushing;
-		isTimedOut = (pushTimeStamp - currentTimeStamp > 4);
-		finishingPush = (leftVelocity < 10) && pushTimeStamp - currentTimeStamp > 1 && !isTimedOut;
-		wasPushing = pushReq;
+
 
 		if(startingPush) {
+			System.out.println("starting push");
 			mDriveStates = DriveStates.DRIVE_TO_STALL;
-			leftDrive(.3);
-			rightDrive(.3);
+			leftDrive(Constants.kStallPower);
+			rightDrive(Constants.kStallPower);
 			pushTimeStamp = currentTimeStamp;
 		}
-		if(finishingPush) {
+
+		isTimedOut = (currentTimeStamp - pushTimeStamp > 2);
+		finishingPush = (leftVelocity < Constants.kStallSpeed && currentTimeStamp - pushTimeStamp > Constants.kStallWaitPeriod) || isTimedOut;
+		wasPushing = pushReq;
+		if(leftVelocity < Constants.kStallSpeed && mDriveStates == DriveStates.DRIVE_TO_STALL) {
+			System.out.println("time to stall " + (currentTimeStamp - pushTimeStamp));
+		}
+
+		if(finishingPush && mDriveStates == DriveStates.DRIVE_TO_STALL) {
+			System.out.println("finishing push");
+			System.out.println("speed low? " + (leftVelocity < 500));
+			System.out.println("wait period? " + (currentTimeStamp - pushTimeStamp > 1));
+			System.out.println("is timed out? " + isTimedOut);
 			mDriveStates = DriveStates.DRIVING;
 			pushTimeStamp = 0;
 			leftDrive(0);
 			rightDrive(0);
 		}
+
 	}
 
 
@@ -726,8 +739,8 @@ public class DriveTrainSubsystem implements Subsystem {
 		if (!mPathFollower.isFinished()) {
 			Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
 			updateVelocitySetpoint(setpoint.left, setpoint.right);
-			SmartDashboard.putNumber("Left Side Setpoint: ", setpoint.left);
-			SmartDashboard.putNumber("Right Side Setpoint: ", setpoint.right);
+			SmartDashboard.putNumber("A Left Side Setpoint: ", setpoint.left);
+			SmartDashboard.putNumber("A Right Side Setpoint: ", setpoint.right);
 		} else {
 			setOpenLoop(new DriveSignal(0, 0, false));
 			//updateVelocitySetpoint(0, 0);
@@ -802,8 +815,8 @@ public class DriveTrainSubsystem implements Subsystem {
             		"Right Side Veloctiy: "+ right_inches_per_sec);*/
 
 
-			SmartDashboard.putNumber("Left Side Velocity", getLeftVelocityInchesPerSec());
-			SmartDashboard.putNumber("Right Side Velocity", getRightVelocityInchesPerSec());
+			SmartDashboard.putNumber("A Left Side Velocity", getLeftVelocityInchesPerSec());
+			SmartDashboard.putNumber("A Right Side Velocity", getRightVelocityInchesPerSec());
 		} else {
 			System.out.println("Hit a bad velocity control state");
             masterLeft.getPIDController().setReference(0, ControlType.kDutyCycle);
