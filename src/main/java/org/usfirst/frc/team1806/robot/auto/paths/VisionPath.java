@@ -98,6 +98,7 @@ public class VisionPath implements PathContainer {
             if (!targets.isEmpty()){
                 RigidTransform2d closestBayPose = new RigidTransform2d(new Translation2d(10000, 10000), Rotation2d.fromDegrees(0.0));
                 RigidTransform2d latestFieldToVehicle = RobotState.getInstance().getLatestFieldToVehicle().getValue();
+                Target closestTarget = null;
                 for(Target target: targets){
                     RigidTransform2d robotPose = RobotState.getInstance().getFieldToVehicle(targetsTimestamp - Constants.kVisionExpectedCameraLag);
                     double goalHeading = robotPose.getRotation().getDegrees() - target.getTargetHeadingOffset();
@@ -106,8 +107,15 @@ public class VisionPath implements PathContainer {
                     RigidTransform2d proposedBayPose = interpolateAlongLine(correctedRobotPose, target.getDistance(), Math.toRadians(-target.getRobotToTarget()+ robotPose.getRotation().getDegrees()), Math.toRadians(-target.getTargetHeadingOffset() + robotPose.getRotation().getDegrees()));
                     if(closestBayPose == null || proposedBayPose.getTranslation().subtract(latestFieldToVehicle.getTranslation()).norm() < closestBayPose.getTranslation().subtract(latestFieldToVehicle.getTranslation()).norm()){
                         closestBayPose = proposedBayPose;
+                        closestTarget = target;
                     }
                 }
+                if(closestTarget != null){
+                    System.out.println("Robot to target" + closestTarget.getRobotToTarget());
+                    System.out.println("Target heading offset" + closestTarget.getTargetHeadingOffset());
+                    System.out.println("Distance" + closestTarget.getDistance());
+                }
+
                 return closestBayPose;
             }
         }

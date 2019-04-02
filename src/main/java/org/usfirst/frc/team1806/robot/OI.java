@@ -187,7 +187,12 @@ OI {
 		if(dc.getButtonBack() || oc.getPOVDown()){
 			Robot.RetractAll();
 		}
-
+		if(oc.getLeftTrigger() > Constants.kTriggerThreshold){
+			mCargoIntakeSubsystem.extendOuterIntake();
+		}
+		if(oc.getRightTrigger() > Constants.kTriggerThreshold){
+			mCargoIntakeSubsystem.retractOuterIntake();
+		}
 		if(Math.abs(oc.getLeftJoyY()) > 0.2){
 			mLiftSubsystem.manualMode(-oc.getLeftJoyY());
 		}
