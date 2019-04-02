@@ -230,7 +230,7 @@ public class Robot extends TimedRobot {
             mAutomatedSequenceExecuter = new AutoModeExecuter();
         }
       mDrive.setOpenLoop(DriveSignal.NEUTRAL);
-      mDrive.setNeutralMode(true);
+      mDrive.setNeutralMode(false);
       //SquidSubsystem.getInstance().extendSquid();
       autoInteleOpState = AutoInTeleOp.AUTO_DISABLED;
     }

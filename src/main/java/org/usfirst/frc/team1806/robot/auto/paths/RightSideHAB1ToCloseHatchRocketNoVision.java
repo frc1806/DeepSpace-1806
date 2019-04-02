@@ -15,10 +15,10 @@ public class RightSideHAB1ToCloseHatchRocketNoVision implements PathContainer {
     public Path buildPath() {
         ArrayList<PathBuilder.Waypoint> sWaypoints = new ArrayList<PathBuilder.Waypoint>();
 
-        sWaypoints.add(new PathBuilder.Waypoint(116,115,0,0));
-        sWaypoints.add(new PathBuilder.Waypoint(117,115,0,60));
+        sWaypoints.add(new PathBuilder.Waypoint(116,118,0,0));
+        sWaypoints.add(new PathBuilder.Waypoint(117,118,0,60));
         sWaypoints.add(new PathBuilder.Waypoint(136,100,6,60));
-        sWaypoints.add(new PathBuilder.Waypoint(156,49,6,50));
+        sWaypoints.add(new PathBuilder.Waypoint(156,47,6,50));
         sWaypoints.add(new PathBuilder.Waypoint(176,37,0,50));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
@@ -26,7 +26,7 @@ public class RightSideHAB1ToCloseHatchRocketNoVision implements PathContainer {
     @Override
 
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(116, 115), RobotState.getInstance().getLatestFieldToVehicle().getValue().getRotation());
+        return new RigidTransform2d(new Translation2d(116, 118), RobotState.getInstance().getLatestFieldToVehicle().getValue().getRotation());
     }
 
     @Override

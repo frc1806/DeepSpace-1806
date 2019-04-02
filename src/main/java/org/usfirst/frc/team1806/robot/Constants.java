@@ -10,13 +10,13 @@ public class Constants {
     public final static boolean enableDebugMode = true;
     public final static double kLooperDt = 0.005;
     public final static double kDriveWheelDiameterInches = 4;
-    public final static double kTrackWidthInches = 15;
-    public final static double kTrackScrubFactor = .915;
+    public final static double kTrackWidthInches = 14;
+    public final static double kTrackScrubFactor = .900;
 
-    public final static double kVisionExpectedCameraLag = 0.031;
+    public final static double kVisionExpectedCameraLag = 0.175;
 
     public final static double kStallTimeout = 2;
-    public final static double kStallWaitPeriod = 25;
+    public final static double kStallWaitPeriod = .3;
     public final static double kStallSpeed = 500;
     public final static double kStallPower = .2;
 
@@ -80,7 +80,7 @@ public class Constants {
     public final static double kDriveLowGearPositionKf = 0.000;
     public final static double kDriveLowGearPositionIZone = 1.5;
     public final static int kDriveLowGearMaxVelocity = 700; // Counts
-    public final static int kDriveLowGearMaxAccel = 1000; // Counts
+    public final static int kDriveLowGearMaxAccel = 20; // Counts
     public final static double kDriveTurnMaxPower = .6;
 
     // PID gains for drive velocity loop ***This should be high gear lollz sorry yall
@@ -160,10 +160,17 @@ public class Constants {
 
 
     //HAB Climb Constnats
-    public final static double kHABClimbPositionKp = 0.005;
-    public final static double kHABClimbPositionKi = 0.0;
-    public final static double kHABClimbPositionKd = 0.0;
-    public final static double kHABClimbPositionkf = 0.0;
-    public final static double kHABClimbPositionKiZone = 1;
+    public final static double kHABClimbVelocityKp = 0.005;
+    public final static double kHABClimbVelocityKi = 0.0;
+    public final static double kHABClimbVelocityKd = 0.0;
+    public final static double kHABClimbVelocityKf = 0.0;
+    public final static double kHABClimbVelocityKiZone = 1;
+
+    public final static double kHABClimbSyncKp = 1;
+    public final static double kHABClimbSyncThrottleLetoffDistance = 0.000;
+    public final static double kHABClimbSyncVelocityTolerance = 500;
+    public final static double kHABClimbSyncPositionTolerance = 0.5;
+
+    public final static double kHabClimbTargetSpeed = 2000;
 
 }

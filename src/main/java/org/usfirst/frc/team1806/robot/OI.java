@@ -64,14 +64,14 @@ OI {
 
 
 
-		/*
+
 		if(oc.getPOVUp()){
 			//mHabClimber.goToSetpoint(HABinAGoodTime.ClimbPosition.EXTENSION_LIMIT);
 		}
 		if(dc.getButtonLS()){
 			//mHabClimber.goToSetpoint((HABinAGoodTime.ClimbPosition.RETRACTION_LIMIT));
 		}
-		*/
+
 		//Controls that change based on mode
 		switch(Robot.getGamePieceMode()){
 			case HATCH_PANEL:

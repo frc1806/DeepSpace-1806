@@ -128,5 +128,9 @@ public class SparkMaxMechanismSynchronizer {
         return Math.abs(left.getEncoder().getVelocity()) < velocityTolerance && Math.abs(left.getEncoder().getPosition() - wantedPosition) < positionTolerance
                 && Math.abs(right.getEncoder().getVelocity()) < velocityTolerance && Math.abs(right.getEncoder().getPosition() - wantedPosition) < positionTolerance;
     }
+
+    public SynchronizerState getState(){
+        return mSynchronizerState;
+    }
 }
 

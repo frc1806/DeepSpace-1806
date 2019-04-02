@@ -6,6 +6,7 @@ import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
+import org.usfirst.frc.team1806.robot.util.SparkMaxMechanismSynchronizer;
 //import com.revrobotics.CANSparkMax;
 
 public class HABinAGoodTime implements Subsystem {
@@ -13,6 +14,7 @@ public class HABinAGoodTime implements Subsystem {
     private static HABinAGoodTime mHabANiceDay = new HABinAGoodTime();
 
     private CANSparkMax leftHABArm, rightHABArm;
+    private SparkMaxMechanismSynchronizer mSynchronizer;
     private DriveTrainSubsystem mDriveTrainSubsystem;
 
     private ClimbPosition mClimbPosition;
@@ -31,7 +33,7 @@ public class HABinAGoodTime implements Subsystem {
     private HABinAGoodTime(){
         leftHABArm = new CANSparkMax(RobotMap.HABLiftLeft, CANSparkMaxLowLevel.MotorType.kBrushless);
         rightHABArm = new CANSparkMax(RobotMap.HABLiftRight, CANSparkMaxLowLevel.MotorType.kBrushless);
-
+        mSynchronizer = new SparkMaxMechanismSynchronizer(leftHABArm, rightHABArm);
         mClimbStates = ClimbStates.IDLE;
         mClimbPosition = ClimbPosition.RETRACTION_LIMIT;
         mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
@@ -109,9 +111,7 @@ public class HABinAGoodTime implements Subsystem {
     }
 
     public void stop(){
-        rightHABArm.stopMotor();
-        leftHABArm.stopMotor();
-        zeroSensors();
+        mSynchronizer.stop();
     }
 
     public void zeroSensors(){
@@ -122,8 +122,7 @@ public class HABinAGoodTime implements Subsystem {
     public synchronized void goToSetpoint(ClimbPosition setpoint) {
         mClimbStates = ClimbStates.POSITION_CONTROL;
         mClimbPosition = setpoint;
-        leftHABArm.getPIDController().setReference(mClimbPosition.getHeight(), ControlType.kPosition);
-        rightHABArm.getPIDController().setReference(mClimbPosition.getHeight(), ControlType.kPosition);
+        mSynchronizer.setWantedMovement(setpoint.getHeight(), Constants.kHabClimbTargetSpeed);
     }
 
 
@@ -150,7 +149,8 @@ public class HABinAGoodTime implements Subsystem {
                     case HOLD_POSITION:
                         stop(); //TODO create dumb hold position loop IF needed
                     case POSITION_CONTROL:
-                        if(Math.abs(error) < 1) {
+                        mSynchronizer.update();
+                        if(mSynchronizer.getState() == SparkMaxMechanismSynchronizer.SynchronizerState.COMPLETE) {
                             mClimbStates = ClimbStates.HOLD_POSITION;
                         }
                 }
@@ -170,18 +170,10 @@ public class HABinAGoodTime implements Subsystem {
 
 
     public void reloadGains(){
-        reloadHABArmGains(leftHABArm);
-        reloadHABArmGains(rightHABArm);
+        mSynchronizer.configureSynchronizerParameters(Constants.kHABClimbSyncKp, Constants.kHABClimbSyncThrottleLetoffDistance, Constants.kHABClimbSyncVelocityTolerance, Constants.kHABClimbSyncPositionTolerance);
+        mSynchronizer.reloadBothMotorGains(Constants.kHABClimbVelocityKp, Constants.kHABClimbVelocityKi, Constants.kHABClimbVelocityKd, Constants.kHABClimbVelocityKf, Constants.kHABClimbVelocityKiZone);
     }
 
-    public void reloadHABArmGains(CANSparkMax controllerToReload){
-        CANPIDController pidControllerToSet = controllerToReload.getPIDController();
-        pidControllerToSet.setP(Constants.kHABClimbPositionKp);
-        pidControllerToSet.setI(Constants.kHABClimbPositionKi);
-        pidControllerToSet.setD(Constants.kHABClimbPositionKd);
-        pidControllerToSet.setFF(Constants.kHABClimbPositionkf);
-        pidControllerToSet.setIZone(Constants.kHABClimbPositionKiZone);
-    }
 
 
     public void goToHatchMode(){

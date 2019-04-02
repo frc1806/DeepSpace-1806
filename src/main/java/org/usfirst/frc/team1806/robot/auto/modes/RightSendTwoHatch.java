@@ -9,7 +9,6 @@ import org.usfirst.frc.team1806.robot.auto.actions.SquidActions.OpenSquid;
 import org.usfirst.frc.team1806.robot.auto.actions.SquidActions.RetractSquid;
 import org.usfirst.frc.team1806.robot.auto.actions.VisionPathExecuter;
 import org.usfirst.frc.team1806.robot.auto.actions.actionUtil.*;
-import org.usfirst.frc.team1806.robot.auto.actions.BeelineAF;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeBase;
 import org.usfirst.frc.team1806.robot.auto.modes.modesUtil.AutoModeEndedException;
 import org.usfirst.frc.team1806.robot.auto.paths.*;
@@ -18,7 +17,7 @@ import org.usfirst.frc.team1806.robot.util.Translation2d;
 
 import java.util.Arrays;
 
-public class RightNonSendTwoHatch extends AutoModeBase {
+public class RightSendTwoHatch extends AutoModeBase {
     @Override
     public void routine() throws AutoModeEndedException {
         runAction(new RetractSquid());
@@ -27,44 +26,55 @@ public class RightNonSendTwoHatch extends AutoModeBase {
         if(FeatureFlags.FF_LIFT_TILT){
             runAction(new StandUpLift());
         }
-        runAction(new SwitchToHighPID());
 
         runAction(new SwitchToLowPID());
 
-        PathContainer driveOffHab = new RightHabDriveOff();
+        PathContainer driveOffHab = new RightHab2DriveOff();
         runAction(new ResetPoseFromPathAction(driveOffHab));
-        runAction(new DrivePathAction(driveOffHab));
+        runAction(new ParallelAction(Arrays.asList(
+                new DrivePathAction(driveOffHab),
+                new RunActionAtX(107, new SeriesAction(Arrays.asList(new ForceEndPathAction(), new DrivePathAction(new RightHab2ToFarRocket())))),
+                new RunActionAtX(284, new SeriesAction(Arrays.asList(new ForceEndPathAction(), new VisionPathExecuter())))
+        )));
 
-        runAction(new SwitchToHighPID());
 
-        PathContainer driveToRocket = new RightSideHAB1ToCloseHatchRocketNoVision();
-        runAction(new ResetPoseFromPathAction(driveToRocket));
-        runAction(new DrivePathAction(driveToRocket));
-
-        runAction(new SwitchToLowPID());
-        runAction(new VisionPathExecuter());
-
-        //Scoring sequence
-
-        runAction(new ExtendSquid());
+        //runAction(new ExtendSquid());
         runAction(new DriveToStall());
 
-        runAction(new CloseSquid());
+        //TODO: Score 1st Hatch
+        runAction(new ParallelAction(Arrays.asList(
+                new DrivePathAction(new RightFarRocketBackUp()),
+                new  RunActionAtX(288, new SeriesAction(Arrays.asList(new DrivePathAction(new RightFarRocketToRightFeeder())))),
+                new  RunActionAtX(90, new SeriesAction(Arrays.asList(new ForceEndPathAction(), new VisionPathExecuter())))
+        )));
 
-        runAction(new WaitAction(.4));
-        runAction(new RetractSquid());
+        runAction(new DriveToStall());
 
-        runAction(new SwitchToLowPID());
+        //TODO: Pick Up Hatch Panel
 
-        PathContainer backUpFromRocket = new DriveStraightPath(-13,30);
-        runAction(new ResetPoseFromPathAction(backUpFromRocket));
-        runAction(new DrivePathAction(backUpFromRocket));
+        runAction(new DrivePathAction( new RightFeederToCloseRightRocket()));
+        runAction(new TurnTowardsPoint(new Translation2d(215, 20)));
+        runAction(new WaitAction(0.5));
+        runAction(new VisionPathExecuter());
 
-        //runAction(new SwitchToHighPID());
+        //TODO: Score second hatch
 
-        PathContainer whipPath = new WhipFromRocketRight();
-        runAction(new ResetPoseFromPathAction(whipPath));
-        runAction(new DrivePathAction(whipPath));
+//        runAction(new CloseSquid());
+//
+//        runAction(new WaitAction(.4));
+//        runAction(new RetractSquid());
+//
+//        runAction(new SwitchToLowPID());
+//
+//        PathContainer backUpFromRocket = new DriveStraightPath(-13,30);
+//        runAction(new ResetPoseFromPathAction(backUpFromRocket));
+//        runAction(new DrivePathAction(backUpFromRocket));
+//
+//        //runAction(new SwitchToHighPID());
+//
+//        PathContainer whipPath = new WhipFromRocketRight();
+//        runAction(new ResetPoseFromPathAction(whipPath));
+//        runAction(new DrivePathAction(whipPath));
 
         /*
         PathContainer driveToFeeder = new ToFeederAfterWhipRIght();

@@ -567,7 +567,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	public synchronized void setOpenLoop(DriveSignal signal) {
 		if (mDriveStates != DriveStates.DRIVING) {
 			mDriveStates = DriveStates.DRIVING;
-			setNeutralMode(true);
+			setNeutralMode(false);
 		}
         masterLeft.getPIDController().setReference(signal.getLeft(), ControlType.kDutyCycle);
 		masterRight.getPIDController().setReference(signal.getRight(), ControlType.kDutyCycle);
@@ -676,7 +676,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	boolean isTimedOut = false;
 	double pushTimeStamp = 0;
 
-	public synchronized void driveToStall(boolean pushReq) {
+	public synchronized boolean driveToStall(boolean pushReq) {
 		startingPush = pushReq && !wasPushing;
 
 
@@ -688,7 +688,7 @@ public class DriveTrainSubsystem implements Subsystem {
 			pushTimeStamp = currentTimeStamp;
 		}
 
-		isTimedOut = (currentTimeStamp - pushTimeStamp > 2);
+		isTimedOut = (currentTimeStamp - pushTimeStamp > Constants.kStallTimeout);
 		finishingPush = (leftVelocity < Constants.kStallSpeed && currentTimeStamp - pushTimeStamp > Constants.kStallWaitPeriod) || isTimedOut;
 		wasPushing = pushReq;
 		if(leftVelocity < Constants.kStallSpeed && mDriveStates == DriveStates.DRIVE_TO_STALL) {
@@ -697,14 +697,16 @@ public class DriveTrainSubsystem implements Subsystem {
 
 		if(finishingPush && mDriveStates == DriveStates.DRIVE_TO_STALL) {
 			System.out.println("finishing push");
-			System.out.println("speed low? " + (leftVelocity < 500));
-			System.out.println("wait period? " + (currentTimeStamp - pushTimeStamp > 1));
+			System.out.println("speed low? " + (leftVelocity < Constants.kStallSpeed ));
+			System.out.println("wait period? " + (currentTimeStamp - pushTimeStamp > Constants.kStallWaitPeriod));
 			System.out.println("is timed out? " + isTimedOut);
 			mDriveStates = DriveStates.DRIVING;
 			pushTimeStamp = 0;
 			leftDrive(0);
 			rightDrive(0);
+			return true;
 		}
+		return false;
 
 	}
 

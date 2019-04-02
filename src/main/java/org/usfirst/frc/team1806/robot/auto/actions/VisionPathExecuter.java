@@ -6,9 +6,10 @@ import org.usfirst.frc.team1806.robot.auto.modes.VisionMode;
 
 public class VisionPathExecuter implements Action {
     VisionMode visionMode;
+    boolean started = false;
     @Override
     public boolean isFinished() {
-        return visionMode.getIsDone();
+        return started && visionMode.getIsDone();
     }
 
     @Override
@@ -25,5 +26,6 @@ public class VisionPathExecuter implements Action {
     public void start() {
         visionMode = new VisionMode();
         visionMode.run();
+        started = true;
     }
 }
