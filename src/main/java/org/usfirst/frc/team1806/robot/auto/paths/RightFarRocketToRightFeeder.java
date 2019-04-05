@@ -16,10 +16,11 @@ public class RightFarRocketToRightFeeder implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(290,44,0,0));
-        sWaypoints.add(new Waypoint(280,38,5,60));
-        sWaypoints.add(new Waypoint(230,75,20,110));
-        sWaypoints.add(new Waypoint(120,30,20,110));
-        sWaypoints.add(new Waypoint(60,30,0,110));
+        sWaypoints.add(new Waypoint(280,38,5,120));
+        sWaypoints.add(new Waypoint(230,75,20,120));
+        sWaypoints.add(new Waypoint(120,30,20,120));
+        sWaypoints.add(new Waypoint(90,30,20,120));
+        sWaypoints.add(new Waypoint(60,30,0,60));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }

@@ -14,10 +14,10 @@ public class RightHab2DriveOff implements PathContainer {
         public Path buildPath() {
             ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
             sWaypoints.add(new Waypoint(18,115,0,0));
-            sWaypoints.add(new Waypoint(63,115,0,115));
-            sWaypoints.add(new Waypoint(70,115,0,20));
-            sWaypoints.add(new Waypoint(83,115,0,90));
-            sWaypoints.add(new Waypoint(115,115,0,30));
+            sWaypoints.add(new Waypoint(63,115,0,125));
+            sWaypoints.add(new Waypoint(71,115,0,20));
+            sWaypoints.add(new Waypoint(83,115,0,125));
+            sWaypoints.add(new Waypoint(115,115,0,125));
 
             return PathBuilder.buildPathFromWaypoints(sWaypoints);
         }
