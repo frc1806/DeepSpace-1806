@@ -1,5 +1,7 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1806.robot.Constants;
@@ -13,6 +15,7 @@ public class HABinAGoodTime implements Subsystem {
     boolean debug = false;
     private static HABinAGoodTime mHabANiceDay = new HABinAGoodTime();
 
+    private TalonSRX leftClimbDrive, rightClimbDrive;
     private CANSparkMax leftHABArm, rightHABArm;
     private SparkMaxMechanismSynchronizer mSynchronizer;
     private DriveTrainSubsystem mDriveTrainSubsystem;
@@ -49,7 +52,8 @@ public class HABinAGoodTime implements Subsystem {
         RETRACTION_LIMIT(0),
         EXTENSION_LIMIT(70),
         LOW_POS(50),
-        HIGH_POS(30);
+        HIGH_POS(30),
+        LEVEL_TWO(20);
 
         int height;
 
@@ -76,8 +80,6 @@ public class HABinAGoodTime implements Subsystem {
      */
     public enum ClimbStates {
         POSITION_CONTROL,
-        RESET_RETRACT,
-        RESET_EXTEND,
         HOLD_POSITION,
         MANUAL_CONTROL,
         IDLE
@@ -88,6 +90,7 @@ public class HABinAGoodTime implements Subsystem {
     }
     public void manualHandler(boolean manualReq, double left, double right) {
         isManual = manualReq;
+
         if (manualReq) {
             leftHABArm.getPIDController().setReference(left, ControlType.kDutyCycle);
             rightHABArm.getPIDController().setReference(right, ControlType.kDutyCycle);
@@ -107,6 +110,7 @@ public class HABinAGoodTime implements Subsystem {
             SmartDashboard.putNumber("Climb angleOffset", mDriveTrainSubsystem.getGyroRoll());
             SmartDashboard.putString("Climb Position", mClimbPosition.toString());
             SmartDashboard.putString("Climb States", mClimbStates.toString());
+            SmartDashboard.putString("Climb synchronizer state", mSynchronizer.getState().name());
         }
     }
 
@@ -143,16 +147,28 @@ public class HABinAGoodTime implements Subsystem {
             public void onLoop(double timestamp) {
                 avgClimberHeight = (Math.abs(rightHABArm.getEncoder().getPosition()) + Math.abs(leftHABArm.getEncoder().getPosition()))/2;
                 error = mClimbPosition.getHeight() - avgClimberHeight;
+
+                if(mClimbStates != ClimbStates.IDLE) {
+                    leftClimbDrive.set(ControlMode.PercentOutput, mDriveTrainSubsystem.getLeftVoltage());
+                    rightClimbDrive.set(ControlMode.PercentOutput, mDriveTrainSubsystem.getRightVoltage());
+                }
                 switch (mClimbStates) {
+                    case MANUAL_CONTROL:
+                        mSynchronizer.forceToManual();
+                        break;
                     case IDLE:
                         stop();
+                        break;
                     case HOLD_POSITION:
                         stop(); //TODO create dumb hold position loop IF needed
+                        break;
                     case POSITION_CONTROL:
                         mSynchronizer.update();
                         if(mSynchronizer.getState() == SparkMaxMechanismSynchronizer.SynchronizerState.COMPLETE) {
                             mClimbStates = ClimbStates.HOLD_POSITION;
                         }
+                        break;
+
                 }
             }
 
@@ -166,6 +182,11 @@ public class HABinAGoodTime implements Subsystem {
     @Override
     public void setDebug(boolean _debug) {
         debug = _debug;
+    }
+
+    public void setWantStop() {
+        mClimbStates = ClimbStates.IDLE;
+        stop();
     }
 
 

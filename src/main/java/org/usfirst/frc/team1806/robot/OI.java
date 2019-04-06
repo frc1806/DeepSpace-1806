@@ -19,21 +19,26 @@ import org.usfirst.frc.team1806.robot.util.XboxController;
 public class
 
 OI {
+	//snag some subsystem instances
 	private DriveTrainSubsystem mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
 	private SquidSubsystem mSquidSubsystem = SquidSubsystem.getInstance();
 	private CompressorControlSubsystem mCompressorControlSubsystem = CompressorControlSubsystem.getInstance();
 	private LiftSubsystem mLiftSubsystem = LiftSubsystem.getInstance();
 	private HABinAGoodTime mHabClimber = HABinAGoodTime.getInstance();
+	private CargoIntakeSubsystem mCargoIntakeSubsystem = CargoIntakeSubsystem.getInstance();
+
+	//initialise controllers & ish
 	private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
 	private XboxController dc = new XboxController(0);
 	private XboxController oc = new XboxController(1);
 	private XboxController autoController = new XboxController(2);
+
+	//start up button trackers
 	private Latch autoInTeleOp = new Latch();
 	private Boolean wasSquidExtendButton = false;
 	private Boolean wasSquidOpenButton = false;
 	private Boolean wasChangeModeButton = false;
 	private Boolean wasOuterIntakeButton = false;
-	private CargoIntakeSubsystem mCargoIntakeSubsystem = CargoIntakeSubsystem.getInstance();
 
 	public void runCommands(){
 
@@ -42,13 +47,14 @@ OI {
 			autoInTeleOp.update(autoController.getButtonStart());
 		}
 		synchronized (mDriveTrainSubsystem) {
+			//if not driving to stall or wiggling, or visioning.
 			if(!((mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.DRIVE_TO_STALL || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.WIGGLE ) ||(Robot.mSequenceState == Robot.SequenceState.VISION) && Robot.mSequenceState.isActive()))
 			{
 				mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
 						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
 			}
 			mDriveTrainSubsystem.driveToStall(oc.getButtonA());
-			mDriveTrainSubsystem.wiggleHandler(oc.getButtonX());
+			mDriveTrainSubsystem.wiggleHandler(false); //oc.X
 		}
 
 		if(FeatureFlags.FF_LIFT_TILT){
@@ -64,12 +70,28 @@ OI {
 
 
 
+		synchronized (mHabClimber) {
+			if(oc.getPOVUp()){
+				mHabClimber.goToSetpoint(HABinAGoodTime.ClimbPosition.EXTENSION_LIMIT);
+			}
+			if(oc.getPOVDown()){
+				mHabClimber.goToSetpoint(HABinAGoodTime.ClimbPosition.RETRACTION_LIMIT);
+			}
+			if(oc.getPOVLeft()){
+				mHabClimber.goToSetpoint(HABinAGoodTime.ClimbPosition.LEVEL_TWO);
+			}
+			if(oc.getPOVRight()) {
+				mHabClimber.setWantStop();
+			}
 
-		if(oc.getPOVUp()){
-			//mHabClimber.goToSetpoint(HABinAGoodTime.ClimbPosition.EXTENSION_LIMIT);
-		}
-		if(dc.getButtonLS()){
-			//mHabClimber.goToSetpoint((HABinAGoodTime.ClimbPosition.RETRACTION_LIMIT));
+
+			if(Math.abs(oc.getRightJoyY()) > 0.2){
+				mHabClimber.manualHandler(true, oc.getRightJoyY(), oc.getRightJoyY() );
+			}
+			else if (mHabClimber.getmClimbStates() == HABinAGoodTime.ClimbStates.MANUAL_CONTROL) {
+				mHabClimber.manualHandler(true, 0, 0);
+			}
+
 		}
 
 		//Controls that change based on mode
@@ -101,13 +123,6 @@ OI {
 						}
 
 
-					}
-
-					if(oc.getPOVLeft()){
-						mSquidSubsystem.openSquid();
-					}
-					if(oc.getPOVRight()){
-						mSquidSubsystem.closeSquid();
 					}
 
 
@@ -184,23 +199,38 @@ OI {
 
 				break;
 		}
-		if(dc.getButtonBack() || oc.getPOVDown()){
+		if(dc.getButtonBack() || oc.getButtonBack()){
 			Robot.RetractAll();
+		}
+		if(oc.getLeftTrigger() > Constants.kTriggerThreshold){
+			mCargoIntakeSubsystem.retractOuterIntake();
+		}
+		if(oc.getRightTrigger() > Constants.kTriggerThreshold){
+			mCargoIntakeSubsystem.extendOuterIntake();
+		}
+		if(oc.getButtonStart()){
+			if(oc.getButtonRB()){
+				mSquidSubsystem.openSquid();
+			}
+			if(oc.getButtonLB()){
+				mSquidSubsystem.closeSquid();
+			}
+		} else {
+			if (oc.getButtonRB()) {
+				mSquidSubsystem.extendSquid();
+			}
+			if (oc.getButtonLB()) {
+				mSquidSubsystem.retractSquid();
+			}
 		}
 
 		if(Math.abs(oc.getLeftJoyY()) > 0.2){
-			mLiftSubsystem.manualMode(-oc.getLeftJoyY());
+			mLiftSubsystem.manualMode(oc.getLeftJoyY());
 		}
 		else if (mLiftSubsystem.returnLiftStates() == LiftSubsystem.LiftStates.MANUAL_CONTROL){
 			mLiftSubsystem.manualMode( 0);
 		}
 
-		if(Math.abs(oc.getRightJoyY()) > 0.2){
-			mHabClimber.manualHandler(true, oc.getRightJoyY(), oc.getRightJoyY() );
-		}
-		else if (mHabClimber.getmClimbStates() == HABinAGoodTime.ClimbStates.MANUAL_CONTROL) {
-			mHabClimber.manualHandler(true, 0, 0);
-		}
 
 
 		mCompressorControlSubsystem.setOverride(oc.getButtonY());

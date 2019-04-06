@@ -30,6 +30,7 @@ import java.util.Arrays;
 public class Robot extends TimedRobot {
 
     private DriveTrainSubsystem mDrive = DriveTrainSubsystem.getInstance();
+    private CargoIntakeSubsystem mCargoIntakeSubsystem = CargoIntakeSubsystem.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
     private VisionServer mVisionServer = VisionServer.getInstance();
     private AutoModeExecuter mAutoModeExecuter = null;
@@ -189,6 +190,7 @@ public class Robot extends TimedRobot {
             //mDrive.setHighGear(true);
         needToPositionControlInTele = false;
         mDrive.setBrakeMode();
+        mCargoIntakeSubsystem.retractOuterIntake();
         mEnabledLooper.start();
         mAutoModeExecuter.setAutoMode(selectedAuto);
         mAutoModeExecuter.start();

@@ -842,6 +842,14 @@ public class DriveTrainSubsystem implements Subsystem {
 //   	 System.out.println("Drivetrain sensors zeroed!");
 	}
 
+	public double getLeftVoltage() {
+		return masterLeft.getAppliedOutput();
+	}
+	public double getRightVoltage() {
+		return masterRight.getAppliedOutput();
+	}
+
+
 	@Override
 	public void writeToLog() {
 		// TODO Auto-generated method stub

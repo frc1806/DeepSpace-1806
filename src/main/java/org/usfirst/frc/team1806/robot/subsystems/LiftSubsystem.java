@@ -85,6 +85,7 @@ public class LiftSubsystem  implements Subsystem {
 	public LiftSubsystem() {
 		liftLead = new CANSparkMax(RobotMap.liftLead, CANSparkMaxLowLevel.MotorType.kBrushless);
 		liftFollow = new CANSparkMax(RobotMap.liftFollow, CANSparkMaxLowLevel.MotorType.kBrushless);
+		liftLead.setInverted(true);
 		liftFollow.follow(liftLead, true);
 		/*liftLead.setSmartCurrentLimit(130, 80);
 		liftFollow.setSmartCurrentLimit(130, 80);*/

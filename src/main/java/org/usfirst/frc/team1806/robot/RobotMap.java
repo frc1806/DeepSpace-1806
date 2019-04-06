@@ -30,8 +30,8 @@ public class RobotMap {
 	public static int rightInnerIntake = 12;
 	public static int leftOuterIntake = 13;
 	public static int rightOuterIntake = 14;
-	public static int cargoIntakeExtend = 6;
-	public static int cargoIntakeRetract = 7;
+	public static int cargoIntakeExtend = 5;
+	public static int cargoIntakeRetract = 4;
 
 
 

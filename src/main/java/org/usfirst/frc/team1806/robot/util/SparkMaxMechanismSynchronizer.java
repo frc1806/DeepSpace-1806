@@ -20,6 +20,7 @@ public class SparkMaxMechanismSynchronizer {
         IDLE,
         MOVING,
         COMPLETE,
+        MANUAL
     }
 
     public SparkMaxMechanismSynchronizer(CANSparkMax left, CANSparkMax right) {
@@ -97,6 +98,8 @@ public class SparkMaxMechanismSynchronizer {
             case COMPLETE:
                 stop();
                 break;
+            case MANUAL:
+                break;
             default:
                 stop();
                 break;
@@ -113,6 +116,11 @@ public class SparkMaxMechanismSynchronizer {
         right.getPIDController().setReference(0.0, ControlType.kDutyCycle);
     }
 
+    public void stopSynchonizer() {
+        mSynchronizerState = SynchronizerState.IDLE;
+        stop();
+    }
+
     public void updateMovingSetpoints(){
         double leftEncoder = getEncoderPosLeft();
         double rightEncoder = getEncoderPosRight();
@@ -127,6 +135,13 @@ public class SparkMaxMechanismSynchronizer {
     private boolean isFinished(){
         return Math.abs(left.getEncoder().getVelocity()) < velocityTolerance && Math.abs(left.getEncoder().getPosition() - wantedPosition) < positionTolerance
                 && Math.abs(right.getEncoder().getVelocity()) < velocityTolerance && Math.abs(right.getEncoder().getPosition() - wantedPosition) < positionTolerance;
+    }
+
+    /*
+        Force the synchronizer to not update the motors. Consumers will need to write values to the motors for manual mode as this class wants nothing to do with manual control.
+     */
+    public void forceToManual(){
+        mSynchronizerState = SynchronizerState.MANUAL;
     }
 
     public SynchronizerState getState(){
