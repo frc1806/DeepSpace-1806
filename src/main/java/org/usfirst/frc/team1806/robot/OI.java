@@ -229,7 +229,6 @@ OI {
 				mSquidSubsystem.retractSquid();
 			}
 		}
-
 		if(Math.abs(oc.getLeftJoyY()) > 0.2){
 			mLiftSubsystem.manualMode(oc.getLeftJoyY());
 		}
