@@ -92,6 +92,12 @@ OI {
 				mHabClimber.manualHandler(true, 0, 0);
 			}
 
+			if(mHabClimber.getmClimbStates() != HABinAGoodTime.ClimbStates.IDLE){
+				mHabClimber.manualDrive(dc.getLeftJoyY(), dc.getRightJoyX());
+			}
+			else{
+				mHabClimber.manualDrive(0,0);
+			}
 		}
 
 		//Controls that change based on mode
@@ -163,7 +169,7 @@ OI {
 					if(dc.getButtonStart()) {
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.SHIP_CARGO);
 					}
-					if(dc.getRightTrigger() >= Constants.kTriggerThreshold){
+					if(dc.getPOVUp()){
 						mLiftSubsystem.goToSetpoint(LiftSubsystem.LiftPosition.CARGO_FEEDER);
 					}
 				}
@@ -183,7 +189,7 @@ OI {
 						mCargoIntakeSubsystem.stop();
 					}
 
-					if (dc.getPOVUp() && !wasOuterIntakeButton){
+					if (dc.getRightTrigger() > Constants.kTriggerThreshold && !wasOuterIntakeButton){
 						if (mCargoIntakeSubsystem.isExtended()){
 							mCargoIntakeSubsystem.retractOuterIntake();
 						} else{
@@ -238,7 +244,7 @@ OI {
 		wasSquidExtendButton = dc.getLeftTrigger() > Constants.kTriggerThreshold;
 		wasChangeModeButton = dc.getButtonRB();
 		wasSquidOpenButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
-		wasOuterIntakeButton = dc.getPOVUp();
+		wasOuterIntakeButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
 
 	}
 	public void resetAutoLatch(){

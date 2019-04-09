@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
         lastSelectedModeName = "";
       m_oi = new OI();
       zeroAllSensors();
-      mDrive.setDebug(true);
+      //mDrive.setDebug(true);
       //adds in the iterative code to make the code run
       mEnabledLooper.register(RobotStateEstimator.getInstance());
       S_SubsystemManager.registerEnabledLoops(mEnabledLooper);

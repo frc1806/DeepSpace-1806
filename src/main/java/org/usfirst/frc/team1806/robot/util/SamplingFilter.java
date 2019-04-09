@@ -6,6 +6,7 @@ public class SamplingFilter {
 
     private LinkedList<SamplingFilterValue> samplingBuffer;
     int maxSamples;
+    Double currentRunningTotal;
 
     /**
      * Uses a {@link LinkedList} to sample a double value and average the last n samples.
@@ -23,7 +24,7 @@ public class SamplingFilter {
      */
     public Double update(Double sample){
         if(!samplingBuffer.isEmpty()){
-            Double currentRunningTotal = samplingBuffer.getLast().getRunningTotal();
+            currentRunningTotal = samplingBuffer.getLast().getRunningTotal();
             if(samplingBuffer.size() >= maxSamples) {
                     currentRunningTotal -= samplingBuffer.getFirst().getCurrentValue();
                     samplingBuffer.removeFirst();

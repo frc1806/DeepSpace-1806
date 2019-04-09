@@ -37,12 +37,10 @@ public class RightSendTwoHatch extends AutoModeBase {
                 new RunActionAtX(282, new SeriesAction(Arrays.asList(new ForceEndPathAction(), new VisionPathExecuter())))
         )));
 
-
         runAction(new ExtendSquid());
         runAction(new ParallelAction(Arrays.asList(new DriveToStall(), new SeriesAction(Arrays.asList(new WaitAction(0.3), new CloseSquid())))));
 
         runAction(new RetractSquid());
-
 
         runAction(new ParallelAction(Arrays.asList(
                 new DrivePathAction(new RightFarRocketBackUp()),

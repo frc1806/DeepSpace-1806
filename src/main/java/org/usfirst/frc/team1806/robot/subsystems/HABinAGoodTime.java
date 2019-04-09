@@ -8,6 +8,7 @@ import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
+import org.usfirst.frc.team1806.robot.util.CheesyDriveHelper;
 import org.usfirst.frc.team1806.robot.util.SparkMaxMechanismSynchronizer;
 //import com.revrobotics.CANSparkMax;
 
@@ -36,10 +37,16 @@ public class HABinAGoodTime implements Subsystem {
     private HABinAGoodTime(){
         leftHABArm = new CANSparkMax(RobotMap.HABLiftLeft, CANSparkMaxLowLevel.MotorType.kBrushless);
         rightHABArm = new CANSparkMax(RobotMap.HABLiftRight, CANSparkMaxLowLevel.MotorType.kBrushless);
+        rightClimbDrive = new TalonSRX(RobotMap.rightOuterIntake);
+        leftClimbDrive = new TalonSRX(RobotMap.leftOuterIntake);
+        leftClimbDrive.setInverted(true);
+
         mSynchronizer = new SparkMaxMechanismSynchronizer(leftHABArm, rightHABArm);
         mClimbStates = ClimbStates.IDLE;
         mClimbPosition = ClimbPosition.RETRACTION_LIMIT;
         mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
+        leftHABArm.setSmartCurrentLimit(90);
+        rightHABArm.setSmartCurrentLimit(90);
         reloadGains();
 
     }
@@ -111,6 +118,9 @@ public class HABinAGoodTime implements Subsystem {
             SmartDashboard.putString("Climb Position", mClimbPosition.toString());
             SmartDashboard.putString("Climb States", mClimbStates.toString());
             SmartDashboard.putString("Climb synchronizer state", mSynchronizer.getState().name());
+            SmartDashboard.putString("Climb left arm temp", String.valueOf(leftHABArm.getMotorTemperature()));
+            SmartDashboard.putString("Climb right arm temp", String.valueOf(rightHABArm.getMotorTemperature()));
+
         }
     }
 
@@ -148,10 +158,10 @@ public class HABinAGoodTime implements Subsystem {
                 avgClimberHeight = (Math.abs(rightHABArm.getEncoder().getPosition()) + Math.abs(leftHABArm.getEncoder().getPosition()))/2;
                 error = mClimbPosition.getHeight() - avgClimberHeight;
 
-                if(mClimbStates != ClimbStates.IDLE) {
+                /*if(mClimbStates != ClimbStates.IDLE) {
                     leftClimbDrive.set(ControlMode.PercentOutput, mDriveTrainSubsystem.getLeftVoltage());
                     rightClimbDrive.set(ControlMode.PercentOutput, mDriveTrainSubsystem.getRightVoltage());
-                }
+                }*/
                 switch (mClimbStates) {
                     case MANUAL_CONTROL:
                         mSynchronizer.forceToManual();
@@ -207,6 +217,17 @@ public class HABinAGoodTime implements Subsystem {
 
     public void retractAll() {
         //TODO
+    }
+
+    public void manualDrive(double power, double turn){
+        if(Math.abs(power) > .1 || Math.abs(turn) > .1) {
+            leftClimbDrive.set(ControlMode.PercentOutput, power+turn);
+            rightClimbDrive.set(ControlMode.PercentOutput, power-turn);
+        }
+        else{
+            leftClimbDrive.set(ControlMode.PercentOutput, 0.0);
+            rightClimbDrive.set(ControlMode.PercentOutput, 0.0);
+        }
     }
 
     public ClimbStates getmClimbStates(){

@@ -30,6 +30,7 @@ public class CompressorControlSubsystem implements Subsystem {
     private Double batteryCoulombCount = 0.0;
 
     private Boolean wasCompressorRunning;
+    private Boolean runCompressor;
 
 
     private Loop mLoop = new Loop() {
@@ -49,7 +50,7 @@ public class CompressorControlSubsystem implements Subsystem {
 
                 //IF statements in reverse order of priority
 
-                Boolean runCompressor = false;
+                runCompressor = false;
                 if(pressureSamplingFilter.update(pressureSensor.getPressure()) < Constants.kPressureAverageMinimumToStart){
                     runCompressor = true;
                 }
