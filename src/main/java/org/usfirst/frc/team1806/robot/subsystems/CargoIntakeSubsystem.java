@@ -1,7 +1,6 @@
 package org.usfirst.frc.team1806.robot.subsystems;
 
 //import jdk.internal.org.objectweb.asm.tree.InnerClassNode;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Looper;
@@ -11,9 +10,10 @@ public class CargoIntakeSubsystem implements Subsystem {
     boolean debug = false;
     private static CargoIntakeSubsystem mCargoIntakeSubsystem = new CargoIntakeSubsystem();
     //private LiftSubsystem liftSubsystem;
-    private DoubleSolenoid extensionSolenoid;
+    private DoubleSolenoid barExtensionSolenoid;
+    private DoubleSolenoid outerExtensionSolenoid;
     private IntakeSubsystem innerIntake;
-    //private IntakeSubsystem outerIntake;
+    private IntakeSubsystem outerIntake;
 
     /**
      * Different power percentages for scoring a cargo
@@ -52,9 +52,10 @@ public class CargoIntakeSubsystem implements Subsystem {
     
     private CargoIntakeSubsystem(){
 
-        extensionSolenoid = new DoubleSolenoid(RobotMap.cargoIntakeExtend, RobotMap.cargoIntakeRetract);
+        barExtensionSolenoid = new DoubleSolenoid(RobotMap.barIntakeExtend, RobotMap.barIntakeRetract);
+        outerExtensionSolenoid = new DoubleSolenoid(RobotMap.outerIntakeExtend, RobotMap.outerIntakeRetract);
         innerIntake = new IntakeSubsystem(Constants.kInnerIntakingSpeed, RobotMap.leftInnerIntake, RobotMap.rightInnerIntake, true, false);
-        //outerIntake = new IntakeSubsystem(Constants.kOuterIntakingSpeed, RobotMap.leftOuterIntake, RobotMap.rightOuterIntake, false, false);
+        outerIntake = new IntakeSubsystem(Constants.kOuterIntakingSpeed, RobotMap.leftOuterIntake, RobotMap.rightOuterIntake, false, false);
         //liftSubsystem = LiftSubsystem.getInstance();
     }
 
@@ -70,7 +71,7 @@ public class CargoIntakeSubsystem implements Subsystem {
 
     public void stop(){
         innerIntake.stop();
-       // outerIntake.stop();
+        outerIntake.stop();
     }
 
     public void zeroSensors(){
@@ -92,7 +93,8 @@ public class CargoIntakeSubsystem implements Subsystem {
     public void intakeCargo(){
     innerIntake.intakeLeftSide(Constants.kInnerIntakingSpeed);
     innerIntake.intakeRightSide(Constants.kInnerIntakingSpeed);
-
+    outerIntake.intakeLeftSide(Constants.kOuterIntakingSpeed);
+    outerIntake.intakeRightSide(Constants.kOuterIntakingSpeed);
     }
 
     /**
@@ -101,34 +103,48 @@ public class CargoIntakeSubsystem implements Subsystem {
      */
     public void scoreCargo(ScoringPower power){
     innerIntake.outtaking(power.getPower());
-    //outerIntake.stop();
+    outerIntake.stop();
 
     }
 
+    public void extendBarIntake(){
+        barExtensionSolenoid.set(DoubleSolenoid.Value.kForward);}
+
+    public void retractBarIntake(){
+        barExtensionSolenoid.set(DoubleSolenoid.Value.kReverse);}
+
     public void extendOuterIntake(){
-        extensionSolenoid.set(DoubleSolenoid.Value.kForward);
+        outerExtensionSolenoid.set(DoubleSolenoid.Value.kForward);
     }
 
     public void retractOuterIntake(){
-        extensionSolenoid.set(DoubleSolenoid.Value.kReverse);
+        outerExtensionSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
+
+    public void extendAllIntake(){
+        extendBarIntake();
+        extendOuterIntake();
+    }
+
+    public void retractAllIntake(){
+        retractBarIntake();
+        retractOuterIntake();
     }
 
     public boolean isExtended(){
-        return extensionSolenoid.get() == DoubleSolenoid.Value.kForward;
+        return barExtensionSolenoid.get() == DoubleSolenoid.Value.kForward && outerExtensionSolenoid.get() == DoubleSolenoid.Value.kForward;
     }
 
     /**
      * when HatchMode is enabled it retracts outer intake
      */
-    public void goToHatchMode(){
-        retractOuterIntake();
-    }
+    public void goToHatchMode(){ retractAllIntake(); }
 
     public void goToCargoMode(){
         //TODO
     }
 
     public void retractAll() {
-        retractOuterIntake();
+        retractAllIntake();
     }
 }

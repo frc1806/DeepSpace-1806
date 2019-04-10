@@ -170,9 +170,9 @@ OI {
 
 					if (dc.getPOVUp() && !wasOuterIntakeButton){
 						if (mCargoIntakeSubsystem.isExtended()){
-							mCargoIntakeSubsystem.retractOuterIntake();
+							mCargoIntakeSubsystem.retractAllIntake();
 						} else{
-							mCargoIntakeSubsystem.extendOuterIntake();
+							mCargoIntakeSubsystem.extendAllIntake();
 						}
 					}
 
