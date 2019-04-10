@@ -15,14 +15,14 @@ public class RightFarRocketBackUp implements PathContainer {
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(265,29,0,0));
-        sWaypoints.add(new Waypoint(295,44,15,110));
+        sWaypoints.add(new Waypoint(290,44,0,120));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
     @Override
 
     public RigidTransform2d getStartPose() {
-        return new RigidTransform2d(new Translation2d(265, 29), Rotation2d.fromDegrees(180.0));
+        return new RigidTransform2d(new Translation2d(265, 44), Rotation2d.fromDegrees(180.0));
     }
 
     @Override

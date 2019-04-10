@@ -34,30 +34,34 @@ public class RightSendTwoHatch extends AutoModeBase {
         runAction(new ParallelAction(Arrays.asList(
                 new DrivePathAction(driveOffHab),
                 new RunActionAtX(107, new SeriesAction(Arrays.asList(new ForceEndPathAction(), new DrivePathAction(new RightHab2ToFarRocket())))),
-                new RunActionAtX(284, new SeriesAction(Arrays.asList(new ForceEndPathAction(), new VisionPathExecuter())))
+                new RunActionAtX(282, new SeriesAction(Arrays.asList(new ForceEndPathAction(), new VisionPathExecuter())))
         )));
 
+        runAction(new ExtendSquid());
+        runAction(new ParallelAction(Arrays.asList(new DriveToStall(), new SeriesAction(Arrays.asList(new WaitAction(0.3), new CloseSquid())))));
 
-        //runAction(new ExtendSquid());
-        runAction(new DriveToStall());
+        runAction(new RetractSquid());
 
-        //TODO: Score 1st Hatch
         runAction(new ParallelAction(Arrays.asList(
                 new DrivePathAction(new RightFarRocketBackUp()),
-                new  RunActionAtX(288, new SeriesAction(Arrays.asList(new DrivePathAction(new RightFarRocketToRightFeeder())))),
+                new  RunActionAtX(284, new SeriesAction(Arrays.asList(new ForceEndPathAction(),new DrivePathAction(new RightFarRocketToRightFeeder())))),
                 new  RunActionAtX(90, new SeriesAction(Arrays.asList(new ForceEndPathAction(), new VisionPathExecuter())))
         )));
-
+        runAction(new ExtendSquid());
         runAction(new DriveToStall());
+        runAction(new OpenSquid());
+        runAction(new WaitAction( 0.5));
 
-        //TODO: Pick Up Hatch Panel
-
+        runAction(new RetractSquid());
         runAction(new DrivePathAction( new RightFeederToCloseRightRocket()));
         runAction(new TurnTowardsPoint(new Translation2d(215, 20)));
         runAction(new WaitAction(0.5));
         runAction(new VisionPathExecuter());
 
-        //TODO: Score second hatch
+        runAction(new ExtendSquid());
+        runAction(new ParallelAction(Arrays.asList(new DriveToStall(), new SeriesAction(Arrays.asList(new WaitAction(0.3), new CloseSquid())))));
+
+        runAction(new RetractSquid());
 
 //        runAction(new CloseSquid());
 //

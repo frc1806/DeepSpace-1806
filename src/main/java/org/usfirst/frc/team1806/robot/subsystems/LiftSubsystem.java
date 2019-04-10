@@ -41,23 +41,23 @@ public class LiftSubsystem  implements Subsystem {
 		TELEOP_HOLD(600),
 		SHIP_CARGO(7400),
 		CARGO_FEEDER(8250),
-		ROCKET_CARGO_LOW(5500),
-		ROCKET_CARGO_MID(10000),
-		ROCKET_CARGO_HIGH(15000),
-		ROCKET_HATCH_MID(7000),
-		ROCKET_HATCH_HIGH(12500),
+		ROCKET_CARGO_LOW(4522),
+		ROCKET_CARGO_MID(9000),
+		ROCKET_CARGO_HIGH(13100),
+		ROCKET_HATCH_MID(5600),
+		ROCKET_HATCH_HIGH(10000),
 		TEMP_HOLD_POS(0);
 
-		int height;
-		LiftPosition(int liftHeight){
+		double height;
+		LiftPosition(double liftHeight){
 			height = liftHeight;
 		}
 
-		int getHeight(){
+		double getHeight(){
 			return height;
 		}
 
-		LiftPosition setHeight(int liftHeight) {
+		LiftPosition setHeight(double liftHeight) {
 			height = liftHeight;
 			return this;
 		}
@@ -85,6 +85,7 @@ public class LiftSubsystem  implements Subsystem {
 	public LiftSubsystem() {
 		liftLead = new CANSparkMax(RobotMap.liftLead, CANSparkMaxLowLevel.MotorType.kBrushless);
 		liftFollow = new CANSparkMax(RobotMap.liftFollow, CANSparkMaxLowLevel.MotorType.kBrushless);
+		liftLead.setInverted(true);
 		liftFollow.follow(liftLead, true);
 		/*liftLead.setSmartCurrentLimit(130, 80);
 		liftFollow.setSmartCurrentLimit(130, 80);*/
@@ -259,7 +260,7 @@ public class LiftSubsystem  implements Subsystem {
 		//}
 		//System.out.println(mLiftWantedPosition + "  " + isReadyForSetpoint());
 	}
-	public synchronized void goToSetpoint(int setpoint) {
+	public synchronized void goToSetpoint(double setpoint) {
 		mLiftStates = LiftStates.POSITION_CONTROL;
 		mLiftPosition.TEMP_HOLD_POS.setHeight(setpoint);
 		mLiftPosition = LiftPosition.TEMP_HOLD_POS;
@@ -411,6 +412,10 @@ public class LiftSubsystem  implements Subsystem {
 	public synchronized void manualMode(double power){
     	mLiftStates = LiftStates.MANUAL_CONTROL;
 		liftLead.getPIDController().setReference(power, ControlType.kDutyCycle);
+		if(Math.abs(power)< .2) {
+			goToSetpoint(liftLead.getEncoder().getPosition());
+			mLiftStates = LiftStates.HOLD_POSITION;
+		}
 	}
 
 	/**

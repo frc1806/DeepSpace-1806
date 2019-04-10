@@ -13,12 +13,12 @@ public class Constants {
     public final static double kTrackWidthInches = 14;
     public final static double kTrackScrubFactor = .900;
 
-    public final static double kVisionExpectedCameraLag = 0.175;
+    public final static double kVisionExpectedCameraLag = 0.125;
 
     public final static double kStallTimeout = 2;
     public final static double kStallWaitPeriod = .3;
     public final static double kStallSpeed = 500;
-    public final static double kStallPower = .2;
+    public final static double kStallPower = .25;
 
 
     public final static int kDriveTrainPIDSetTimeout = 30;
@@ -37,7 +37,7 @@ public class Constants {
     // our speed
     // in inches per sec
     public final static double kSegmentCompletionTolerance = 0.75; // inches
-    public final static double kPathFollowingMaxAccel = 60; // inches per second^2
+    public final static double kPathFollowingMaxAccel = 55; // inches per second^2
     public final static double kPathFollowingMaxVel = 132; // inches per second
     public final static double kPathFollowingProfileKp = 1.1; //.99
     public final static double kPathFollowingProfileKi = 0.049; //.049
@@ -123,18 +123,18 @@ public class Constants {
 
     //Compressor Control Constants
     public final static int kPressureSensorSamplingLoops = 60; //each loop is 1/200 of a second
-    public final static double kPressureAverageMinimumToStart = 110; //PSI
+    public final static double kPressureAverageMinimumToStart = 90; //PSI
 
     public final static int kBatteryVoltageSamplingLoops = 60; //each loop is 1/200 of a second
-    public final static double kBatteryVoltageCompressorShutoffThreshold = 11.5; //volts
+    public final static double kBatteryVoltageCompressorShutoffThreshold = 11.0; //volts
     public final static double kBatteryVoltageAbsoluteCompressorShutoffThreshold = 8.0; //volts
 
     public final static int kRobotDemandAmpsSamplingLoops = 60; // each loop is 1/200 of a second
-    public final static double kAverageAmpDemandToShutOffCompressor = 140; //Amps
+    public final static double kAverageAmpDemandToShutOffCompressor = 200; //Amps
     public final static double kAbsoluteRobotCompressorShutOffAmps = 300; //Amps
 
     public final static double kExpectedCompressorMaxCurrentDraw = 40;
-    public final static double kExpectedCompressorVoltageDrop = .5;
+    public final static double kExpectedCompressorVoltageDrop = 0.3;
 
 
     //Intake Constants

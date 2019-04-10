@@ -14,10 +14,10 @@ public class RightHab2ToFarRocket implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(110,115,0,110));
-        sWaypoints.add(new Waypoint(135,115,15,110));
-        sWaypoints.add(new Waypoint(273,32,15,110));
-        sWaypoints.add(new Waypoint(285,40,0,110));
+        sWaypoints.add(new Waypoint(110,115,0,120));
+        sWaypoints.add(new Waypoint(135,115,15,120));
+        sWaypoints.add(new Waypoint(273,30,15,120));
+        sWaypoints.add(new Waypoint(285,40,0,120));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
