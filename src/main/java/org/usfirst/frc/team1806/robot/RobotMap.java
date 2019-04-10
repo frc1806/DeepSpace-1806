@@ -12,11 +12,12 @@ public class RobotMap {
 	
 	//Drive train CAN
 
-	public static int masterRight = 1; //
-	public static int rightC = 2;
-	public static int masterLeft = 4;  //
-	public static int leftC = 5; //
-
+	public static int masterRight = 1;
+	public static int rightA = 2;
+	public static int masterLeft = 4;
+	public static int leftA = 5;
+	public static int leftB = 15;
+	public static int rightB = 16;
 	
 	//Cube Elevator CANs
 
@@ -74,8 +75,6 @@ public class RobotMap {
 
 	//HABClimber
 
-	public static int HABLiftLeft = 15;
-	public static int HABLiftRight = 16;
 
 	///////////// PDP PORTS
 

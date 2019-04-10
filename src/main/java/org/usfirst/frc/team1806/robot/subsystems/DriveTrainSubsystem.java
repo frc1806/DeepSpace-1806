@@ -4,6 +4,7 @@ package org.usfirst.frc.team1806.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.ControlType;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Kinematics;
@@ -19,9 +20,6 @@ import org.usfirst.frc.team1806.robot.util.NavX;
 import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
 import org.usfirst.frc.team1806.robot.util.Rotation2d;
 import org.usfirst.frc.team1806.robot.util.Twist2d;
-
-import com.ctre.phoenix.ParamEnum;
-import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.SPI;
@@ -96,21 +94,13 @@ public class DriveTrainSubsystem implements Subsystem {
 	}
 
 	//Initialize all of the drive motors
-	private CANSparkMax masterLeft, masterRight, leftA, rightC;
-	//    private DoubleSolenoid shifter;
+	private CANSparkMax masterLeft, masterRight, leftA, rightA, leftB, rightB;
+	private DoubleSolenoid shifter;
 	private NavX navx;
 	private PathFollower mPathFollower;
 	private Rotation2d mTargetHeading = new Rotation2d();
 	private boolean mIsOnTarget = false;
-	//TODO:Remove these
-	private double leftLowGearMaxVel = 0;
-	private double rightLowGearMaxVel = 0;
-	private double leftLastVel = 0;
-	private double rightLastVel = 0;
-	private double leftMaxAccel = 0;
-	private double rightMaxAccel = 0;
-	private double leftHighGearMaxVel = 0;
-	private double rightHighGearMaxVel = 0;
+
 	private double currentTimeStamp;
 	private double lastTimeStamp;
 	private double leftEncoderDistance, rightEncoderDistance;
@@ -203,19 +193,28 @@ public class DriveTrainSubsystem implements Subsystem {
 		masterLeft = new CANSparkMax(RobotMap.masterLeft, CANSparkMaxLowLevel.MotorType.kBrushless);
 		masterRight = new CANSparkMax(RobotMap.masterRight, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-		leftA = new CANSparkMax(RobotMap.leftC, CANSparkMaxLowLevel.MotorType.kBrushless);
-		rightC = new CANSparkMax(RobotMap.rightC, CANSparkMaxLowLevel.MotorType.kBrushless);
+		leftA = new CANSparkMax(RobotMap.leftA, CANSparkMaxLowLevel.MotorType.kBrushless);
+		rightA = new CANSparkMax(RobotMap.rightA, CANSparkMaxLowLevel.MotorType.kBrushless);
+
+		leftB = new CANSparkMax(RobotMap.leftB, CANSparkMaxLowLevel.MotorType.kBrushless);
+		rightB = new CANSparkMax(RobotMap.rightB, CANSparkMaxLowLevel.MotorType.kBrushless);
 
 		//Follow for right side
-        rightC.follow(masterRight);
+        rightA.follow(masterRight);
+        rightB.follow(masterRight);
 
 		// Follow for left side
         leftA.follow(masterLeft);
+        leftB.follow(masterLeft);
 
         masterLeft.setSmartCurrentLimit(85);
         leftA.setSmartCurrentLimit(85);
+        leftB.setSmartCurrentLimit(85);
+
         masterRight.setSmartCurrentLimit(85);
-        rightC.setSmartCurrentLimit(85);
+        rightA.setSmartCurrentLimit(85);
+        rightB.setSmartCurrentLimit(85);
+
 
 		//Set Encoders for each side of the talon
         //TODO: configure after REV updates their software. https://www.chiefdelphi.com/t/connecting-external-encoders-to-spark-max/345039
@@ -226,10 +225,12 @@ public class DriveTrainSubsystem implements Subsystem {
 		*/
 		masterLeft.setInverted(false);
 		leftA.setInverted(false);
+		leftB.setInverted(false);
 
 //		//Invert the right side
 		masterRight.setInverted(true);
-		rightC.setInverted(true);
+		rightA.setInverted(true);
+		rightB.setInverted(true);
 
 		leftEncoderDistance = 0;
 		rightEncoderDistance = 0;
@@ -273,9 +274,11 @@ public class DriveTrainSubsystem implements Subsystem {
 	public synchronized void forceDoneWithPath() {
 		if (mDriveStates == DriveStates.PATH_FOLLOWING && mPathFollower != null) {
 			mPathFollower.forceFinish();
-		} else {
+		}
+		else {
 			System.out.println("Robot is not in path following mode");
 		}
+
 		mDriveStates = DriveStates.DRIVING;
 		setOpenLoop(new DriveSignal(0, 0 , true));
 		mPathFollower = null;
@@ -368,11 +371,11 @@ public class DriveTrainSubsystem implements Subsystem {
 			SmartDashboard.putNumber("Main Left Drive Temp", masterLeft.getMotorTemperature());
 			SmartDashboard.putNumber("Main LeftA Drive Temp", leftA.getMotorTemperature());
 			SmartDashboard.putNumber("Main Right Drive Temp", masterRight.getMotorTemperature());
-			SmartDashboard.putNumber("Main RightC Drive Temp", rightC.getMotorTemperature());
+			SmartDashboard.putNumber("Main RightC Drive Temp", rightA.getMotorTemperature());
 			SmartDashboard.putNumber("Drive Left Main Amps", masterLeft.getOutputCurrent());
 			SmartDashboard.putNumber("Drive Left Follow Amps", leftA.getOutputCurrent());
 			SmartDashboard.putNumber("Drive Right Main Amps", masterRight.getOutputCurrent());
-			SmartDashboard.putNumber("Drive Right Follow Amps", rightC.getOutputCurrent());
+			SmartDashboard.putNumber("Drive Right Follow Amps", rightA.getOutputCurrent());
 		}
 	}
 
@@ -554,7 +557,7 @@ public class DriveTrainSubsystem implements Subsystem {
 		mIsBrakeMode = brake;
 		CANSparkMax.IdleMode currentMode = brake ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast;
 		masterRight.setIdleMode(currentMode);
-		rightC.setIdleMode(currentMode);
+		rightA.setIdleMode(currentMode);
 		masterLeft.setIdleMode(currentMode);
 		leftA.setIdleMode(currentMode);
 	}
