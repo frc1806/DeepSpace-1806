@@ -31,8 +31,11 @@ public class RobotMap {
 	public static int rightInnerIntake = 12;
 	public static int leftOuterIntake = 13;
 	public static int rightOuterIntake = 14;
-	public static int cargoIntakeExtend = 5;
-	public static int cargoIntakeRetract = 4;
+	public static int barIntakeExtend = 5;
+	public static int barIntakeRetract = 4;
+	//Find actual CAN ports
+	public static int outerIntakeExtend = 6;
+	public static int outerIntakeRetract = 7;
 
 
 

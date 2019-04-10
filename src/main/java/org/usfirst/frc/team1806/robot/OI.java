@@ -191,9 +191,9 @@ OI {
 
 					if (dc.getRightTrigger() > Constants.kTriggerThreshold && !wasOuterIntakeButton){
 						if (mCargoIntakeSubsystem.isExtended()){
-							mCargoIntakeSubsystem.retractOuterIntake();
+							mCargoIntakeSubsystem.retractAllIntake();
 						} else{
-							mCargoIntakeSubsystem.extendOuterIntake();
+							mCargoIntakeSubsystem.extendAllIntake();
 						}
 					}
 
