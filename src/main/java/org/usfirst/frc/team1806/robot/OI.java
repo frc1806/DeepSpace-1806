@@ -39,6 +39,7 @@ OI {
 	private Boolean wasSquidOpenButton = false;
 	private Boolean wasChangeModeButton = false;
 	private Boolean wasOuterIntakeButton = false;
+	private Boolean wasParkingBrakeButton = false;
 
 	public void runCommands(){
 
@@ -50,55 +51,21 @@ OI {
 			//if not driving to stall or wiggling, or visioning.
 			if(!((mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.DRIVE_TO_STALL || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.WIGGLE ) ||(Robot.mSequenceState == Robot.SequenceState.VISION) && Robot.mSequenceState.isActive()))
 			{
-				mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
+				if(FeatureFlags.CODER_MODE) {
+					mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
+							dc.getLeftJoyY() * .3, dc.getRightJoyX()* .45, dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
+				}
+				else {
+					mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
 						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
+				}
 			}
-			mDriveTrainSubsystem.driveToStall(oc.getButtonA());
+			mDriveTrainSubsystem.driveToStall(oc.getButtonA(), oc.getButtonX());
 			mDriveTrainSubsystem.wiggleHandler(false); //oc.X
+			if(oc.getPOVDown() && !wasParkingBrakeButton) mDriveTrainSubsystem.startParkingBrake();
+			if(!oc.getPOVDown() && wasParkingBrakeButton) mDriveTrainSubsystem.stopParkingBrake();
 		}
 
-		if(FeatureFlags.FF_LIFT_TILT){
-			synchronized (mLiftSubsystem){
-				if (oc.getButtonRB()){
-					mLiftSubsystem.standLiftUp();
-				}
-				if (oc.getButtonLB()){
-					mLiftSubsystem.leanLiftBack();
-				}
-			}
-		}
-
-
-
-		synchronized (mHabClimber) {
-			if(oc.getPOVUp()){
-				mHabClimber.goToSetpoint(HABinAGoodTime.ClimbPosition.EXTENSION_LIMIT);
-			}
-			if(oc.getPOVDown()){
-				mHabClimber.goToSetpoint(HABinAGoodTime.ClimbPosition.RETRACTION_LIMIT);
-			}
-			if(oc.getPOVLeft()){
-				mHabClimber.goToSetpoint(HABinAGoodTime.ClimbPosition.LEVEL_TWO);
-			}
-			if(oc.getPOVRight()) {
-				mHabClimber.setWantStop();
-			}
-
-
-			if(Math.abs(oc.getRightJoyY()) > 0.2){
-				mHabClimber.manualHandler(true, oc.getRightJoyY(), oc.getRightJoyY() );
-			}
-			else if (mHabClimber.getmClimbStates() == HABinAGoodTime.ClimbStates.MANUAL_CONTROL) {
-				mHabClimber.manualHandler(true, 0, 0);
-			}
-
-			if(mHabClimber.getmClimbStates() != HABinAGoodTime.ClimbStates.IDLE){
-				mHabClimber.manualDrive(dc.getLeftJoyY(), dc.getRightJoyX());
-			}
-			else{
-				mHabClimber.manualDrive(0,0);
-			}
-		}
 
 		//Controls that change based on mode
 		switch(Robot.getGamePieceMode()){
@@ -244,7 +211,7 @@ OI {
 		wasChangeModeButton = dc.getButtonRB();
 		wasSquidOpenButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
 		wasOuterIntakeButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
-
+		wasParkingBrakeButton = oc.getPOVDown();
 	}
 	public void resetAutoLatch(){
 	    autoInTeleOp.resetLatch();
