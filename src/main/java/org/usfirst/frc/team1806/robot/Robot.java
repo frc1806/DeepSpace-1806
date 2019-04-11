@@ -44,7 +44,7 @@ public class Robot extends TimedRobot {
 
 
     private static final SubsystemManager S_SubsystemManager = new SubsystemManager(
-            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance(), CompressorControlSubsystem.getInstance(), CargoIntakeSubsystem.getInstance(), SquidSubsystem.getInstance(), HABinAGoodTime.getInstance()));
+            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance(), CompressorControlSubsystem.getInstance(), CargoIntakeSubsystem.getInstance(), SquidSubsystem.getInstance()));
 
     private Looper mEnabledLooper = new Looper();
 
@@ -187,7 +187,7 @@ public class Robot extends TimedRobot {
             if (mAutoModeExecuter != null) {
                 mAutoModeExecuter.stop();
             }
-            //mDrive.setHighGear(true);
+            mDrive.setHighGear(true);
         needToPositionControlInTele = false;
         mDrive.setBrakeMode();
         mCargoIntakeSubsystem.retractOuterIntake();

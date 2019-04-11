@@ -240,7 +240,7 @@ public class DriveTrainSubsystem implements Subsystem {
 
 
 		// init solenoids
-//		shifter = new DoubleSolenoid(RobotMap.shiftLow, RobotMap.shiftHigh);
+		shifter = new DoubleSolenoid(RobotMap.module2Number, RobotMap.shiftLow, RobotMap.shiftHigh);
 //		init navx
 		navx = new NavX(SPI.Port.kMXP);
 
@@ -541,12 +541,12 @@ public class DriveTrainSubsystem implements Subsystem {
 	 * @param wantsHighGear
 	 * it's a boolean saying if you want it or not
 	 */
-//	public synchronized void setHighGear(boolean wantsHighGear) {
-//        if (wantsHighGear != mIsHighGear) {
-//            mIsHighGear = wantsHighGear;
-//            shifter.set(wantsHighGear ? Value.kForward : Value.kReverse);
-//        }
-//    }
+	public synchronized void setHighGear(boolean wantsHighGear) {
+        if (wantsHighGear != mIsHighGear) {
+            mIsHighGear = wantsHighGear;
+            shifter.set(wantsHighGear ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+        }
+    }
 
 	/**
 	 * Sets the neutral mode for the drive train.

@@ -24,7 +24,6 @@ OI {
 	private SquidSubsystem mSquidSubsystem = SquidSubsystem.getInstance();
 	private CompressorControlSubsystem mCompressorControlSubsystem = CompressorControlSubsystem.getInstance();
 	private LiftSubsystem mLiftSubsystem = LiftSubsystem.getInstance();
-	private HABinAGoodTime mHabClimber = HABinAGoodTime.getInstance();
 	private CargoIntakeSubsystem mCargoIntakeSubsystem = CargoIntakeSubsystem.getInstance();
 
 	//initialise controllers & ish
@@ -39,6 +38,7 @@ OI {
 	private Boolean wasSquidOpenButton = false;
 	private Boolean wasChangeModeButton = false;
 	private Boolean wasOuterIntakeButton = false;
+	private Boolean wasShift = false;
 
 	public void runCommands(){
 
@@ -48,10 +48,18 @@ OI {
 		}
 		synchronized (mDriveTrainSubsystem) {
 			//if not driving to stall or wiggling, or visioning.
+			if(!wasShift && dc.getPOVLeft()){
+				if(mDriveTrainSubsystem.isHighGear()){
+					mDriveTrainSubsystem.setHighGear(false);
+				}
+				else{
+					mDriveTrainSubsystem.setHighGear(true);
+				}
+			}
 			if(!((mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.DRIVE_TO_STALL || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.WIGGLE ) ||(Robot.mSequenceState == Robot.SequenceState.VISION) && Robot.mSequenceState.isActive()))
 			{
 				mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
-						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
+						-dc.getLeftJoyY(), -dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
 			}
 			mDriveTrainSubsystem.driveToStall(oc.getButtonA());
 			mDriveTrainSubsystem.wiggleHandler(false); //oc.X
@@ -70,35 +78,6 @@ OI {
 
 
 
-		synchronized (mHabClimber) {
-			if(oc.getPOVUp()){
-				mHabClimber.goToSetpoint(HABinAGoodTime.ClimbPosition.EXTENSION_LIMIT);
-			}
-			if(oc.getPOVDown()){
-				mHabClimber.goToSetpoint(HABinAGoodTime.ClimbPosition.RETRACTION_LIMIT);
-			}
-			if(oc.getPOVLeft()){
-				mHabClimber.goToSetpoint(HABinAGoodTime.ClimbPosition.LEVEL_TWO);
-			}
-			if(oc.getPOVRight()) {
-				mHabClimber.setWantStop();
-			}
-
-
-			if(Math.abs(oc.getRightJoyY()) > 0.2){
-				mHabClimber.manualHandler(true, oc.getRightJoyY(), oc.getRightJoyY() );
-			}
-			else if (mHabClimber.getmClimbStates() == HABinAGoodTime.ClimbStates.MANUAL_CONTROL) {
-				mHabClimber.manualHandler(true, 0, 0);
-			}
-
-			if(mHabClimber.getmClimbStates() != HABinAGoodTime.ClimbStates.IDLE){
-				mHabClimber.manualDrive(dc.getLeftJoyY(), dc.getRightJoyX());
-			}
-			else{
-				mHabClimber.manualDrive(0,0);
-			}
-		}
 
 		//Controls that change based on mode
 		switch(Robot.getGamePieceMode()){
@@ -244,6 +223,7 @@ OI {
 		wasChangeModeButton = dc.getButtonRB();
 		wasSquidOpenButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
 		wasOuterIntakeButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
+		wasShift = dc.getPOVLeft();
 
 	}
 	public void resetAutoLatch(){
