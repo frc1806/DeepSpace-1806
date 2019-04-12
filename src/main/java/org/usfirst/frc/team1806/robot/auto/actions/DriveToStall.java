@@ -7,7 +7,7 @@ public class DriveToStall implements Action {
     DriveTrainSubsystem mDrive = DriveTrainSubsystem.getInstance();
     @Override
     public boolean isFinished() {
-        return mDrive.driveToStall(false);
+        return mDrive.driveToStall(false, true);
     }
 
     @Override
@@ -22,6 +22,6 @@ public class DriveToStall implements Action {
 
     @Override
     public void start() {
-        mDrive.driveToStall(true);
+        mDrive.driveToStall(true, false);
     }
 }

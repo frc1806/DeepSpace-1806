@@ -61,7 +61,7 @@ OI {
 				mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
 						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
 			}
-			mDriveTrainSubsystem.driveToStall(oc.getButtonA());
+			mDriveTrainSubsystem.driveToStall(oc.getButtonA(), oc.getButtonX());
 			mDriveTrainSubsystem.wiggleHandler(false); //oc.X
 		}
 

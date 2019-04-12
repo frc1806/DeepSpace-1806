@@ -42,6 +42,7 @@ public class DriveTrainSubsystem implements Subsystem {
 		VELOCITY_SETPOINT,
 		WIGGLE,
 		DRIVE_TO_STALL,
+		PARKING_BRAKE,
 		NOTHING // Used on init
 	}
 
@@ -156,9 +157,11 @@ public class DriveTrainSubsystem implements Subsystem {
 					case WIGGLE:
 						return;
 					case DRIVE_TO_STALL:
-
 						leftDrive(Constants.kStallPower);
 						rightDrive(Constants.kStallPower);
+						return;
+					case PARKING_BRAKE:
+						parkingBrakeHandler();
 						return;
 					default:
 						return;
@@ -498,7 +501,12 @@ public class DriveTrainSubsystem implements Subsystem {
 	public synchronized void setBrakeMode() {
 		//set for auto
         masterLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        masterRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
+		leftA.setIdleMode(CANSparkMax.IdleMode.kBrake);
+		leftB.setIdleMode(CANSparkMax.IdleMode.kBrake);
+
+		masterRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
+		rightA.setIdleMode(CANSparkMax.IdleMode.kBrake);
+		rightB.setIdleMode(CANSparkMax.IdleMode.kBrake);
 	}
 
 	/**
@@ -506,8 +514,14 @@ public class DriveTrainSubsystem implements Subsystem {
 	 */
 	public synchronized void setCoastMode() {
 		// set for driving
-        masterLeft.setIdleMode(CANSparkMax.IdleMode.kCoast);
-        masterRight.setIdleMode(CANSparkMax.IdleMode.kCoast);
+		masterLeft.setIdleMode(CANSparkMax.IdleMode.kCoast);
+		leftA.setIdleMode(CANSparkMax.IdleMode.kCoast);
+		leftB.setIdleMode(CANSparkMax.IdleMode.kCoast);
+
+		masterRight.setIdleMode(CANSparkMax.IdleMode.kCoast);
+		rightA.setIdleMode(CANSparkMax.IdleMode.kCoast);
+		rightB.setIdleMode(CANSparkMax.IdleMode.kCoast);
+
 	}
 
 	/**
@@ -679,7 +693,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	boolean isTimedOut = false;
 	double pushTimeStamp = 0;
 
-	public synchronized boolean driveToStall(boolean pushReq) {
+	public synchronized boolean driveToStall(boolean pushReq, boolean stopReq) {
 		startingPush = pushReq && !wasPushing;
 
 
@@ -692,7 +706,7 @@ public class DriveTrainSubsystem implements Subsystem {
 		}
 
 		isTimedOut = (currentTimeStamp - pushTimeStamp > Constants.kStallTimeout);
-		finishingPush = (leftVelocity < Constants.kStallSpeed && leftVelocity < Constants.kStallSpeed && currentTimeStamp - pushTimeStamp > Constants.kStallWaitPeriod) || isTimedOut;
+		finishingPush = (leftVelocity < Constants.kStallSpeed && rightVelocity < Constants.kStallSpeed && currentTimeStamp - pushTimeStamp > Constants.kStallWaitPeriod) || isTimedOut || stopReq;
 		wasPushing = pushReq;
 		if(leftVelocity < Constants.kStallSpeed && mDriveStates == DriveStates.DRIVE_TO_STALL) {
 			System.out.println("time to stall " + (currentTimeStamp - pushTimeStamp));
@@ -712,6 +726,45 @@ public class DriveTrainSubsystem implements Subsystem {
 		return false;
 
 	}
+
+	private boolean parkingBrakeIsStopped = false;
+	private double parkingBrakePosition = 0.0;
+
+	private synchronized boolean parkingBrakeHandler() {
+		if(!parkingBrakeIsStopped) {
+			masterLeft.getPIDController().setReference(0, ControlType.kVelocity);
+			masterRight.getPIDController().setReference(0, ControlType.kVelocity);
+			if(masterRight.getEncoder().getVelocity() < 100 && masterLeft.getEncoder().getVelocity() < 100)  {
+				parkingBrakeIsStopped = true;
+				reloadParkingBrakeGains(masterLeft);
+				reloadParkingBrakeGains(masterRight);
+			}
+		}
+		else {
+			masterLeft.getPIDController().setReference(parkingBrakePosition, ControlType.kPosition);
+		}
+
+		return false;
+	}
+
+	private void reloadParkingBrakeGains(CANSparkMax motorController) { //TODO create seperate PID slot if needed
+		motorController.getPIDController().setP(Constants.kDriveLowGearPositionKp,kLowGearPositionControlSlot);
+		motorController.getPIDController().setI(Constants.kDriveLowGearPositionKi,kLowGearPositionControlSlot);
+		motorController.getPIDController().setD(Constants.kDriveLowGearPositionKd,kLowGearPositionControlSlot);
+		motorController.getPIDController().setFF(Constants.kDriveLowGearPositionKf,kLowGearPositionControlSlot);
+		motorController.getPIDController().setIZone(Constants.kDriveLowGearPositionIZone,kLowGearPositionControlSlot);
+	}
+
+	public void startParkingBrake() {
+		setBrakeMode();
+		mDriveStates = DriveStates.PARKING_BRAKE;
+		parkingBrakeIsStopped = false;
+	}
+	public void stopParkingBrake() {
+		mDriveStates = DriveStates.DRIVING;
+		parkingBrakeIsStopped = false;
+	}
+
 
 
 
