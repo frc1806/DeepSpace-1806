@@ -18,7 +18,7 @@ public class Constants {
     public final static double kStallTimeout = 2;
     public final static double kStallWaitPeriod = .3;
     public final static double kStallSpeed = 500;
-    public final static double kStallPower = .25;
+    public final static double kStallPower = .15;
 
 
     public final static int kDriveTrainPIDSetTimeout = 30;

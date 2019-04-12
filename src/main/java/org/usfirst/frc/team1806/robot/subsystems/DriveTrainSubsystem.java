@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj.SPI;
  */
 public class DriveTrainSubsystem implements Subsystem {
 
-	boolean debug = false;
+	boolean debug = true;
 
 	public enum DriveStates {
 		DRIVING, // Ya old normal dirivng
@@ -223,14 +223,14 @@ public class DriveTrainSubsystem implements Subsystem {
 		masterRight.setSensorPhase(true);
 		masterLeft.setSensorPhase(true);
 		*/
-		masterLeft.setInverted(false);
-		leftA.setInverted(false);
-		leftB.setInverted(false);
+		masterLeft.setInverted(true);
+		leftA.setInverted(true);
+		leftB.setInverted(true);
 
 //		//Invert the right side
-		masterRight.setInverted(true);
-		rightA.setInverted(true);
-		rightB.setInverted(true);
+		masterRight.setInverted(false);
+		rightA.setInverted(false);
+		rightB.setInverted(false);
 
 		leftEncoderDistance = 0;
 		rightEncoderDistance = 0;
@@ -692,7 +692,7 @@ public class DriveTrainSubsystem implements Subsystem {
 		}
 
 		isTimedOut = (currentTimeStamp - pushTimeStamp > Constants.kStallTimeout);
-		finishingPush = (leftVelocity < Constants.kStallSpeed && currentTimeStamp - pushTimeStamp > Constants.kStallWaitPeriod) || isTimedOut;
+		finishingPush = (leftVelocity < Constants.kStallSpeed && leftVelocity < Constants.kStallSpeed && currentTimeStamp - pushTimeStamp > Constants.kStallWaitPeriod) || isTimedOut;
 		wasPushing = pushReq;
 		if(leftVelocity < Constants.kStallSpeed && mDriveStates == DriveStates.DRIVE_TO_STALL) {
 			System.out.println("time to stall " + (currentTimeStamp - pushTimeStamp));

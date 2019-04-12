@@ -104,7 +104,7 @@ public class LiftSubsystem  implements Subsystem {
  		wasIntakeOut = false;
 
  		if(FeatureFlags.FF_LIFT_TILT){
- 		    liftLeaner = new DoubleSolenoid(RobotMap.liftStandUp, RobotMap.liftLeanBack);
+ 		    //liftLeaner = new DoubleSolenoid(RobotMap.liftStandUp, RobotMap.liftLeanBack);
         }
 	}
 

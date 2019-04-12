@@ -59,7 +59,7 @@ OI {
 			if(!((mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.DRIVE_TO_STALL || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.WIGGLE ) ||(Robot.mSequenceState == Robot.SequenceState.VISION) && Robot.mSequenceState.isActive()))
 			{
 				mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
-						-dc.getLeftJoyY(), -dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
+						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
 			}
 			mDriveTrainSubsystem.driveToStall(oc.getButtonA());
 			mDriveTrainSubsystem.wiggleHandler(false); //oc.X
@@ -159,12 +159,8 @@ OI {
 					if (dc.getLeftTrigger() > Constants.kTriggerThreshold) {
 						mCargoIntakeSubsystem.intakeCargo();
 					} else if (dc.getPOVDown()) {
-						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.MEDIUM);
-					} else if (dc.getPOVLeft()) {
-						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.FAST);
-					} else if (dc.getButtonLB()) {
-						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.SLOW);
-					} else {
+						mCargoIntakeSubsystem.scoreCargo(CargoIntakeSubsystem.ScoringPower.IRRESPONSIBLE);
+					}  else {
 						mCargoIntakeSubsystem.stop();
 					}
 
