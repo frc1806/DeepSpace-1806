@@ -24,7 +24,6 @@ OI {
 	private SquidSubsystem mSquidSubsystem = SquidSubsystem.getInstance();
 	private CompressorControlSubsystem mCompressorControlSubsystem = CompressorControlSubsystem.getInstance();
 	private LiftSubsystem mLiftSubsystem = LiftSubsystem.getInstance();
-	private HABinAGoodTime mHabClimber = HABinAGoodTime.getInstance();
 	private CargoIntakeSubsystem mCargoIntakeSubsystem = CargoIntakeSubsystem.getInstance();
 
 	//initialise controllers & ish
@@ -39,7 +38,7 @@ OI {
 	private Boolean wasSquidOpenButton = false;
 	private Boolean wasChangeModeButton = false;
 	private Boolean wasOuterIntakeButton = false;
-	private Boolean wasParkingBrakeButton = false;
+	private Boolean wasShift = false;
 
 	public void runCommands(){
 
@@ -49,22 +48,35 @@ OI {
 		}
 		synchronized (mDriveTrainSubsystem) {
 			//if not driving to stall or wiggling, or visioning.
-			if(!((mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.DRIVE_TO_STALL || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.WIGGLE ) ||(Robot.mSequenceState == Robot.SequenceState.VISION) && Robot.mSequenceState.isActive()))
-			{
-				if(FeatureFlags.CODER_MODE) {
-					mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
-							dc.getLeftJoyY() * .3, dc.getRightJoyX()* .45, dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
+			if(!wasShift && dc.getPOVLeft()){
+				if(mDriveTrainSubsystem.isHighGear()){
+					mDriveTrainSubsystem.setHighGear(false);
 				}
-				else {
-					mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
-						dc.getLeftJoyY(), dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
+				else{
+					mDriveTrainSubsystem.setHighGear(true);
 				}
 			}
-			mDriveTrainSubsystem.driveToStall(oc.getButtonA(), oc.getButtonX());
+			if(!((mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.DRIVE_TO_STALL || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.WIGGLE ) ||(Robot.mSequenceState == Robot.SequenceState.VISION) && Robot.mSequenceState.isActive()))
+			{
+				mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
+						-dc.getLeftJoyY(), -dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
+			}
+			mDriveTrainSubsystem.driveToStall(oc.getButtonA());
 			mDriveTrainSubsystem.wiggleHandler(false); //oc.X
-			if(oc.getPOVDown() && !wasParkingBrakeButton) mDriveTrainSubsystem.startParkingBrake();
-			if(!oc.getPOVDown() && wasParkingBrakeButton) mDriveTrainSubsystem.stopParkingBrake();
 		}
+
+		if(FeatureFlags.FF_LIFT_TILT){
+			synchronized (mLiftSubsystem){
+				if (oc.getButtonRB()){
+					mLiftSubsystem.standLiftUp();
+				}
+				if (oc.getButtonLB()){
+					mLiftSubsystem.leanLiftBack();
+				}
+			}
+		}
+
+
 
 
 		//Controls that change based on mode
@@ -211,7 +223,8 @@ OI {
 		wasChangeModeButton = dc.getButtonRB();
 		wasSquidOpenButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
 		wasOuterIntakeButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
-		wasParkingBrakeButton = oc.getPOVDown();
+		wasShift = dc.getPOVLeft();
+
 	}
 	public void resetAutoLatch(){
 	    autoInTeleOp.resetLatch();

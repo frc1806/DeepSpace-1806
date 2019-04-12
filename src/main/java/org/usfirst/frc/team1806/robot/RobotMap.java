@@ -31,24 +31,30 @@ public class RobotMap {
 	public static int rightInnerIntake = 12;
 	public static int leftOuterIntake = 13;
 	public static int rightOuterIntake = 14;
-	public static int barIntakeExtend = 5;
-	public static int barIntakeRetract = 4;
-	//Find actual CAN ports
-	public static int outerIntakeExtend = 6;
-	public static int outerIntakeRetract = 7;
+
 
 
 
 	////////// These are all of the solenoids for the robotri
+	public static int module1Number = 0;
+	public static int module2Number = 1;
 	
 	//Shifting
+	public static int shiftHigh = 0; //module 2
+	public static int shiftLow = 1;//module 2
+
+	//Intake
+	public static int barIntakeExtend = 5;//module 1
+	public static int barIntakeRetract = 4;//module 1
+	public static int outerIntakeExtend = 6;//module 1
+	public static int outerIntakeRetract = 7;//module 1
 
 	//Squid
 
-	public static int squidOpenPort = 1;
-	public static int squidClosePort = 0; //1
-	public static int squidExtendForward = 3;
-	public static int squidExtendBackward = 2;
+	public static int squidOpenPort = 1;//module 1
+	public static int squidClosePort = 0; //module 1
+	public static int squidExtendForward = 3;//module 1
+	public static int squidExtendBackward = 2;//module 1
 
 	//BeaverTail
 
@@ -56,8 +62,8 @@ public class RobotMap {
 	//public static int beaverTailEjectRetract = 7;
 
 	//LiftStand
-	public static int liftStandUp = 6;
-	public static int liftLeanBack = 7;
+	//public static int liftStandUp = 6;
+	//public static int liftLeanBack = 7;
 
 
 
