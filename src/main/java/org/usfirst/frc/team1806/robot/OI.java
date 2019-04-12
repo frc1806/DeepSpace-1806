@@ -39,6 +39,7 @@ OI {
 	private Boolean wasChangeModeButton = false;
 	private Boolean wasOuterIntakeButton = false;
 	private Boolean wasShift = false;
+	private Boolean wasParkingBrake = false;
 
 	public void runCommands(){
 
@@ -58,10 +59,24 @@ OI {
 			}
 			if(!((mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.DRIVE_TO_STALL || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.WIGGLE ) ||(Robot.mSequenceState == Robot.SequenceState.VISION) && Robot.mSequenceState.isActive()))
 			{
-				mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
-						-dc.getLeftJoyY(), -dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
+			    if(FeatureFlags.CODER_MODE) {
+			        mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
+                            -dc.getLeftJoyY() * .3, -dc.getRightJoyX() * .45, dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
+                }
+			    else {
+			        mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
+                            -dc.getLeftJoyY(), -dc.getRightJoyX(), dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
+                }
 			}
-			mDriveTrainSubsystem.driveToStall(oc.getButtonA());
+            if(oc.getPOVDown() && !wasParkingBrake) {
+                mDriveTrainSubsystem.startParkingBrake();
+            }
+            else if(!oc.getPOVDown() && wasParkingBrake) {
+                mDriveTrainSubsystem.stopParkingBrake();
+            }
+
+
+			mDriveTrainSubsystem.driveToStall(oc.getButtonA(), oc.getButtonX());
 			mDriveTrainSubsystem.wiggleHandler(false); //oc.X
 		}
 
@@ -223,7 +238,8 @@ OI {
 		wasChangeModeButton = dc.getButtonRB();
 		wasSquidOpenButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
 		wasOuterIntakeButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
-		wasShift = dc.getPOVLeft();
+        wasShift = dc.getPOVLeft();
+        wasParkingBrake = oc.getPOVDown();
 
 	}
 	public void resetAutoLatch(){
