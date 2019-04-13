@@ -371,6 +371,7 @@ public class DriveTrainSubsystem implements Subsystem {
 			SmartDashboard.putNumber("ARight Side: ", rightEncoderDistance);
 			SmartDashboard.putString("Drive State", returnDriveState());
 			SmartDashboard.putNumber("ANavX", getGyroYaw().getDegrees());
+			SmartDashboard.putBoolean("isHighGear", isHighGear());
 			SmartDashboard.putNumber("Main Left Drive Temp", masterLeft.getMotorTemperature());
 			SmartDashboard.putNumber("Main LeftA Drive Temp", leftA.getMotorTemperature());
 			SmartDashboard.putNumber("Main Right Drive Temp", masterRight.getMotorTemperature());
@@ -728,7 +729,8 @@ public class DriveTrainSubsystem implements Subsystem {
 	}
 
 	private boolean parkingBrakeIsStopped = false;
-	private double parkingBrakePosition = 0.0;
+	private double parkingBrakePositionLeft = 0.0;
+	private double parkingBrakePositionRight = 0.0;
 
 	private synchronized boolean parkingBrakeHandler() {
 		if(!parkingBrakeIsStopped) {
@@ -736,12 +738,15 @@ public class DriveTrainSubsystem implements Subsystem {
 			masterRight.getPIDController().setReference(0, ControlType.kVelocity);
 			if(masterRight.getEncoder().getVelocity() < 100 && masterLeft.getEncoder().getVelocity() < 100)  {
 				parkingBrakeIsStopped = true;
+				parkingBrakePositionLeft = masterLeft.getEncoder().getPosition();
+				parkingBrakePositionRight = masterRight.getEncoder().getPosition();
 				reloadParkingBrakeGains(masterLeft);
 				reloadParkingBrakeGains(masterRight);
 			}
 		}
 		else {
-			masterLeft.getPIDController().setReference(parkingBrakePosition, ControlType.kPosition);
+			masterLeft.getPIDController().setReference(parkingBrakePositionLeft, ControlType.kPosition);
+			masterRight.getPIDController().setReference(parkingBrakePositionRight, ControlType.kPosition);
 		}
 
 		return false;
@@ -763,6 +768,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	public void stopParkingBrake() {
 		mDriveStates = DriveStates.DRIVING;
 		parkingBrakeIsStopped = false;
+		setCoastMode();
 	}
 
 

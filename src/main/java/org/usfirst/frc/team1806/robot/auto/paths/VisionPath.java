@@ -40,7 +40,7 @@ public class VisionPath implements PathContainer {
 
     BayLocation trackedBay = BayLocation.CARGO_SHIP_FRONT_AUDIANCE;
     RigidTransform2d odometry;
-    public final int speed = 65;
+    public final int speed = 45;
     private VisionServer mVisionServer = VisionServer.getInstance();
     ArrayList<Target> targets;
     public RigidTransform2d bayyPose;
@@ -68,18 +68,24 @@ public class VisionPath implements PathContainer {
             System.out.println("Field to vehicle: (" + roboPose.getTranslation().x() + ", " + roboPose.getTranslation().y() + ")");
             //RigidTransform2d bayyPose = new RigidTransform2d(new Translation2d(roboPose.getTranslation().x() - odometry.getTranslation().x(), roboPose.getTranslation().y() + odometry.getTranslation().y()), Rotation2d.fromDegrees(roboPose.getRotation().getDegrees() + odometry.getRotation().getDegrees()));
             bayyPose = generateBayVisionPoseFromODO();
+            double robotEndDistanceFromTarget = -11.75;
+            double robotDistanceToEnd = -interpolateAlongLine(bayyPose.getTranslation(), robotEndDistanceFromTarget, bayyPose.getRotation().getRadians()).subtract(roboPose.getTranslation()).norm();
+            double secondFromEndDistance = Math.min((robotDistanceToEnd+robotEndDistanceFromTarget) * 0.70, -15);
+            double firstFromEndDistance = Math.min((robotDistanceToEnd+robotEndDistanceFromTarget) * 0.30, -13);
             DriveTrainSubsystem driveTrain = DriveTrainSubsystem.getInstance();
             double averageSpeed = (driveTrain.getLeftVelocityInchesPerSec() + driveTrain.getRightVelocityInchesPerSec()) / 2;
             sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose.getTranslation(), 0, roboPose.getRotation().getRadians()), 0, Math.max(10, averageSpeed)));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose.getTranslation(), 0.5, roboPose.getRotation().getRadians()), 0, Math.max(10, averageSpeed)));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose.getTranslation(), -27, bayyPose.getRotation().getRadians()), 0, speed));
+            //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(roboPose.getTranslation(), 2, roboPose.getRotation().getRadians()), 0, Math.max(10, averageSpeed)));
+            Translation2d nonSideInterpolSecondPoint = interpolateAlongLine(bayyPose.getTranslation(), secondFromEndDistance,  bayyPose.getRotation().getRadians());
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(nonSideInterpolSecondPoint,roboPose.getTranslation().subtract(nonSideInterpolSecondPoint).norm()*0.5 , roboPose.getRotation().getRadians()),Math.abs(firstFromEndDistance - robotEndDistanceFromTarget) *0.5, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose.getTranslation(), firstFromEndDistance,  bayyPose.getRotation().getRadians()),Math.abs(firstFromEndDistance - robotEndDistanceFromTarget) *0.5, speed));
             //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(interpolateAlongLine(bayyPose.getTranslation(), -27, bayyPose.getRotation().getRadians()), 3, roboPose.getRotation().getRadians()), 0, speed));
             //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -26, bayyPose.getRotation().getRadians()), 0, speed));
             //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -23, bayyPose.getRotation().getRadians()), 0, speed));
             //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -21, bayyPose.getRotation().getRadians()), 0, speed));
             //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose, -19, bayyPose.getRotation().getRadians()), 0, speed));
             //sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose.getTranslation(), -13.5, bayyPose.getRotation().getRadians()), 0, speed));
-            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose.getTranslation(), -13.0, bayyPose.getRotation().getRadians()), 0, speed));
+            sWaypoints.add(new PathBuilder.Waypoint(interpolateAlongLine(bayyPose.getTranslation(), robotEndDistanceFromTarget, bayyPose.getRotation().getRadians()), 0, speed));
         }
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
 
@@ -102,7 +108,7 @@ public class VisionPath implements PathContainer {
                 for(Target target: targets){
                     RigidTransform2d robotPose = RobotState.getInstance().getFieldToVehicle(targetsTimestamp - Constants.kVisionExpectedCameraLag);
                     double goalHeading = robotPose.getRotation().getDegrees() - target.getTargetHeadingOffset();
-                    RigidTransform2d xCorrectedRobotPose = interpolateAlongLine(robotPose, -2, robotPose.getRotation().getRadians(), robotPose.getRotation().getRadians());
+                    RigidTransform2d xCorrectedRobotPose = interpolateAlongLine(robotPose, -3.75, robotPose.getRotation().getRadians(), robotPose.getRotation().getRadians());
                     RigidTransform2d correctedRobotPose = interpolateAlongLine(xCorrectedRobotPose, -8.5, robotPose.getRotation().getRadians() + Math.toRadians(90), Rotation2d.fromRadians(robotPose.getRotation().getRadians()).getRadians());
                     RigidTransform2d proposedBayPose = interpolateAlongLine(correctedRobotPose, target.getDistance(), Math.toRadians(-target.getRobotToTarget()+ robotPose.getRotation().getDegrees()), Math.toRadians(-target.getTargetHeadingOffset() + robotPose.getRotation().getDegrees()));
                     if(closestBayPose == null || proposedBayPose.getTranslation().subtract(latestFieldToVehicle.getTranslation()).norm() < closestBayPose.getTranslation().subtract(latestFieldToVehicle.getTranslation()).norm()){

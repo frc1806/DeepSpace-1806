@@ -37,7 +37,7 @@ public class RobotMap {
 
 	////////// These are all of the solenoids for the robotri
 	public static int module1Number = 0;
-	public static int module2Number = 1;
+	public static int module2Number = 0;
 	
 	//Shifting
 	public static int shiftHigh = 0; //module 2

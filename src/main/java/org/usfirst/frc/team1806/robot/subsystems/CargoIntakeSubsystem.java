@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class CargoIntakeSubsystem implements Subsystem {
     boolean debug = false;
-    private static CargoIntakeSubsystem mCargoIntakeSubsystem = new CargoIntakeSubsystem();
     //private LiftSubsystem liftSubsystem;
     private DoubleSolenoid barExtensionSolenoid;
     private DoubleSolenoid outerExtensionSolenoid;
@@ -46,17 +45,19 @@ public class CargoIntakeSubsystem implements Subsystem {
         }
     }
 
+    private static CargoIntakeSubsystem mCargoIntakeSubsystem = new CargoIntakeSubsystem();
     public static CargoIntakeSubsystem getInstance(){
         return mCargoIntakeSubsystem;
     }
-    
+
     private CargoIntakeSubsystem(){
-        
+        /*
         barExtensionSolenoid = new DoubleSolenoid(RobotMap.barIntakeExtend, RobotMap.barIntakeRetract);
         outerExtensionSolenoid = new DoubleSolenoid(RobotMap.outerIntakeExtend, RobotMap.outerIntakeRetract);
         innerIntake = new IntakeSubsystem(Constants.kInnerIntakingSpeed, RobotMap.leftInnerIntake, RobotMap.rightInnerIntake, false, false);
         outerIntake = new IntakeSubsystem(Constants.kOuterIntakingSpeed, RobotMap.leftOuterIntake, RobotMap.rightOuterIntake, false, true);
         //liftSubsystem = LiftSubsystem.getInstance();
+        */
     }
 
 

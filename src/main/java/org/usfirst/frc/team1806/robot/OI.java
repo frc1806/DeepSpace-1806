@@ -16,9 +16,7 @@ import org.usfirst.frc.team1806.robot.util.XboxController;
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
  */
-public class
-
-OI {
+public class OI {
 	//snag some subsystem instances
 	private DriveTrainSubsystem mDriveTrainSubsystem = DriveTrainSubsystem.getInstance();
 	private SquidSubsystem mSquidSubsystem = SquidSubsystem.getInstance();
@@ -31,7 +29,6 @@ OI {
 	private XboxController dc = new XboxController(0);
 	private XboxController oc = new XboxController(1);
 	private XboxController autoController = new XboxController(2);
-
 	//start up button trackers
 	private Latch autoInTeleOp = new Latch();
 	private Boolean wasSquidExtendButton = false;
@@ -39,6 +36,7 @@ OI {
 	private Boolean wasChangeModeButton = false;
 	private Boolean wasOuterIntakeButton = false;
 	private Boolean wasShift = false;
+	private Boolean wasParkingBrake = false;
 
 	public void runCommands(){
 
@@ -56,7 +54,8 @@ OI {
 					mDriveTrainSubsystem.setHighGear(true);
 				}
 			}
-			if(!((mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.DRIVE_TO_STALL || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.WIGGLE ) ||(Robot.mSequenceState == Robot.SequenceState.VISION) && Robot.mSequenceState.isActive()))
+			if(!((mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.DRIVE_TO_STALL || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.WIGGLE || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.PARKING_BRAKE) ||(Robot.mSequenceState == Robot.SequenceState.VISION) && Robot.mSequenceState.isActive()))
+
 			{
 				if(!FeatureFlags.CODER_MODE) {
 					mDriveTrainSubsystem.setOpenLoop(mCheesyDriveHelper.cheesyDrive(
@@ -67,6 +66,13 @@ OI {
 							dc.getLeftJoyY() * .3, dc.getRightJoyX() * .45, dc.getButtonRB() , mDriveTrainSubsystem.isHighGear()));
 				}
 			}
+            if(oc.getPOVDown() && !wasParkingBrake) {
+                mDriveTrainSubsystem.startParkingBrake();
+            }
+            else if(!oc.getPOVDown() && wasParkingBrake) {
+                mDriveTrainSubsystem.stopParkingBrake();
+            }
+
 			mDriveTrainSubsystem.driveToStall(oc.getButtonA(), oc.getButtonX());
 			mDriveTrainSubsystem.wiggleHandler(false); //oc.X
 		}
@@ -225,7 +231,8 @@ OI {
 		wasChangeModeButton = dc.getButtonRB();
 		wasSquidOpenButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
 		wasOuterIntakeButton = dc.getRightTrigger() > Constants.kTriggerThreshold;
-		wasShift = dc.getPOVLeft();
+        wasShift = dc.getPOVLeft();
+        wasParkingBrake = oc.getPOVDown();
 
 	}
 	public void resetAutoLatch(){

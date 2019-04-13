@@ -10,19 +10,21 @@ import org.usfirst.frc.team1806.robot.loop.Looper;
 public class SquidSubsystem implements Subsystem {
 
     boolean debug = false;
-    private static SquidSubsystem mSquidSubsystem = new SquidSubsystem();
     private DoubleSolenoid mSquidSolenoid;
     private DoubleSolenoid mSquidExtender;
     private DigitalInput mHatchDetector;
 
+    private static SquidSubsystem mSquidSubsystem = new SquidSubsystem();
     public static SquidSubsystem getInstance(){
         return mSquidSubsystem;
     }
 
     private SquidSubsystem(){
-            mSquidSolenoid = new DoubleSolenoid(RobotMap.squidOpenPort, RobotMap.squidClosePort);
-            mSquidExtender = new DoubleSolenoid(RobotMap.squidExtendForward, RobotMap.squidExtendBackward);
-            mHatchDetector = new DigitalInput(RobotMap.hatchDetector);
+        /*
+        mSquidSolenoid = new DoubleSolenoid(RobotMap.squidOpenPort, RobotMap.squidClosePort);
+        mSquidExtender = new DoubleSolenoid(RobotMap.squidExtendForward, RobotMap.squidExtendBackward);
+        mHatchDetector = new DigitalInput(RobotMap.hatchDetector)
+        */
     }
 
     public void writeToLog(){
