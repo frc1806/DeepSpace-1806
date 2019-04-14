@@ -72,7 +72,7 @@ public class OI {
             else if(!oc.getPOVDown() && wasParkingBrake) {
                 mDriveTrainSubsystem.stopParkingBrake();
             }
-
+			mDriveTrainSubsystem.setWantVisionTracking(dc.getButtonLB());
 			mDriveTrainSubsystem.driveToStall(oc.getButtonA(), oc.getButtonX());
 			mDriveTrainSubsystem.wiggleHandler(false); //oc.X
 		}
@@ -245,7 +245,7 @@ public class OI {
 		return autoInTeleOp.returnStatus();
 	}
 	public boolean getAutomatedSequenceButton() {
-		return dc.getButtonLB();
+		return false;
 	}
 	public boolean getDisableAutoButton() {
 		return oc.getButtonB();

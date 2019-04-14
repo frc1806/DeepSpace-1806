@@ -10,16 +10,12 @@ import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Kinematics;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.RobotState;
+import org.usfirst.frc.team1806.robot.Vision.VisionServer;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 import org.usfirst.frc.team1806.robot.path.Path;
 import org.usfirst.frc.team1806.robot.path.PathFollower;
-import org.usfirst.frc.team1806.robot.util.DriveSignal;
-import org.usfirst.frc.team1806.robot.util.Lookahead;
-import org.usfirst.frc.team1806.robot.util.NavX;
-import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
-import org.usfirst.frc.team1806.robot.util.Rotation2d;
-import org.usfirst.frc.team1806.robot.util.Twist2d;
+import org.usfirst.frc.team1806.robot.util.*;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.SPI;
@@ -32,10 +28,14 @@ public class DriveTrainSubsystem implements Subsystem {
 
 	boolean debug = true;
 
+	VisionServer mVisionServer = VisionServer.getInstance();
+	Target mostRecentTarget;
+	double mostRecentTargetTimestamp;
+
 	public enum DriveStates {
 		DRIVING, // Ya old normal dirivng
 		CREEP, // Creep for percise movement
-		VISION, // Vision tracking?
+		VISION, // Vision tracking!
 		TURN_TO_HEADING, // Turn using PID
 		DRIVE_TO_POSITION, // Drive to Position using SRX PID
 		PATH_FOLLOWING,
@@ -153,6 +153,7 @@ public class DriveTrainSubsystem implements Subsystem {
 					case VELOCITY_SETPOINT:
 						return;
 					case VISION:
+						updateVision();
 						return;
 					case WIGGLE:
 						return;
@@ -240,7 +241,9 @@ public class DriveTrainSubsystem implements Subsystem {
 		leftVelocity = 0;
 		rightVelocity = 0;
 
-
+		mVisionServer = VisionServer.getInstance();
+		mostRecentTarget = null;
+		mostRecentTargetTimestamp = 0;
 
 		// init solenoids
 		shifter = new DoubleSolenoid(RobotMap.module2Number, RobotMap.shiftLow, RobotMap.shiftHigh);
@@ -935,6 +938,37 @@ public class DriveTrainSubsystem implements Subsystem {
 	public void setMaxDrivePower(double power) {
 	    masterLeft.getPIDController().setOutputRange(-power, power);
 	    masterRight.getPIDController().setOutputRange(-power, power);
+
+	}
+
+	public void setWantVisionTracking(boolean wantVision){
+		if(wantVision && mDriveStates != DriveStates.VISION){
+			mDriveStates = DriveStates.VISION;
+			configureTalonsForSpeedControl();
+		}
+		else if(!wantVision && mDriveStates == DriveStates.VISION){
+			mDriveStates = DriveStates.DRIVING;
+			setCoastMode();
+		}
+
+	}
+
+	public void updateVision(){
+		double VISION_BASE_SPEED = 20;
+		double PROPORTIONAL_GAIN_FOR_VISION = 10;
+		Target wantedTarget = TargetHelper.getClosestTargetToRobot();
+		double targetTimestamp = mVisionServer.getTargetsTimestamp();
+		RigidTransform2d robotPose = RobotState.getInstance().getFieldToVehicle(targetTimestamp - Constants.kVisionExpectedCameraLag);
+		if(wantedTarget != null){
+			mostRecentTarget = wantedTarget;
+			mostRecentTargetTimestamp = targetTimestamp;
+		}
+
+		RigidTransform2d correctingRobotPose =RobotState.getInstance().getFieldToVehicle(mostRecentTargetTimestamp - Constants.kVisionExpectedCameraLag);
+		double robotToTarget = Math.toRadians(-mostRecentTarget.getRobotToTarget() + robotPose.getRotation().getDegrees());
+		double visionCorrection = (robotToTarget * PROPORTIONAL_GAIN_FOR_VISION);
+
+		setVelocitySetpoint(VISION_BASE_SPEED + visionCorrection, VISION_BASE_SPEED - visionCorrection);
 
 	}
 
