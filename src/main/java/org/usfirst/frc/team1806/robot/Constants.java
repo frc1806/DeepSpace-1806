@@ -119,8 +119,6 @@ public class Constants {
 
     public final static int kTeleOpHoldHeight = 1100;
 
-
-
     //Compressor Control Constants
     public final static int kPressureSensorSamplingLoops = 60; //each loop is 1/200 of a second
     public final static double kPressureAverageMinimumToStart = 90; //PSI
@@ -173,4 +171,11 @@ public class Constants {
 
     public final static double kHabClimbTargetSpeed = 2000;
 
+    //Output to Smart Dashboard Keys
+    public final static String kCompressorKey = "Compressor ";
+    public final static String kDriveTrainKey = "DriveTrain ";
+    public final static String kIntakeKey = "Intake ";
+    public final static String kLiftKey = "Lift ";
+    public final static String kSquidKey = "Squid ";
+    public final static String kRobotStateKey = "robot";
 }

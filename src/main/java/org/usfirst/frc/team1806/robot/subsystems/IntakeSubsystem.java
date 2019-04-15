@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.CircularBuffer;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Robot;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Loop;
@@ -77,9 +78,9 @@ public class IntakeSubsystem implements Subsystem{
 
 	@Override
 	public void outputToSmartDashboard() {
-		SmartDashboard.putNumber("Total Intake Current", circularBufferTotal);
-		SmartDashboard.putNumber("Average Intake Current", circularBufferTotal / wantedSize);
-		SmartDashboard.putBoolean("Are we over Intake Threshold", circularBufferTotal / wantedSize >= currentThreshold);
+		SmartDashboard.putNumber(Constants.kIntakeKey + "Total Current", circularBufferTotal);
+		SmartDashboard.putNumber(Constants.kIntakeKey + "Average Current", circularBufferTotal / wantedSize);
+		SmartDashboard.putBoolean(Constants.kIntakeKey + "Are we over Intake Threshold", circularBufferTotal / wantedSize >= currentThreshold);
 	}
 
 	@Override

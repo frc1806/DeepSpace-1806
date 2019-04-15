@@ -366,23 +366,31 @@ public class DriveTrainSubsystem implements Subsystem {
 	@Override
 	public void outputToSmartDashboard() {
 		if(debug) {
-			SmartDashboard.putNumber("AdriveLeftPosition", getLeftDistanceInches());
-			SmartDashboard.putNumber("AdriveRightPosition", getRightDistanceInches());
-			SmartDashboard.putNumber("driveLeftVelocity", getLeftVelocityInchesPerSec());
-			SmartDashboard.putNumber("driveRightVelocity", getRightVelocityInchesPerSec());
-			SmartDashboard.putNumber("ALeft Side", leftEncoderDistance);
-			SmartDashboard.putNumber("ARight Side: ", rightEncoderDistance);
-			SmartDashboard.putString("Drive State", returnDriveState());
-			SmartDashboard.putNumber("ANavX", getGyroYaw().getDegrees());
-			SmartDashboard.putBoolean("isHighGear", isHighGear());
-			SmartDashboard.putNumber("Main Left Drive Temp", masterLeft.getMotorTemperature());
-			SmartDashboard.putNumber("Main LeftA Drive Temp", leftA.getMotorTemperature());
-			SmartDashboard.putNumber("Main Right Drive Temp", masterRight.getMotorTemperature());
-			SmartDashboard.putNumber("Main RightC Drive Temp", rightA.getMotorTemperature());
-			SmartDashboard.putNumber("Drive Left Main Amps", masterLeft.getOutputCurrent());
-			SmartDashboard.putNumber("Drive Left Follow Amps", leftA.getOutputCurrent());
-			SmartDashboard.putNumber("Drive Right Main Amps", masterRight.getOutputCurrent());
-			SmartDashboard.putNumber("Drive Right Follow Amps", rightA.getOutputCurrent());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "position left (in)", getLeftDistanceInches());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "position right (in)", getRightDistanceInches());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "velocity left (in/sec)", getLeftVelocityInchesPerSec());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "velocity right (in/sec)", getRightVelocityInchesPerSec());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "encoder count left", leftEncoderDistance);
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "encoder count right", rightEncoderDistance);
+
+			SmartDashboard.putString(Constants.kDriveTrainKey + "drive state", returnDriveState());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "navX yaw", getGyroYaw().getDegrees());
+		   SmartDashboard.putBoolean(Constants.kDriveTrainKey + "is high gear?", isHighGear());
+
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "temp masterLeft", masterLeft.getMotorTemperature());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "temp leftA", leftA.getMotorTemperature());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "temp leftB", leftB.getMotorTemperature());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "temp masterRight", masterRight.getMotorTemperature());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "temp rightA", rightA.getMotorTemperature());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "temp rightB", rightB.getMotorTemperature());
+
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "amps masterLeft", masterLeft.getOutputCurrent());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "amps leftA", leftA.getOutputCurrent());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "amps leftB", leftB.getOutputCurrent());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "amps masterRight", masterRight.getOutputCurrent());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "amps rightA", rightA.getOutputCurrent());
+			SmartDashboard.putNumber(Constants.kDriveTrainKey + "amps rightB", rightB.getOutputCurrent());
+
 		}
 	}
 
