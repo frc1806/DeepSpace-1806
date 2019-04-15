@@ -15,7 +15,7 @@ public class CompressorControlSubsystem implements Subsystem {
 
     boolean debug = false;
 
-    private static CompressorControlSubsystem compressorControlSubsystem = new CompressorControlSubsystem();
+    private static CompressorControlSubsystem compressorControlSubsystem = null;//new CompressorControlSubsystem();
 
     public static CompressorControlSubsystem getInstance(){
         return compressorControlSubsystem;

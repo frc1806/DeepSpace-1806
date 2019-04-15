@@ -106,9 +106,6 @@ public class Robot extends TimedRobot {
       } catch (InterruptedException e){
         System.out.println(e);
       }
-
-      BluePathAdapter.initPaths();
-      RedPathAdapter.initPaths();
     }
 
     public enum SequenceState{

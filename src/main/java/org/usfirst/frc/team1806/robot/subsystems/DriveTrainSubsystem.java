@@ -88,7 +88,7 @@ public class DriveTrainSubsystem implements Subsystem {
 	 * @return true or false depending on if the VelocityControl is needed or not
 	 */
 	protected static boolean usesTalonVelocityControl(DriveStates state) {
-		if (state == DriveStates.VELOCITY_SETPOINT || state == DriveStates.PATH_FOLLOWING) {
+		if (state == DriveStates.VELOCITY_SETPOINT || state == DriveStates.PATH_FOLLOWING || state == DriveStates.VISION) {
 			return true;
 		}
 		return false;
@@ -157,6 +157,7 @@ public class DriveTrainSubsystem implements Subsystem {
 						return;
 					case WIGGLE:
 						return;
+
 					case DRIVE_TO_STALL:
 						leftDrive(Constants.kStallPower);
 						rightDrive(Constants.kStallPower);
@@ -274,6 +275,7 @@ public class DriveTrainSubsystem implements Subsystem {
 			setMaxDrivePower(1);
 			System.out.println("Configuring speed control");
 			setBrakeMode();
+			updateVelocitySetpoint(0,0);
 		}
 	}
 
@@ -943,8 +945,11 @@ public class DriveTrainSubsystem implements Subsystem {
 
 	public void setWantVisionTracking(boolean wantVision){
 		if(wantVision && mDriveStates != DriveStates.VISION){
+			isWantedLowPID = true;
 			mDriveStates = DriveStates.VISION;
 			configureTalonsForSpeedControl();
+			mostRecentTarget = null;
+			mostRecentTargetTimestamp = 0;
 		}
 		else if(!wantVision && mDriveStates == DriveStates.VISION){
 			mDriveStates = DriveStates.DRIVING;
@@ -954,8 +959,8 @@ public class DriveTrainSubsystem implements Subsystem {
 	}
 
 	public void updateVision(){
-		double VISION_BASE_SPEED = 20;
-		double PROPORTIONAL_GAIN_FOR_VISION = 10;
+		double VISION_BASE_SPEED = 40;
+		double PROPORTIONAL_GAIN_FOR_VISION = .075;
 		Target wantedTarget = TargetHelper.getClosestTargetToRobot();
 		double targetTimestamp = mVisionServer.getTargetsTimestamp();
 		RigidTransform2d robotPose = RobotState.getInstance().getFieldToVehicle(targetTimestamp - Constants.kVisionExpectedCameraLag);
@@ -963,12 +968,17 @@ public class DriveTrainSubsystem implements Subsystem {
 			mostRecentTarget = wantedTarget;
 			mostRecentTargetTimestamp = targetTimestamp;
 		}
+		if(mostRecentTarget != null){
+			RigidTransform2d correctingRobotPose =RobotState.getInstance().getFieldToVehicle(mostRecentTargetTimestamp - Constants.kVisionExpectedCameraLag);
+			double robotToTarget =mostRecentTarget.getRobotToTarget() + correctingRobotPose.getRotation().getDegrees();
+			double visionCorrection = (robotToTarget * PROPORTIONAL_GAIN_FOR_VISION);
 
-		RigidTransform2d correctingRobotPose =RobotState.getInstance().getFieldToVehicle(mostRecentTargetTimestamp - Constants.kVisionExpectedCameraLag);
-		double robotToTarget = Math.toRadians(-mostRecentTarget.getRobotToTarget() + robotPose.getRotation().getDegrees());
-		double visionCorrection = (robotToTarget * PROPORTIONAL_GAIN_FOR_VISION);
+			updateVelocitySetpoint(VISION_BASE_SPEED - visionCorrection, VISION_BASE_SPEED + visionCorrection);
+		}
+		else{
+			updateVelocitySetpoint(0, 0);
+		}
 
-		setVelocitySetpoint(VISION_BASE_SPEED + visionCorrection, VISION_BASE_SPEED - visionCorrection);
 
 	}
 

@@ -1,6 +1,7 @@
 package org.usfirst.frc.team1806.robot.auto.paths;
 
 import org.usfirst.frc.team1806.robot.RobotState;
+import org.usfirst.frc.team1806.robot.auto.GeneralPathAdapter;
 import org.usfirst.frc.team1806.robot.path.Path;
 import org.usfirst.frc.team1806.robot.path.PathBuilder;
 import org.usfirst.frc.team1806.robot.path.PathContainer;
@@ -14,15 +15,7 @@ public class RightSideHAB1ToCloseHatchRocket implements PathContainer {
 
     @Override
     public Path buildPath() {
-        ArrayList<PathBuilder.Waypoint> sWaypoints = new ArrayList<PathBuilder.Waypoint>();
-
-        sWaypoints.add(new PathBuilder.Waypoint(66,115,0,0));
-        sWaypoints.add(new PathBuilder.Waypoint(67,115,0,10));
-        sWaypoints.add(new PathBuilder.Waypoint(116,115,0,20));
-        sWaypoints.add(new PathBuilder.Waypoint(136,74,10,50));
-        sWaypoints.add(new PathBuilder.Waypoint(166,50,0,80));
-
-        return PathBuilder.buildPathFromWaypoints(sWaypoints);
+        return GeneralPathAdapter.getInstance().getRightSideHAB1ToCloseHatchRocket();
     }
     @Override
 
