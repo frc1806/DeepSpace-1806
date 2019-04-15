@@ -33,6 +33,10 @@ public class RobotMap {
 	public static int rightOuterIntake = 14;
 
 
+	//Hatch Floor Pickup
+	public static int tongueMotor = 42;
+
+
 
 
 	////////// These are all of the solenoids for the robotri

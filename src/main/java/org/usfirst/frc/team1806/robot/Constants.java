@@ -173,4 +173,14 @@ public class Constants {
 
     public final static double kHabClimbTargetSpeed = 2000;
 
+
+    public final static double kLickKp = 0.04;
+    public final static double kLickKi = 0.00;
+    public final static double kLickKd = 0.00;
+    public final static double kLickKf = 0.00;
+    public final static int kLickKiZone = 10;
+
+    public final static int kLickPositionTolerance = 20;
+    public final static int kLickVelocityTolerance = 2000;
+
 }
