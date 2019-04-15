@@ -14,6 +14,5 @@ public class NothingAuto extends AutoModeBase {
         if(FeatureFlags.FF_LIFT_TILT){
             runAction(new StandUpLift());
         }
-        runAction(new WaitAction(15));
     }
 }

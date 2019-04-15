@@ -1,25 +1,22 @@
 package org.usfirst.frc.team1806.robot.auto.paths;
-import java.util.ArrayList;
 
 import org.usfirst.frc.team1806.robot.auto.GeneralPathAdapter;
-import org.usfirst.frc.team1806.robot.path.PathBuilder.Waypoint;
 import org.usfirst.frc.team1806.robot.path.Path;
-import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
 import org.usfirst.frc.team1806.robot.path.PathContainer;
-import org.usfirst.frc.team1806.robot.path.PathBuilder;
+import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
 import org.usfirst.frc.team1806.robot.util.Rotation2d;
 import org.usfirst.frc.team1806.robot.util.Translation2d;
 
-public class RightHab2DriveOff implements PathContainer {
+public class LeftHab2DriveOff implements PathContainer {
 
         @Override
         public Path buildPath() {
-            return GeneralPathAdapter.getInstance().getRightHab2DriveOff();
+            return GeneralPathAdapter.getInstance().getLeftHab2DriveOff();
         }
         @Override
 
         public RigidTransform2d getStartPose() {
-            return new RigidTransform2d(new Translation2d(18, 115), Rotation2d.fromDegrees(180.0));
+            return new RigidTransform2d(new Translation2d(18, 205), Rotation2d.fromDegrees(180.0));
         }
 
         @Override

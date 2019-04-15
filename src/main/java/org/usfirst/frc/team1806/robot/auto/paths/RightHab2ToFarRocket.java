@@ -1,25 +1,17 @@
 package org.usfirst.frc.team1806.robot.auto.paths;
 
+import org.usfirst.frc.team1806.robot.auto.GeneralPathAdapter;
 import org.usfirst.frc.team1806.robot.path.Path;
-import org.usfirst.frc.team1806.robot.path.PathBuilder;
-import org.usfirst.frc.team1806.robot.path.PathBuilder.Waypoint;
 import org.usfirst.frc.team1806.robot.path.PathContainer;
 import org.usfirst.frc.team1806.robot.util.RigidTransform2d;
 import org.usfirst.frc.team1806.robot.util.Rotation2d;
 import org.usfirst.frc.team1806.robot.util.Translation2d;
 
-import java.util.ArrayList;
-
 public class RightHab2ToFarRocket implements PathContainer {
     @Override
     public Path buildPath() {
-        ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(110,115,0,120));
-        sWaypoints.add(new Waypoint(135,115,15,120));
-        sWaypoints.add(new Waypoint(273,30,15,120));
-        sWaypoints.add(new Waypoint(285,40,0,120));
 
-        return PathBuilder.buildPathFromWaypoints(sWaypoints);
+        return GeneralPathAdapter.getInstance().getRightHab2ToFarRocket();
     }
     @Override
 

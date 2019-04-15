@@ -1,6 +1,7 @@
 package org.usfirst.frc.team1806.robot.auto.paths;
 
 import org.usfirst.frc.team1806.robot.RobotState;
+import org.usfirst.frc.team1806.robot.auto.GeneralPathAdapter;
 import org.usfirst.frc.team1806.robot.path.Path;
 import org.usfirst.frc.team1806.robot.path.PathBuilder;
 import org.usfirst.frc.team1806.robot.path.PathContainer;
@@ -13,12 +14,7 @@ import java.util.ArrayList;
 public class RightSideCloseHatchRocketToFeeder implements PathContainer {
     @Override
     public Path buildPath() {
-        ArrayList<PathBuilder.Waypoint> sWaypoints = new ArrayList<PathBuilder.Waypoint>();
-        sWaypoints.add(new PathBuilder.Waypoint(190,30,0,0));
-        sWaypoints.add(new PathBuilder.Waypoint(60,30,0,60));
-
-
-        return PathBuilder.buildPathFromWaypoints(sWaypoints);
+        return GeneralPathAdapter.getInstance().getRightSideCloseHatchRocketToFeeder();
     }
 
     @Override

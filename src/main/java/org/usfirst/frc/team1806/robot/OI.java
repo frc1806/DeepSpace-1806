@@ -46,6 +46,7 @@ public class OI {
 		}
 		synchronized (mDriveTrainSubsystem) {
 			//if not driving to stall or wiggling, or visioning.
+			mDriveTrainSubsystem.setWantVisionTracking(false);
 			if(!wasShift && dc.getPOVLeft()){
 				if(mDriveTrainSubsystem.isHighGear()){
 					mDriveTrainSubsystem.setHighGear(false);
@@ -54,7 +55,7 @@ public class OI {
 					mDriveTrainSubsystem.setHighGear(true);
 				}
 			}
-			if(!((mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.DRIVE_TO_STALL || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.WIGGLE || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.PARKING_BRAKE) ||(Robot.mSequenceState == Robot.SequenceState.VISION) && Robot.mSequenceState.isActive()))
+			if(!((mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.DRIVE_TO_STALL || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.WIGGLE || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.PARKING_BRAKE || mDriveTrainSubsystem.getmDriveStates() == DriveTrainSubsystem.DriveStates.VISION) ||(Robot.mSequenceState == Robot.SequenceState.VISION) && Robot.mSequenceState.isActive()))
 
 			{
 				if(!FeatureFlags.CODER_MODE) {
@@ -72,7 +73,7 @@ public class OI {
             else if(!oc.getPOVDown() && wasParkingBrake) {
                 mDriveTrainSubsystem.stopParkingBrake();
             }
-			mDriveTrainSubsystem.setWantVisionTracking(dc.getButtonLB());
+
 			mDriveTrainSubsystem.driveToStall(oc.getButtonA(), oc.getButtonX());
 			mDriveTrainSubsystem.wiggleHandler(false); //oc.X
 		}
@@ -225,7 +226,7 @@ public class OI {
 
 
 
-		mCompressorControlSubsystem.setOverride(oc.getButtonY());
+		//TODO: readd mCompressorControlSubsystem.setOverride(oc.getButtonY());
 
 		wasSquidExtendButton = dc.getLeftTrigger() > Constants.kTriggerThreshold;
 		wasChangeModeButton = dc.getButtonRB();
@@ -245,7 +246,7 @@ public class OI {
 		return autoInTeleOp.returnStatus();
 	}
 	public boolean getAutomatedSequenceButton() {
-		return false;
+		return dc.getButtonLB();
 	}
 	public boolean getDisableAutoButton() {
 		return oc.getButtonB();
