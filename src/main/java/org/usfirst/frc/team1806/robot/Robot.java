@@ -44,7 +44,7 @@ public class Robot extends TimedRobot {
 
 
     private static final SubsystemManager S_SubsystemManager = new SubsystemManager(
-            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance())); ///TODO RE ADD IN SUBSYSTEMS
+            Arrays.asList(DriveTrainSubsystem.getInstance(), LiftSubsystem.getInstance(), CargoIntakeSubsystem.getInstance(), CompressorControlSubsystem.getInstance(), SquidSubsystem.getInstance())); ///TODO RE ADD IN SUBSYSTEMS
 
     private Looper mEnabledLooper = new Looper();
 
@@ -158,7 +158,7 @@ public class Robot extends TimedRobot {
       allPeriodic();
       selectedModeName = SmartDashboard.getString(
                 AutoModeSelector.SELECTED_AUTO_MODE_DASHBOARD_KEY,
-                "org.usfirst.frc.team1806.robot.auto.modes.DummyMode");
+                "org.usfirst.frc.team1806.robot.auto.modes.NothingAuto");
       if(!selectedModeName.equals(lastSelectedModeName) || bAutoModeStale){
           bAutoModeStale = false;
           AutoModeSelector.initAutoModeSelector();

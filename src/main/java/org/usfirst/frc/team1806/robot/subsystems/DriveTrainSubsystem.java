@@ -28,7 +28,7 @@ public class DriveTrainSubsystem implements Subsystem {
 
 	boolean debug = true;
 
-	VisionServer mVisionServer = VisionServer.getInstance();
+	VisionServer mVisionServer;
 	Target mostRecentTarget;
 	double mostRecentTargetTimestamp;
 

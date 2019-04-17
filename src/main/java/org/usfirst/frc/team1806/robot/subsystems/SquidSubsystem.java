@@ -20,11 +20,11 @@ public class SquidSubsystem implements Subsystem {
     }
 
     private SquidSubsystem(){
-        /*
+
         mSquidSolenoid = new DoubleSolenoid(RobotMap.squidOpenPort, RobotMap.squidClosePort);
         mSquidExtender = new DoubleSolenoid(RobotMap.squidExtendForward, RobotMap.squidExtendBackward);
-        mHatchDetector = new DigitalInput(RobotMap.hatchDetector)
-        */
+        mHatchDetector = new DigitalInput(RobotMap.hatchDetector);
+
     }
 
     public void writeToLog(){

@@ -13,7 +13,7 @@ public class SonarPositioningSubsystem implements Subsystem{
     boolean debug = false;
 
 
-    private static SonarPositioningSubsystem mSonarPositioningSubsystem = new SonarPositioningSubsystem();
+    private static SonarPositioningSubsystem mSonarPositioningSubsystem = null;//new SonarPositioningSubsystem();
     private Ultrasonic rearLeftSonar, rearRightSonar, leftSonar, rightSonar;
     public static SonarPositioningSubsystem getInstance() {return mSonarPositioningSubsystem;}
 

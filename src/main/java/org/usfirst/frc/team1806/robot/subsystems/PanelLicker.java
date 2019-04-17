@@ -12,7 +12,7 @@ public class PanelLicker implements Subsystem{
 
     private static boolean DEBUG = false;
 
-    private static PanelLicker mPanelLicker = new PanelLicker();
+    private static PanelLicker mPanelLicker = null; //new PanelLicker();
     private LickPosition mLickPosition;
     private LickState mLickState;
     public TalonSRX mLickMotor; //Don't lick 775 pros, they don't taste good.

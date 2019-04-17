@@ -9,6 +9,7 @@ import org.usfirst.frc.team1806.robot.auto.modes.DummyMode;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.usfirst.frc.team1806.robot.auto.modes.NothingAuto;
 
 /**
  * Class that allows a user to select which autonomous mode to execute from the web dashboard.
@@ -79,7 +80,7 @@ public class AutoModeSelector {
     
     public static AutoModeBase fallBackToDefaultAuto(String wantedAutoMode){
     	DriverStation.reportError("Failed to select auto mode: " + wantedAutoMode, false);
-    	return new DummyMode();
+    	return new NothingAuto();
     }
     public static String returnNameOfSelectedAuto(){
         return  SmartDashboard.getString(
