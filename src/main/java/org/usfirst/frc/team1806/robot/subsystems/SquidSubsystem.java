@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.SensorUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 
@@ -33,8 +34,8 @@ public class SquidSubsystem implements Subsystem {
 
     public void outputToSmartDashboard(){
     if(debug) {
-        SmartDashboard.putString("Squid State", mSquidSolenoid.get().name());
-        SmartDashboard.putString("Squid Extend" , mSquidExtender.get().name());
+        SmartDashboard.putString(Constants.kSquidKey + "State", mSquidSolenoid.get().name());
+        SmartDashboard.putString(Constants.kSquidKey + "Extend" , mSquidExtender.get().name());
     }
 
     }

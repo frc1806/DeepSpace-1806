@@ -112,20 +112,17 @@ public class LiftSubsystem  implements Subsystem {
 	@Override
 	public void outputToSmartDashboard() {
 		if(debug) {
-			SmartDashboard.putString("Lift State: ", returnLiftStates().toString());
-			SmartDashboard.putString("Lift Position", returnLiftPosition().toString());
-			SmartDashboard.putNumber("Lift Encoder Position", liftLead.getEncoder().getPosition());
-			SmartDashboard.putNumber("Lift Velocity", liftLead.getEncoder().getVelocity());
-			SmartDashboard.putNumber("Lift Leader Power Sending", liftLead.getAppliedOutput());
-			SmartDashboard.putNumber("Lift Follow Power Sending", liftFollow.getAppliedOutput());
-			SmartDashboard.putBoolean("Lift Bottom limit triggered", areWeAtBottomLimit());
-			SmartDashboard.putNumber("Lift Wanted Height", mLiftPosition.getHeight());
-			SmartDashboard.putNumber("Lift Lead Motor Temp", liftLead.getMotorTemperature());
-			SmartDashboard.putNumber("Lift Follow Motor Temp", liftFollow.getMotorTemperature());
-			SmartDashboard.putBoolean("Lift is at position?", isAtPosition());
-			if(FeatureFlags.FF_LIFT_TILT){
-				SmartDashboard.putBoolean("Lift Leaning?", liftLeaner.get() == DoubleSolenoid.Value.kReverse);
-			}
+			SmartDashboard.putString(Constants.kLiftKey + "State: ", returnLiftStates().toString());
+			SmartDashboard.putString(Constants.kLiftKey + "Position", returnLiftPosition().toString());
+			SmartDashboard.putNumber(Constants.kLiftKey + "Encoder Position", liftLead.getEncoder().getPosition());
+			SmartDashboard.putNumber(Constants.kLiftKey + "Velocity", liftLead.getEncoder().getVelocity());
+			SmartDashboard.putNumber(Constants.kLiftKey + "Leader Power Sending", liftLead.getAppliedOutput());
+			SmartDashboard.putNumber(Constants.kLiftKey + "Follow Power Sending", liftFollow.getAppliedOutput());
+			SmartDashboard.putBoolean(Constants.kLiftKey + "Bottom limit triggered", areWeAtBottomLimit());
+			SmartDashboard.putNumber(Constants.kLiftKey + "Wanted Height", mLiftPosition.getHeight());
+			SmartDashboard.putNumber(Constants.kLiftKey + "Lead Motor Temp", liftLead.getMotorTemperature());
+			SmartDashboard.putNumber(Constants.kLiftKey + "Follow Motor Temp", liftFollow.getMotorTemperature());
+			SmartDashboard.putBoolean(Constants.kLiftKey + "is at position?", isAtPosition());
 		}
 
         }

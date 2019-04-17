@@ -2,13 +2,11 @@ package org.usfirst.frc.team1806.robot.subsystems;
 
 import org.usfirst.frc.team1806.robot.Constants;
 import org.usfirst.frc.team1806.robot.Robot;
-import org.usfirst.frc.team1806.robot.RobotMap;
 import org.usfirst.frc.team1806.robot.driver.AnalogPressureSensor;
 import org.usfirst.frc.team1806.robot.loop.Loop;
 import org.usfirst.frc.team1806.robot.loop.Looper;
 import edu.wpi.first.wpilibj.Compressor;
 import org.usfirst.frc.team1806.robot.util.SamplingFilter;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class CompressorControlSubsystem implements Subsystem {
@@ -122,13 +120,13 @@ public class CompressorControlSubsystem implements Subsystem {
 
     public void outputToSmartDashboard(){
         if(debug) {
-            SmartDashboard.putNumber("STORAGE PRESSURE", pressureSensor.getPressure());
-            SmartDashboard.putNumber("Recent Average Pressure", pressureSamplingFilter.getCurrentAverage());
-            SmartDashboard.putNumber("Compressor Current", compressor.getCompressorCurrent());
-            SmartDashboard.putNumber("Recent Average Battery Voltage", voltageSamplingFilter.getCurrentAverage());
-            SmartDashboard.putNumber("Recent Average PDP Total Current", amperageSamplingFilter.getCurrentAverage());
-            SmartDashboard.putBoolean("Is Compressor Running?", compressor.getClosedLoopControl());
-            SmartDashboard.putNumber("Battery Charge", (batteryCoulombCount / Constants.kFullChargeBatteryCoulombCount) * 100);
+            SmartDashboard.putNumber(Constants.kCompressorKey + "STORAGE PRESSURE", pressureSensor.getPressure());
+            SmartDashboard.putNumber(Constants.kCompressorKey + "Recent Average Pressure", pressureSamplingFilter.getCurrentAverage());
+            SmartDashboard.putNumber(Constants.kCompressorKey + "Current", compressor.getCompressorCurrent());
+            SmartDashboard.putNumber(Constants.kCompressorKey + "Recent Average Battery Voltage", voltageSamplingFilter.getCurrentAverage());
+            SmartDashboard.putNumber(Constants.kCompressorKey + "Recent Average PDP Total Current", amperageSamplingFilter.getCurrentAverage());
+            SmartDashboard.putBoolean(Constants.kCompressorKey + "Is Running?", compressor.getClosedLoopControl());
+            SmartDashboard.putNumber(Constants.kCompressorKey + "Battery Charge", (batteryCoulombCount / Constants.kFullChargeBatteryCoulombCount) * 100);
         }
     }
 
